@@ -1,0 +1,69 @@
+<!--
+
+    Copyright 2014 Lockheed Martin Corporation
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<div class="modal-header">
+    <h3>Upload Topology</h3>
+</div>
+
+<div class="modal-body">
+    <div ng-show="!isStarted()">
+        <h4>Select a topology jar to upload...</h4>
+
+        <div class="row-fluid">
+            <form name="form" class="form-horizontal">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label" for="name">Name: </label>
+                    <div class="col-sm-9">
+                        <input id="name" ng-model="name" type="text"
+                               placeholder="Name" class="form-control"/>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label" for="description">Description</label>
+                    <div class="col-sm-9">
+                        <textarea id="description" ng-model="description"
+                            placeholder="Description" rows="3" class="form-control"></textarea>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="row-fluid">
+            <button class="span3 btn btn-primary" ng-click="choose()">
+                <i class="fa fa-file"></i> Browse...</button>
+            <div class="span9 well well-small">{{ importFile }}</div>
+        </div>
+        <input streamflow-fileupload id="topology_file_import" class="hide" 
+               type="file" name="file"  data-url="api/topologies" add="add(e, data)" 
+               done="done(e, data)" fail="fail(e, data)" progressall="progressall(e, data)"/>
+    </div>
+    <div ng-show="isActive()">
+        <h4>Uploading the selected topology... {{ importProgress }}%</h4>
+        <progress percent="importProgress" class="progress-striped active"></progress>
+    </div>
+    <div ng-show="isFinished()">
+        <h4>{{ importMessage }}</h4>
+    </div>
+</div>
+
+<div class="modal-footer">
+    <button class="btn btn-warning" ng-show="isActive()" ng-click="cancel()">
+        <i class="fa fa-ban"></i> Cancel</button>
+    <button class="btn btn-default" ng-show="!isStarted() || isFinished()" ng-click="close()">
+        <i class="fa fa-times"></i> Close</button>
+    <button class="btn btn-primary" ng-show="!isStarted() && submitHandle" ng-click="upload()">
+        <i class="fa fa-upload"></i> Upload</button>
+</div>

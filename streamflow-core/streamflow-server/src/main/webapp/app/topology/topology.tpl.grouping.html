@@ -1,0 +1,62 @@
+<!--
+
+    Copyright 2014 Lockheed Martin Corporation
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<div class="modal-header">
+    <h3>Edge Grouping</h3>
+</div>
+
+<div class="modal-body">
+    <form name="form" class="form-horizontal">
+        <div class="form-group">
+            <label class="col-sm-3 control-label" for="grouping">Grouping</label>
+            <div class="col-sm-9">
+                <select id="grouping" class="form-control"
+                        ng-model="connector.grouping">
+                    <option value="Default" ng-if="topologyType == 'TRIDENT'">Default</option>
+                    <option value="Shuffle">Shuffle</option>
+                    <option value="Broadcast" ng-if="topologyType == 'TRIDENT'">Broadcast</option>
+                    <option value="Fields" ng-if="topologyType == 'STANDARD'">Fields</option>
+                    <option value="All" ng-if="topologyType == 'STANDARD'">All</option>
+                    <option value="Global">Global</option>
+                    <option value="Batch Global" ng-if="topologyType == 'TRIDENT'">Batch Global</option>
+                    <option value="Partition By" ng-if="topologyType == 'TRIDENT'">Partition By</option>
+                    <option value="Group By" ng-if="topologyType == 'TRIDENT'">Group By</option>
+                    <option value="None" ng-if="topologyType == 'STANDARD'">None</option>
+                    <option value="Direct" ng-if="topologyType == 'STANDARD'">Direct</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group"
+             ng-show="connector.grouping == 'Fields' || 
+                      connector.grouping == 'Direct' || 
+                      connector.grouping == 'Partition By' || 
+                      connector.grouping == 'Group By'">
+            <label class="col-sm-3 control-label" for="groupingRef">Grouping Reference</label>
+            <div class="col-sm-9">
+                <input id="groupingRef" type="text" class="form-control"
+                       ng-model="connector.groupingRef"/>
+            </div>
+        </div>
+    </form>
+</div>
+
+<div class="modal-footer">
+    <button class="btn btn-default" ng-click="cancel()">
+        <i class="fa fa-ban"></i> Cancel</button>
+    <button class="btn btn-primary" ng-click="apply()">
+        <i class="fa fa-check"></i> Apply</button>
+</div>

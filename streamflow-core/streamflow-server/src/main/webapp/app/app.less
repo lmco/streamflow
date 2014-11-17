@@ -1,0 +1,116 @@
+/*
+ * Copyright 2014 Lockheed Martin Corporation
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+@import "../vendor/bootswatch/3.2.0/flatly/variables.less";
+
+@standardPadding: 10px;
+
+@grid-float-breakpoint: 900px;
+
+body, input, button, select, textarea, 
+h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6 {
+    /* Set the default and failover fonts for the app */
+    font-family: "Open Sans", @font-family-sans-serif;
+}
+
+.body {
+    /* Offset padding for the fixed navbar */
+    padding-top: @navbar-height + @standardPadding;
+    padding-bottom: @standardPadding;
+}
+
+.footer {
+    /* Padding and faded coloring for copyright info which appears on every page */
+    padding: 0px 10px 10px 10px;
+    color: #999999;
+}
+
+h2 {
+    margin-top: 10px;
+}
+
+.control-group {
+    /* Shrink the bottom margin for form entries */
+    margin-bottom: @standardPadding !important;
+}
+
+.btn-spacer {
+    /* Gap between groups of buttons which are logically grouped */
+    padding: @standardPadding / 2;
+}
+
+.btn-header {
+    /* Adjust padding for buttons within headers to fit cleanly when wrapped */
+    margin-top: @standardPadding;
+    margin-bottom: @standardPadding;
+}
+
+a {
+    /* Hide text decorations (underline) for links/buttons */
+    text-decoration: none !important;
+}
+
+.btn-sm {
+    margin-bottom: @standardPadding / 2;
+}
+
+.table td {
+    /* Force display of bottom border for last element in tables */
+    border-bottom: 1px solid @table-border-color !important;
+}
+
+.table td > h3,h4 {
+    /* Remove margin above headers within tables (by default offset strangely) */
+    margin: 0px 0px 5px 0px;
+}
+
+.table td > p {
+    /* Remove the margins surrounding paragraphs within tables */
+    margin: 0px;
+}
+
+hr.hr-thin {
+    /* Reduce the padding before and after horizontal rules to save space */
+    margin: 0px;
+}
+
+.rounded-corners (@radius: 5px) {
+    border-radius: @radius;
+    -webkit-border-radius: @radius;
+    -moz-border-radius: @radius;
+}
+
+.shadow-box (@hshadow, @vshadow, @spread, @color) {
+    box-shadow: @hshadow @vshadow @spread @color;
+   -o-box-shadow: @hshadow @vshadow @spread @color;
+   -webkit-box-shadow: @hshadow @vshadow @spread @color;
+   -moz-box-shadow: @hshadow @vshadow @spread #FFF;
+}
+
+.streamflow-badge {
+    .rounded-corners(3px);
+    line-height: 14px;
+    padding: 2px 4px;
+    display: inline-block;
+    color: #FFFFFF;
+    font-weight: bold;
+    font-size: @font-size-small;
+    text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+    vertical-align: middle;
+    white-space: nowrap;
+    /*background-color: @btn-default-bg;*/
+    text-transform: uppercase;
+}

@@ -1,0 +1,104 @@
+#!/bin/sh
+#
+# streamflow <summary>
+#
+# chkconfig:   2345 80 20
+# description: Starts and stops Streamflow on this system 
+#
+
+### BEGIN INIT INFO
+# Provides: Streamflow
+# Required-Start: $network $named
+# Required-Stop: $network $named
+# Default-Start: 2 3 4 5
+# Default-Stop: 0 1 6
+# Short-Description: This service manages the streamflow daemon
+# Description: Streamflow description goes here
+### END INIT INFO
+
+if [ -f /etc/rc.status ]; then
+    . /etc/rc.status
+    rc_reset
+fi
+
+if [ -f /etc/rc.d/init.d/functions ]; then
+    . /etc/rc.d/init.d/functions
+fi
+
+# Streamflow distribution directory
+STREAMFLOW_HOME=/opt/streamflow
+
+# Streamflow user to run this daemon as
+STREAMFLOW_USER="streamflow"
+
+# Streamflow executable support files
+EXEC="$STREAMFLOW_HOME/bin/streamflow.sh"
+PROG="streamflow"
+PID_FILE=/var/run/${PROG}/${PROG}.pid
+LOCK_FILE=/var/lock/subsys/$PROG
+
+[ -e /etc/sysconfig/$PROG ] && . /etc/sysconfig/$PROG
+
+
+start() {
+    if [ -x "$JAVA_HOME/bin/java" ]; then
+        JAVA="$JAVA_HOME/bin/java"
+    else
+        JAVA=`which java`
+    fi
+
+    if [ ! -x "$JAVA" ]; then
+        echo "Could not find any executable java binary. Please install java in your PATH or set JAVA_HOME"
+        exit 1
+    fi
+
+    [ -x $EXEC ] || exit 5
+    echo -n $"Starting $PROG: "
+    daemon --user $STREAMFLOW_USER --pidfile $PID_FILE $EXEC -p $PID_FILE
+
+    retval=$?
+    echo
+    [ $retval -eq 0 ] && touch $LOCK_FILE
+    return $retval
+}
+
+stop() {
+    echo -n $"Stopping $PROG: "
+    killproc -p $PID_FILE -d 20 $PROG
+
+    retval=$?
+    echo
+    [ $retval -eq 0 ] && rm -f $LOCK_FILE
+    return $retval
+}
+
+restart() {
+    stop
+    start
+}
+
+status() {
+    # run checks to determine if the service is running or use generic status
+    status -p $PID_FILE $PROG
+}
+
+
+case "$1" in
+    start)
+        $1
+        ;;
+    stop)
+        $1
+        ;;
+    restart)
+        $1
+        ;;
+    status)
+        $1
+        ;;
+    *)
+        echo $"Usage: $0 {start|stop|status|restart}"
+        exit 2
+esac
+exit $?
+

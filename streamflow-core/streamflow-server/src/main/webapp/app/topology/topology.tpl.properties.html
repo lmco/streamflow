@@ -1,0 +1,46 @@
+<!--
+
+    Copyright 2014 Lockheed Martin Corporation
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<div class="modal-header">
+    <h3 contenteditable ng-model="componentObject.label">{{ componentObject.label}}</h3>
+</div>
+
+<div class="modal-body">
+    <form name="form" class="form-horizontal" ng-show="componentConfig.properties.length > 0" novalidate>
+        <div ng-repeat="propertyConfig in componentConfig.properties" class="form-group">
+            <label class="col-sm-4 control-label">{{ propertyConfig.label }}:</label>
+            <div class="col-sm-8">
+                <!-- Use the streamflow-property directive to render a proper input based on the config -->
+                <div streamflow-property 
+                     property-config="propertyConfig"
+                     property-object="componentObject.properties[propertyConfig.name]"
+                     property-index="property{{ $index }}">
+                </div>
+            </div>
+        </div>
+    </form>
+    <h4 class="text-center" ng-show="componentConfig.properties.length == 0">
+        This component does not have any properties.
+    </h4>
+</div>
+
+<div class="modal-footer">
+    <button class="btn btn-default" ng-click="cancel()">
+        <i class="fa fa-ban"></i> Cancel</button>
+    <button class="btn btn-primary" ng-click="apply()">
+        <i class="fa fa-check"></i> Apply</button>
+</div>

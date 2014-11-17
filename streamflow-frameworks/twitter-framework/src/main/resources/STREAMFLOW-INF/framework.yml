@@ -1,0 +1,44 @@
+name: twitter-framework
+label: Twitter Framework
+version: ${project.version}
+description: Spouts and Bolts supporting Twitter functionality
+
+components: 
+  - name: twitter-sample-spout
+    label: Twitter Sample Spout
+    type: storm-spout
+    description: Utilizes Twitter Streaming API to stream of 1% Twitter data for analysis. Twitter OAuth credentials for you application are required for use.
+    mainClass: streamflow.spout.twitter.TwitterSampleSpout
+    icon: icons/twitter.png
+    properties: 
+      - name: oauth-consumer-key
+        label: OAuth Consumer Key
+        type: text
+        description: Twitter OAuth Consumer Key
+        defaultValue: 
+        required: true
+      - name: oauth-consumer-secret
+        label: OAuth Consumer Secret
+        type: text
+        description: Twitter OAuth Consumer Secret
+        defaultValue: 
+        required: true
+      - name: oauth-access-token
+        label: OAuth Access Token
+        type: text
+        description: Twitter OAuth Access Token
+        defaultValue: 
+        required: true
+      - name: oauth-access-token-secret
+        label: OAuth Access Token Secret
+        type: text
+        description: Twitter OAuth Access Token Secret
+        defaultValue: 
+        required: true
+    outputs: 
+      - key: default
+        description: Twitter Status
+        
+
+#serializations: 
+#  - typeClass: twitter4j.Status

@@ -1,0 +1,115 @@
+<!--
+
+    Copyright 2014 Lockheed Martin Corporation
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<!DOCTYPE html>
+<html id="ng-app" ng-app="streamflow">
+<head>
+    <title>StreamFlow&trade;</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    
+    <link rel="shortcut icon" type="image/png" href="assets/favicon.ico">
+    
+    <!-- Vendor stylesheets -->
+    <link rel="stylesheet" type="text/css" href="vendor/fonts/open-sans/open-sans.css"/>
+    <link rel="stylesheet" type="text/css" href="vendor/angular-notify/2.0.2/angular-notify.min.css"/>
+    <link rel="stylesheet" type="text/css" href="vendor/bootswatch/3.2.0/flatly/bootstrap.min.css"/>
+    <link rel="stylesheet" type="text/css" href="vendor/font-awesome/4.2.0/css/font-awesome.css"/>
+    
+    <!-- Custom stylesheets -->
+    <!--
+    <link rel="stylesheet" type="text/css" href="app/app.css"/>
+    <link rel="stylesheet" type="text/css" href="app/dashboard/dashboard.css"/>
+    <link rel="stylesheet" type="text/css" href="app/framework/framework.css"/>
+    <link rel="stylesheet" type="text/css" href="app/property/property.css"/>
+    <link rel="stylesheet" type="text/css" href="app/resource/resource.css"/>
+    <link rel="stylesheet" type="text/css" href="app/topology/topology.css"/>
+    <link rel="stylesheet" type="text/css" href="app/user/user.css"/>
+    -->
+
+    <link rel="stylesheet/less" type="text/x-less" href="app/app.less"/>
+    <link rel="stylesheet/less" type="text/x-less" href="app/security/security.less"/>
+    <link rel="stylesheet/less" type="text/x-less" href="app/dashboard/dashboard.less"/>
+    <link rel="stylesheet/less" type="text/x-less" href="app/framework/framework.less"/>
+    <link rel="stylesheet/less" type="text/x-less" href="app/property/property.less"/>
+    <link rel="stylesheet/less" type="text/x-less" href="app/resource/resource.less"/>
+    <link rel="stylesheet/less" type="text/x-less" href="app/topology/topology.less"/>
+    <link rel="stylesheet/less" type="text/x-less" href="app/user/user.less"/>
+    
+    <base href="/"/>
+</head>
+<body id="body-data" ng-controller="SecuredController">
+    
+    <!-- Display loading message while angualar loads -->
+    <div ng-hide="true" style="width: 400px; height: 50px; position:absolute; 
+            margin-top:-25px; margin-left:-200px; top:50%; left:50%;">
+        <h3 class="text-center"><i class="fa fa-spinner fa-spin fa-lg"></i> Loading...</h3>
+    </div>
+    
+    <!-- Streamflow Navbar Content -->
+    <div class="header" src="'app/navigation/navigation.tpl.navbar.html'" ng-include>
+    </div>
+
+    <!-- Streamflow Body Content -->
+    <div class="body container-fluid">
+        <div ng-view></div>
+    </div>
+
+    <!-- Streamflow Footer Content -->
+    <div class="footer" src="'app/navigation/navigation.tpl.footer.html'" ng-include>
+    </div>
+    
+    <!-- Vendor scripts -->
+    <script type="text/javascript" src="vendor/jquery/1.10.2/jquery.min.js"></script>
+    <script type="text/javascript" src="vendor/jqueryui/1.10.3/js/jquery-ui-1.10.3.custom.min.js"></script>
+    <script type="text/javascript" src="vendor/touch-punch/0.2.3/jquery.ui.touch-punch.min.js"></script>
+    <script type="text/javascript" src="vendor/jsplumb/1.5.2/jquery.jsPlumb-1.5.2.js"></script>
+    <script type="text/javascript" src="vendor/file-upload/9.8.0/jquery.iframe-transport.js"></script>
+    <script type="text/javascript" src="vendor/file-upload/9.8.0/jquery.fileupload.js"></script>
+    <script type="text/javascript" src="vendor/angular/1.3.0/angular.js"></script>
+    <script type="text/javascript" src="vendor/angular/1.3.0/angular-route.js"></script>
+    <script type="text/javascript" src="vendor/angular/1.3.0/angular-resource.js"></script>
+    <script type="text/javascript" src="vendor/angular/1.3.0/angular-sanitize.js"></script>
+    <script type="text/javascript" src="vendor/bootstrap/3.2.0/js/bootstrap.js"></script>
+    <script type="text/javascript" src="vendor/ui-bootstrap/0.11.2/ui-bootstrap-tpls-0.11.2.js"></script>
+    <script type="text/javascript" src="vendor/angular-notify/2.0.2/angular-notify.min.js"></script>
+    <script type="text/javascript" src="vendor/less/1.7.5/less-1.7.5.min.js"></script>
+    
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+        <script src="vendor/respond/1.4.2/respond.min.js"></script>
+        <script src="vendor/html5shiv/3.7.2/html5shiv.min.js"></script>
+    <![endif]-->
+    
+    <!-- Custom scripts -->
+    <script type="text/javascript" src="common/editable/editable.js"></script>
+    <script type="text/javascript" src="common/fileupload/fileupload.js"></script>
+    <script type="text/javascript" src="common/notify/notify.js"></script>
+    <script type="text/javascript" src="common/resize/resize.js"></script>
+    <script type="text/javascript" src="common/same/same.js"></script>
+    <script type="text/javascript" src="app/app.js"></script>
+    <script type="text/javascript" src="app/security/security.js"></script>
+    <script type="text/javascript" src="app/navigation/navigation.js"></script>
+    <script type="text/javascript" src="app/dashboard/dashboard.js"></script>
+    <script type="text/javascript" src="app/framework/framework.js"></script>
+    <script type="text/javascript" src="app/property/property.js"></script>
+    <script type="text/javascript" src="app/service/service.js"></script>
+    <script type="text/javascript" src="app/resource/resource.js"></script>
+    <script type="text/javascript" src="app/topology/topology.js"></script>
+    <script type="text/javascript" src="app/user/user.js"></script>
+</body>
+</html>

@@ -1,0 +1,60 @@
+<!--
+
+    Copyright 2014 Lockheed Martin Corporation
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<div class="modal-header">
+    <h3>Create Topology</h3>
+</div>
+
+<div class="modal-body">
+    <form name="form" class="form-horizontal">
+        <div class="form-group">
+            <label class="col-sm-3 control-label" for="topologyType">Type</label>
+            <div class="col-sm-9">
+                <select id="topologyType" class="form-control" ng-model="topologyType" required>
+                    <option value="">Select a Type...</option>
+                    <option value="STANDARD">Standard</option>
+                    <option value="TRIDENT">Trident</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label" for="topologyName">Name</label>
+            <div class="col-sm-9">
+                <input id="topologyName" ng-model="topologyName"
+                       placeholder="Name" type="text" class="form-control" required>
+                <div ng-show="form.topologyName.$dirty && form.topologyName.$invalid">
+                    <span ng-show="form.topologyName.$error.required" class="text-error">
+                        Topology name is required</span>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label" for="topologyDescription">Description</label>
+            <div class="col-sm-9">
+                <textarea id="topologyDescription" ng-model="topologyDescription"
+                          placeholder="Description" class="form-control" rows="3"></textarea>
+            </div>
+        </div>
+    </form>
+</div>
+
+<div class="modal-footer">
+    <button class="btn btn-default" ng-click="cancel()">
+        <i class="fa fa-ban"></i> Cancel</button>
+    <button class="btn btn-primary" ng-click="create()" ng-disabled="form.$invalid">
+        <i class="fa fa-plus"></i> Create</button>
+</div>

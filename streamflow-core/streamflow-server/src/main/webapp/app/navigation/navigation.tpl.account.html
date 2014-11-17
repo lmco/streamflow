@@ -1,0 +1,84 @@
+<!--
+
+    Copyright 2014 Lockheed Martin Corporation
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<div class="modal-header">
+    <h3>User Account Settings</h3>
+</div>
+
+<div class="modal-body">
+    <form name="form" class="form-horizontal">
+        <div class="form-group">
+            <label class="col-sm-3 col-sm-3 control-label" for="username">Username</label>
+            <div class="col-sm-9">
+                <input id="username" ng-model="user.username" class="form-control"
+                       placeholder="Username" type="text" required>
+                <div ng-show="form.username.$dirty && form.username.$invalid">
+                    <span ng-show="form.username.$error.required" class="text-error">
+                        Username is required</span>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 col-sm-3 control-label" for="email">Email</label>
+            <div class="col-sm-9">
+                <input id="email" ng-model="user.email" class="form-control"
+                       placeholder="Email" type="text" required>
+                <div ng-show="form.email.$dirty && form.email.$invalid">
+                    <span ng-show="form.email.$error.required" class="text-error">
+                        Email is required</span>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label" for="firstName">First Name</label>
+            <div class="col-sm-9">
+                <input id="firstName" ng-model="user.firstName" class="form-control"
+                       placeholder="First Name" type="text" required>
+                <div ng-show="form.firstName.$dirty && form.firstName.$invalid">
+                    <span ng-show="form.firstName.$error.required" class="text-error">
+                        First name is required</span>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label" for="lastName">Last Name</label>
+            <div class="col-sm-9">
+                <input id="lastName" ng-model="user.lastName" class="form-control"
+                       placeholder="Last Name" type="text" required>
+                <div ng-show="form.lastName.$dirty && form.lastName.$invalid">
+                    <span ng-show="form.lastName.$error.required" class="text-error">
+                        Last name is required</span>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-3 control-label">Password</label>
+            <div class="col-sm-9">
+                <button class="btn btn-primary" ng-click="editPassword()">
+                    Change Password
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<div class="modal-footer">
+    <button class="btn btn-default" ng-click="cancel()">
+        <i class="fa fa-times"></i> Cancel</button>
+    <button class="btn btn-primary" ng-click="update()" ng-disabled="form.$invalid">
+        <i class="fa fa-check"></i> Update</button>
+</div>

@@ -1,0 +1,167 @@
+name: core-framework
+label: Core Framework
+version: ${project.version}
+description: Common Utility Spouts and bolts
+
+components:
+        
+  - name: TupleGenerator
+    label: Tuple Generator
+    type: storm-spout
+    description: Generates tuples for testing topologies.
+    mainClass: streamflow.spout.core.TupleGenerator
+    properties:
+      - name: jetstream_spout_core_tupleGenerator_delay
+        label: delay
+        type: text
+        description: Delay between emit.
+        required: true
+        defaultValue:  60
+      - name: jetstream_spout_core_tupleGenerator_json
+        label: json
+        type: text
+        description: JSON
+        required: true
+        defaultValue: "{ \"url\" : \"http://www.google.com\" }"
+    outputs:
+      - key: default
+        description: Test tuples.
+        
+  - name: kafka-consumer
+    label: Kafka Consumer
+    type: storm-spout
+    description: Consumes data from the selected Kafka topic
+    mainClass: streamflow.bolt.core.TupleLogger
+    properties:
+      - name: kafka-topic
+        label: Kafka Topic
+        type: kafka-topic
+        description: Comma separated list of fields to include in the outgoing tuple.
+      - name: group-id
+        label: Group ID
+        type: text
+        description: 
+        defaultValue: 
+    outputs: 
+      - key: default
+        description: any
+
+  - name: kafka-producer
+    label: Kafka Producer
+    type: storm-bolt
+    description: Prints out incoming tuples by serializing objects to JSON
+    mainClass: streamflow.bolt.core.TupleLogger
+    properties:
+      - name: kafka-topic
+        label: Kafka Topic
+        type: kafka-topic
+        description: Comma separated list of fields to include in the outgoing tuple.
+    inputs: 
+      - key: default
+        description: any
+        
+  - name: tuple-logger
+    label: Tuple Logger
+    type: storm-bolt
+    description: Prints out incoming tuples by serializing objects to JSON
+    mainClass: streamflow.bolt.core.TupleLogger
+    properties: []
+    inputs: 
+      - key: default
+        description: any
+        
+  - name: trident-core-drpc
+    label: DRPC Stream
+    type: trident-drpc
+    description: Starts a new DRPC stream using the provided function name
+    properties:
+      - name: drpc-function
+        label: DRPC Function
+        type: text
+        description: DRPC function name to deploy to Storm (must be globally unique)
+        defaultValue: 
+    outputs: 
+      - key: default
+        description: stream
+        
+  - name: trident-core-project
+    label: Project
+    type: trident-project
+    description: Projects only the specified fields for downstream tuples
+    properties:
+      - name: project-fields
+        label: Projected Fields
+        type: text
+        description: Comma separated list of fields to include in the outgoing tuple.
+        defaultValue:
+    inputs: 
+      - key: default
+        description: stream
+    outputs: 
+      - key: default
+        description: stream
+        
+  - name: trident-core-join
+    label: Join
+    type: trident-join
+    description: Joins streams tuples using the native join() Trident method.
+    properties:
+      - name: join-fields
+        label: Join Fields
+        type: text
+        description: Comma separated list of fields to join for the stream.
+        defaultValue:
+    inputs: 
+      - key: default
+        description: stream
+    outputs: 
+      - key: default
+        description: stream
+        
+  - name: trident-core-merge
+    label: Merge
+    type: trident-merge
+    description: Merges streams tuples using the native merge() Trident method.
+    properties: []
+    inputs: 
+      - key: default
+        description: stream
+    outputs: 
+      - key: default
+        description: stream
+        
+  - name: trident-core-chained-agg
+    label: Chained Agg Start
+    type: trident-chained-agg
+    description: Starts a new aggregation chain (must eventually be terminated by "Chained Aggregator End" to be valid).
+    properties: []
+    inputs: 
+      - key: default
+        description: stream
+    outputs: 
+      - key: default
+        description: chained
+        
+  - name: trident-core-chain-end
+    label: Chained Agg End
+    type: trident-chain-end
+    description: Starts a new aggregation chain (must be preceeeded by a "Chained Aggregator Start" to be valid)
+    properties: []
+    inputs: 
+      - key: default
+        description: chained
+    outputs: 
+      - key: default
+        description: stream
+        
+  - name: trident-agg-partition
+    label: Agg Partition
+    type: trident-agg-partition
+    description: Changes the GroupedStream to an AggregatableStream
+    properties: []
+    inputs: 
+      - key: default
+        description: grouped
+    outputs: 
+      - key: default
+        description: aggregatable

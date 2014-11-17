@@ -1,0 +1,325 @@
+/*
+ * Copyright 2014 Lockheed Martin Corporation
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+@import "../app.less";
+
+.topology-panel {
+    .rounded-corners(6px);
+    height: 100%;
+    border: 6px solid @gray-dark;
+}
+
+.topology-content-wrapper {
+    position: relative; 
+    height: 100%;
+}
+
+.topology-view-name {
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+.topology-view-description {
+    margin: 15px 0px 5px 5px;
+}
+
+.topology-log {
+    overflow: auto;
+    background-color: @gray-lighter;
+}
+
+.topology-metrics {
+    overflow: auto;
+}
+
+.topology-palette {
+    overflow: auto;
+    width: 300px;
+    right: 0px;
+    height: 100%;
+    position: absolute;
+}
+
+.topology-palette-header {
+    border-bottom: 6px solid @gray-dark;
+    padding: 5px;
+}
+
+.topology-palette-header-label {
+    font-weight: bold;
+    padding-right: 5px;
+}
+
+.topology-palette-filter {
+    padding: 5px;
+}
+
+.topology-palette-content {
+    padding: 10px;
+}
+
+.topology-palette-component {
+    .rounded-corners(6px);
+    margin-bottom: 5px;
+    padding-bottom: 6px;
+    padding-top: 6px;
+    cursor: move;
+    border: 3px solid @gray-light;
+    box-shadow: none;
+}
+
+.topology-palette-component:hover {
+    border-color: @brand-success;
+}
+
+.topology-palette-label {
+}
+
+.topology-palette-icon {
+    margin: 2px 5px;
+    width: 20px;
+    height: 20px;
+}
+
+.topology-palette-info {
+    padding: 5px;
+    cursor: pointer;
+}
+
+.topology-canvas-container {
+    overflow: auto;
+    position: absolute;
+    left: 0px;
+    right: 310px;
+    height: 100%
+}
+
+.topology-legacy {
+    height: 100%;
+    background-image: url(../../assets/bg-graph-paper.gif);
+}
+
+.topology-legacy-message {
+    padding-top: 20px;
+}
+
+.topology-canvas {
+    width: 3000px;
+    height: 2000px;
+    padding: 1px !important;	/* Override ui-tabs-panel class padding */
+    position: relative;
+    background-image: url(../../assets/bg-graph-paper.gif);
+}
+
+.topology-connector-label {
+    display: none;
+    font-size: 14px;
+    background-color: @btn-primary-bg;
+    color: white;
+    padding: 4px 6px;
+    line-height: 14px;
+    z-index: 400;
+    .rounded-corners(0.2em);
+    cursor: pointer;
+    /*.shadow-box(2px, 3px, 10px, #777);*/
+}
+.topology-connector-label:hover {
+    background-color: @btn-primary-border;
+    /*.shadow-box(2px, 3px, 12px, #444);*/
+}
+.topology-connector-delete {
+    display:none;
+    color: @btn-primary-bg;
+    z-index: 600;
+    cursor: pointer;
+}
+.topology-connector-delete:hover {
+    color: @brand-success;
+}
+
+.topology-component {
+    position: absolute;
+    width: 128px;
+    border-radius: 0.5em 0.5em 0.5em 0.5em;
+    .rounded-corners(0.5em);
+    background-color: white;
+    cursor: move;
+    z-index: 500;
+    border: 4px solid @btn-primary-border;
+    /*.shadow-box(2px, 3px, 10px, #777);*/
+}
+.topology-component:hover {
+    border-color: @brand-success;
+    /*opacity:0.9;*/
+    /*filter:alpha(opacity=90);*/
+    /*.shadow-box(2px, 3px, 12px, #444);*/
+}
+.topology-component-selected {
+    z-index: 600;
+    border-style: solid;
+}
+.topology-component-control {
+    display: none;
+    position: absolute;
+    color: @btn-primary-border;  
+    cursor: pointer;
+}
+.topology-component-control:hover {
+    color: @brand-success;
+}
+.topology-component-control-delete {
+    top: -15px;
+    left: -15px;
+}
+.topology-component-control-edit {
+    top: -15px;
+    right: -15px;
+}
+.topology-component-control-delete {
+    top: -15px;
+    left: -15px;
+}
+.topology-component-control-fields {
+    bottom: -15px;
+    left: -15px;
+}
+.topology-component-control-parallelism {
+    position: absolute;
+    bottom: -15px;
+    right: -15px;
+    text-align: center;
+    padding: 2px;
+    width: 34px;
+    height: 24px;
+    font-size: 12px;
+    color: white;
+    font-weight: bold;
+    text-align: center;
+    cursor: text;
+    border: 4px solid @btn-primary-border;
+    background-color: @btn-primary-border;
+    .rounded-corners(4px);
+}
+.topology-component-control-parallelism:focus {
+    border: 4px solid @brand-success;
+    background-color: @brand-success;
+}
+.topology-component-label-outer {
+    position: relative;
+    width: 100px;
+    top: 0px;
+    left: 10px;
+}
+.topology-component-label-inner {
+    /*font-weight: bold;*/
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+    width: 100px;
+    bottom: 5px;
+    padding-top: 5px;
+    line-height: 15px;
+}
+.topology-component-icon {
+    position: relative;
+    text-align: center;
+    width: 80px;
+    height: 50px;
+    left: 20px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    cursor: move;
+}
+.topology-component-icon img {
+    width: 40px;
+    height: 40px;
+}
+.topology-component-parallelism {
+    width: 20px;
+    height: 17px;
+    top: 40px;
+    left: 30px;
+    position: absolute;
+    font-weight: bold;
+    padding: 0px;
+}
+.topology-component-endpoint {
+    z-index: 0;
+}
+.topology-component-endpoint-hover {
+    z-index: 800;
+    cursor: move;
+}
+.topology-component-endpoint-drop-hover {
+    opacity: 1.0 !important;
+}
+.topology-component-endpoint-drop-active {
+    z-index: 800;
+    border: 0px;
+    .rounded-corners(1.0em);
+    box-shadow: 0px 0px 0px 4px #1ABC9C;
+    opacity: 0.75;
+}
+.topology-component-endpoint-label {
+    display: none;
+    font-size: 13px;
+    background-color: black;
+    color: white;
+    padding: 2px 4px;
+    line-height: 13px;
+    opacity: 0.75;
+    z-index: 900;
+    .rounded-corners(0.2em);
+    .shadow-box(2px, 3px, 10px, #777);
+    opacity:0.9;
+    filter:alpha(opacity=90);
+}
+
+.topology-component-parallelism-edit {
+    width: 30px;
+}
+
+.topology-status-active {
+    background-color: @btn-info-bg;
+}
+
+.topology-status-killed {
+    background-color: @btn-danger-bg;
+}
+
+.topology-status-idle {
+    background-color: @btn-default-bg;
+}
+
+.topology-status-header {
+    margin-left: 10px;
+    margin-top: 20px;
+}
+
+.topology-type-standard {
+    background-color: @btn-success-bg !important;
+}
+
+.topology-type-trident {
+    background-color: @btn-info-bg !important;
+}
+
+/**
+ * Vendor library style overrides
+ */
+._jsPlumb_hover {
+    /* Ensure hovered jsplumb connectors and endpoints appear abover other elements */
+    z-index: 800;
+    cursor: pointer;
+}

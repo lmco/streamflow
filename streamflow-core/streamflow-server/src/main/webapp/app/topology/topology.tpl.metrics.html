@@ -1,0 +1,66 @@
+<!--
+
+    Copyright 2014 Lockheed Martin Corporation
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<div class="topology-toolbar clearfix">
+    <div class="pull-left">
+        <h2 class="topology-view-name">
+            <i class="fa fa-sitemap fa-rotate-270"></i> 
+            {{ topology.name }} | Metrics
+        </h2>
+        <p class="topology-view-description">{{ topology.description }}</p>
+    </div>
+    <div class="pull-right">
+        <a class="btn btn-primary btn-header" ng-click="updateMetrics()">
+            <i class="fa fa-refresh"></i> Update</a>
+        <span class="btn-spacer"></span>
+        <a class="btn btn-primary btn-header" ng-href="#/topologies">
+            <i class="fa fa-arrow-left"></i> Back</a>
+    </div>
+</div>
+
+<!-- Main content area (resizes to fill maximum height) -->
+<div class="topology-content clearfix" streamflow-resize>
+    <!-- Topology Canvas -->
+    <div class="well span12 topology-metrics topology-panel">
+        <div class="row-fluid" style="margin-left: 0px;">
+            <span class="span2" ng-show="metrics.length > 0"><b > Number of Metrics:&nbsp;&nbsp;{{ (metrics | filter:{component: component} | filter:{className: className} | filter:{metricName: metricName}).length}}</b></span>
+            <span class="span10" ng-show="metrics.length > 0"> <b>Component:&nbsp;</b>
+                <select  ng-model="component" ng-options="cID as c.name for (cID, c) in components">
+                    <option value="">-- All Components --</option>
+                </select>&nbsp;&nbsp;
+                <b>Class:&nbsp;</b>
+                <select  ng-model="className" ng-options="cID as c.name for (cID, c) in classNames">
+                    <option value="">-- All Classes --</option>
+                </select>&nbsp;&nbsp;
+                <b>Metric:&nbsp;</b>
+                <select  ng-model="metricName" ng-options="cID as c.name for (cID, c) in metricNames">
+                    <option value="">-- All Metrics --</option>
+                </select>
+            </span>
+            <b ng-show="metricsMsg != null" class="span12">{{ metricsMsg}}</b>
+            <div ng-repeat="metric in metrics| filter:{component: component} | filter:{className: className} | filter:{metricName: metricName}" class="thumbnail span4" style="display: table; padding: 5px; background-color: #FFFFFF; margin: 5px;">
+                <img ng-src="{{metric.graphUrl}}" style="display: block" />
+                <div class="caption">
+                    <h4>{{ metric.metricName}}</h4>
+                    <span style="display: block"><b>Value:</b> {{ metric.value}}</span>
+                    <span style="display: block"><b>Class:</b> {{ metric.className}}</span>
+                    <span style="display: block"><b>Component:</b> {{ metric.component}} <b>Task:</b> {{ metric.task}}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

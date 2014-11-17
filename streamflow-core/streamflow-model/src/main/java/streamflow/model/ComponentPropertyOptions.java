@@ -1,0 +1,211 @@
+/**
+ * Copyright 2014 Lockheed Martin Corporation
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package streamflow.model;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import java.io.Serializable;
+import java.util.ArrayList;
+import org.mongodb.morphia.annotations.Embedded;
+
+@Embedded
+@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonInclude(Include.NON_NULL)
+public class ComponentPropertyOptions implements Serializable {
+
+    private Integer numericStep;
+
+    private Integer maxNumber;
+
+    private Integer minNumber;
+
+    private Float floatStep;
+
+    private String displayUnits;
+
+    private String dateFormat;
+
+    private Integer minuteStep;
+
+    private String resourceFramework;
+
+    private String resourceName;
+
+    private ArrayList<String> listItems = new ArrayList<String>();
+
+    
+    public ComponentPropertyOptions() {
+    }
+
+    public Integer getNumericStep() {
+        return numericStep;
+    }
+
+    public void setNumericStep(Integer numericStep) {
+        this.numericStep = numericStep;
+    }
+
+    public Integer getMaxNumber() {
+        return maxNumber;
+    }
+
+    public void setMaxNumber(Integer maxNumber) {
+        this.maxNumber = maxNumber;
+    }
+
+    public Integer getMinNumber() {
+        return minNumber;
+    }
+
+    public void setMinNumber(Integer minNumber) {
+        this.minNumber = minNumber;
+    }
+
+    public Float getFloatStep() {
+        return floatStep;
+    }
+
+    public void setFloatStep(Float floatStep) {
+        this.floatStep = floatStep;
+    }
+
+    public String getDisplayUnits() {
+        return displayUnits;
+    }
+
+    public void setDisplayUnits(String displayUnits) {
+        this.displayUnits = displayUnits;
+    }
+
+    public String getDateFormat() {
+        return dateFormat;
+    }
+
+    public void setDateFormat(String dateFormat) {
+        this.dateFormat = dateFormat;
+    }
+
+    public ArrayList<String> getListItems() {
+        return listItems;
+    }
+
+    public void setListItems(ArrayList<String> listItems) {
+        this.listItems = listItems;
+    }
+
+    public Integer getMinuteStep() {
+        return minuteStep;
+    }
+
+    public void setMinuteStep(Integer minuteStep) {
+        this.minuteStep = minuteStep;
+    }
+
+    public String getResourceFramework() {
+        return resourceFramework;
+    }
+
+    public void setResourceFramework(String resourceFramework) {
+        this.resourceFramework = resourceFramework;
+    }
+
+    public String getResourceName() {
+        return resourceName;
+    }
+
+    public void setResourceName(String resourceName) {
+        this.resourceName = resourceName;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 41 * hash + (this.numericStep != null ? this.numericStep.hashCode() : 0);
+        hash = 41 * hash + (this.maxNumber != null ? this.maxNumber.hashCode() : 0);
+        hash = 41 * hash + (this.minNumber != null ? this.minNumber.hashCode() : 0);
+        hash = 41 * hash + (this.floatStep != null ? this.floatStep.hashCode() : 0);
+        hash = 41 * hash + (this.displayUnits != null ? this.displayUnits.hashCode() : 0);
+        hash = 41 * hash + (this.dateFormat != null ? this.dateFormat.hashCode() : 0);
+        hash = 41 * hash + (this.minuteStep != null ? this.minuteStep.hashCode() : 0);
+        hash = 41 * hash + (this.resourceFramework != null ? this.resourceFramework.hashCode() : 0);
+        hash = 41 * hash + (this.resourceName != null ? this.resourceName.hashCode() : 0);
+        hash = 41 * hash + (this.listItems != null ? this.listItems.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final ComponentPropertyOptions other = (ComponentPropertyOptions) obj;
+        if (this.numericStep != other.numericStep && (this.numericStep == null 
+                || !this.numericStep.equals(other.numericStep))) {
+            return false;
+        }
+        if (this.maxNumber != other.maxNumber && (this.maxNumber == null 
+                || !this.maxNumber.equals(other.maxNumber))) {
+            return false;
+        }
+        if (this.minNumber != other.minNumber && (this.minNumber == null 
+                || !this.minNumber.equals(other.minNumber))) {
+            return false;
+        }
+        if (this.floatStep != other.floatStep && (this.floatStep == null 
+                || !this.floatStep.equals(other.floatStep))) {
+            return false;
+        }
+        if ((this.displayUnits == null) ? (other.displayUnits != null) 
+                : !this.displayUnits.equals(other.displayUnits)) {
+            return false;
+        }
+        if ((this.dateFormat == null) ? (other.dateFormat != null) 
+                : !this.dateFormat.equals(other.dateFormat)) {
+            return false;
+        }
+        if (this.minuteStep != other.minuteStep && (this.minuteStep == null 
+                || !this.minuteStep.equals(other.minuteStep))) {
+            return false;
+        }
+        if ((this.resourceFramework == null) ? (other.resourceFramework != null) 
+                : !this.resourceFramework.equals(other.resourceFramework)) {
+            return false;
+        }
+        if ((this.resourceName == null) ? (other.resourceName != null) 
+                : !this.resourceName.equals(other.resourceName)) {
+            return false;
+        }
+        if (this.listItems != other.listItems && (this.listItems == null 
+                || !this.listItems.equals(other.listItems))) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        return "ComponentPropertyOptions{" + "numericStep=" + numericStep 
+                + ", maxNumber=" + maxNumber + ", minNumber=" + minNumber 
+                + ", floatStep=" + floatStep + ", displayUnits=" + displayUnits 
+                + ", dateFormat=" + dateFormat + ", minuteStep=" + minuteStep 
+                + ", resourceFramework=" + resourceFramework 
+                + ", resourceName=" + resourceName + ", listItems=" + listItems + '}';
+    }
+}

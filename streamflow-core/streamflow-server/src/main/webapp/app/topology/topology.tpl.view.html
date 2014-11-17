@@ -1,0 +1,142 @@
+<!--
+
+    Copyright 2014 Lockheed Martin Corporation
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<div class="topology-toolbar row-fluid clearfix">
+    <div class="span12">
+        <div class="pull-left">
+            <h2 class="topology-view-name pull-left">
+                <i class="fa fa-sitemap fa-rotate-270"></i> {{ topology.name}}
+            </h2>
+            <span class="streamflow-badge topology-status-header topology-status-{{ topology.status | lowercase }}">
+                {{ topology.status}}
+            </span>
+            <!--<p class="topology-view-description">{{ topology.description }}</p>-->
+        </div>
+        <div class="pull-right" ng-show="topology.status">
+            <a class="btn btn-primary btn-header"  ng-if="!topology.legacy"
+               ng-click="saveTopology()">
+                <i class="fa fa-save"></i> Save</a>
+            <span class="btn-spacer"></span>
+            <a class="btn btn-primary btn-header" ng-if="topology.status == 'ACTIVE'"
+               ng-click="killTopology()">
+                <i class="fa fa-pause"></i> Kill</a>
+            <a class="btn btn-primary btn-header" ng-if="topology.status == 'KILLED'"
+               ng-click="clearTopology()">
+                <i class="fa fa-eraser"></i> Clear</a>
+            <a class="btn btn-primary btn-header" ng-if="topology.status != 'IDLE'"
+               ng-click="submitTopology()">
+                <i class="fa fa-play"></i> Resubmit</a>
+            <a class="btn btn-primary btn-header" ng-if="topology.status == 'IDLE'"
+               ng-click="submitTopology()">
+                <i class="fa fa-play"></i> Submit</a>
+            <span class="btn-spacer" ng-if="topology.status != 'IDLE'"></span>
+            <a class="btn btn-primary btn-header" 
+               ng-if="topology.status != 'IDLE' && topology.clusterId == 'LOCAL'"
+               ng-href="#/topologies/{{ topology.id}}/log/local">
+                <i class="fa fa-bars"></i> Log</a>
+            <a class="btn btn-primary btn-header" 
+               ng-if="topology.status != 'IDLE' && topology.clusterId != 'LOCAL'"
+               ng-href="#/topologies/{{ topology.id}}/log/cluster">
+                <i class="fa fa-bars"></i> Log</a>
+            <a class="btn btn-primary btn-header" ng-if="topology.status != 'IDLE'"
+               ng-href="#/topologies/{{ topology.id}}/metrics">
+                <i class="fa fa-bar-chart-o"></i> Metrics</a>
+            <span class="btn-spacer"></span>
+            <a class="btn btn-primary btn-header" ng-click="loadTopologyProperties()">
+                <i class="fa fa-tasks"></i> Properties</a>
+            <a class="btn btn-primary btn-header" ng-href="#/topologies">
+                <i class="fa fa-arrow-left"></i> Back</a>
+        </div>
+    </div>
+</div>
+
+<!-- Main content area (resizes to fill maximum height) -->
+<div class="topology-content row-fluid clearfix" streamflow-resize>
+    <div class="topology-content-wrapper">
+        <!-- Topology Canvas -->
+        <div class="topology-canvas-container topology-panel">
+            <div class="topology-legacy text-center clearfix" 
+                 ng-if="topology && topology.legacy">
+                <h4 class="topology-legacy-message">
+                    This topology was not built with StreamFlow. 
+                    Native Storm topologies can be monitored, but not edited.
+                </h4>
+            </div>
+            <div class="topology-legacy text-center clearfix" 
+                 ng-if="topology && !topologyLoaded && !topology.legacy">
+                <h4 class="topology-legacy-message">
+                    <i class="fa fa-spinner fa-spin fa-lg"></i> Loading Topology...
+                </h4>
+            </div>
+            <div class="topology-legacy text-center clearfix" 
+                 ng-if="topology && topologyLoaded && topologyFailed && !topology.legacy">
+                <h4 class="topology-legacy-message">
+                    <i class="fa fa-warning-sign"></i> Unable to load the topology.
+                </h4>
+            </div>
+            <div streamflow-canvas topology-config="topologyConfig" topology-disabled="false" 
+                 ng-if="topology && topologyLoaded && !topologyFailed && !topology.legacy"
+                 topology-state="topologyState" topology-type="topology.type" class="topology-canvas">
+            </div>
+        </div>
+
+        <!-- Topology Component Palette -->
+        <div class="topology-palette topology-panel" ng-controller="TopologyPaletteController">
+            
+            <div class="topology-palette-header text-center">
+                <div class="topology-palette-filter">
+                    <span class="topology-palette-header-label">Group:</span>
+                    <div class="btn-group">
+                        <button class="btn btn-default" ng-click="selectGroupBy('FRAMEWORK')" 
+                                ng-class="{'btn-success': hasGroupBy('FRAMEWORK')}">Framework</button>
+                        <button class="btn btn-default" ng-click="selectGroupBy('TYPE')" 
+                                ng-class="{'btn-success': hasGroupBy('TYPE')}">Type</button>
+                    </div>
+                </div>
+                <!--
+                <div class="topology-palette-filter">
+                    <span class="topology-palette-header-label">Show:</span>
+                    <div class="btn-group">
+                        <button class="btn btn-default" ng-click="selectVisibility('ALL')" 
+                                ng-class="{'btn-success': hasVisibility('ALL')}">All</button>
+                        <button class="btn btn-default" ng-click="selectVisibility('PUBLIC')" 
+                                ng-class="{'btn-success': hasVisibility('PUBLIC')}">Public</button>
+                        <button class="btn btn-default" ng-click="selectVisibility('PRIVATE')" 
+                                ng-class="{'btn-success': hasVisibility('PRIVATE')}">Private</button>
+                    </div>
+                </div>
+                -->
+            </div>
+            
+            <div class="topology-palette-content">
+                <accordion id="accordion" close-others="false">
+                    <accordion-group ng-repeat="(category, components) in componentsProcessed" is-open="status.open">
+                        <accordion-heading>
+                            <div class="component-group">
+                                <i class="pull-right fa" ng-class="{'fa-chevron-down': status.open, 'fa-chevron-right': !status.open}"></i>
+                                {{ category }} <span class="badge">{{ components.length }}</span>
+                            </div>
+                        </accordion-heading>
+                        <div streamflow-palette-component class="row-fluid topology-palette-component"
+                            ng-repeat="component in components">
+                       </div>
+                    </accordion-group>
+                </accordion>
+            </div>
+        </div>
+    </div>
+</div>

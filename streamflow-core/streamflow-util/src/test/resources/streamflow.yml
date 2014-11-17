@@ -1,0 +1,31 @@
+# Server Configuration
+server:
+    port: 8080
+
+# Authentication Configuration
+auth:
+    enabled: false
+
+# Logging Configuration
+logger:
+    level: INFO
+    baseDir: /var/log/storm
+    formatPattern: "%d{ISO8601,GMT} %p %X{topology} %X{component} %c - %m%n"
+    
+# Datastore configuration
+datastore:
+    moduleClass: streamflow.datastore.jdbc.config.JDBCDatastoreModule
+
+# HTTP Proxy Configuration
+proxy:
+    host: test.classpath.proxy
+    port: 80
+
+# Cluster Configuration
+clusters:
+    - id: develop
+      displayName: Development Cluster
+      nimbusHost: localhost 
+      nimbusPort: 6627 
+      logServerHost: localhost
+      logServerPort: 9200
