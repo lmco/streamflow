@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="description" content="Streamflow : ">
+
+    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
+
+    <title>Streamflow</title>
+  </head>
+
+  <body>
+
+    <!-- HEADER -->
+    <div id="header_wrap" class="outer">
+        <header class="inner">
+          <a id="forkme_banner" href="https://github.com/lmco/streamflow">View on GitHub</a>
+
+          <h1 id="project_title">Streamflow</h1>
+          <h2 id="project_tagline"></h2>
+
+            <section id="downloads">
+              <a class="zip_download_link" href="https://github.com/lmco/streamflow/zipball/master">Download this project as a .zip file</a>
+              <a class="tar_download_link" href="https://github.com/lmco/streamflow/tarball/master">Download this project as a tar.gz file</a>
+            </section>
+        </header>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div id="main_content_wrap" class="outer">
+      <section id="main_content" class="inner">
+        <h2>
+<a id="welcome" class="anchor" href="#welcome" aria-hidden="true"><span class="octicon octicon-link"></span></a>Welcome!</h2>
+
+<p>StreamFlow™ is a stream processing tool designed to help build and monitor processing 
+workflows.  The ultimate goal of StreamFlow is to make working with stream processing frameworks 
+such as Apache Storm easier, faster, and with "enterprise" like management functionality.<br>
+StreamFlow also provides a mechanism for non-developers such as data scientists, analysts, or 
+operational users to rapidly build scalable data flows and analytics.</p>
+
+<p>StreamFlow provides the following capabilites: </p>
+
+<ol>
+<li>A <strong>responsive web interface</strong> for building and monitoring Storm topologies.</li>
+<li>An interactive <strong>drag and drop topology builder</strong> for authoring new topologies</li>
+<li>A <strong>dashboard</strong> for monitoring the status and performance of topologies as well as viewing aggregated topology logs.</li>
+<li>A speciaized <strong>topology engine</strong> which solves some Storm complexities such as ClassLoader isolation and serialization and provides a mechanism for dependency injection.</li>
+<li>A <strong>modular framework</strong> for publishing and organizing new capabilities in the form of Spouts and Bolts.</li>
+</ol>
+
+<h2>
+<a id="how-it-works" class="anchor" href="#how-it-works" aria-hidden="true"><span class="octicon octicon-link"></span></a>How it works</h2>
+
+<p>The following is a simple depiction of the StreamFlow stack. The web interface is built using open 
+source web frameworks and is backed by a series of reusable web services. StreamFlow is capable of 
+authoring and managing topologies dynamically using a series of reusable Frameworks.  These 
+Frameworks are simply JAR files comprised of standard Storm Spouts and Bolts with a metadata 
+configuration file which exposes the frameworks.  StreamFlow utilizes a custom topology driver 
+which is used to bootstrap and execute a topology along with StreamFlow specific configuration logic.</p>
+
+<h2>
+<a id="concepts" class="anchor" href="#concepts" aria-hidden="true"><span class="octicon octicon-link"></span></a>Concepts</h2>
+
+<p>The following is a description of some core StreamFlow concepts and terminology.</p>
+
+<h5>
+<a id="component" class="anchor" href="#component" aria-hidden="true"><span class="octicon octicon-link"></span></a>Component</h5>
+
+<p>A component is either Storm Spout or a Storm Bolt</p>
+
+<h5>
+<a id="framework" class="anchor" href="#framework" aria-hidden="true"><span class="octicon octicon-link"></span></a>Framework</h5>
+
+<p>A grouping of related <em>Components</em> and their associated metadata. Ideally elements of a framework 
+should all be compatible when wired together on a topology as they share the same protocol. 
+Frameworks might be organized around a set of technologies or domains. An analogy would be a 
+Java Library or Objective C Framework. Topologies have frameworks as dependencies.</p>
+
+<h5>
+<a id="resource" class="anchor" href="#resource" aria-hidden="true"><span class="octicon octicon-link"></span></a>Resource</h5>
+
+<p>A resource is an object used by spouts/bolts in order to externalize common state. For example, an 
+object which represents a technical asset in the environment/cluster such as a database or Kafka 
+queue. Alternatively, a resource might provide an uploaded file or container of global state. 
+Resources should be used to encapsulate functionality outside of a bolt/spout if that information 
+is used in several places in a topology or within multiple topologies. Resources also provide a 
+useful mechanism for injecting parameters, connections, or state into a bolt/spout making the spout 
+or bolt simpler, easier to write, and more testable.</p>
+
+<h5>
+<a id="serialization" class="anchor" href="#serialization" aria-hidden="true"><span class="octicon octicon-link"></span></a>Serialization</h5>
+
+<h5>
+<a id="topology" class="anchor" href="#topology" aria-hidden="true"><span class="octicon octicon-link"></span></a>Topology</h5>
+
+<h2>
+<a id="find-out-more" class="anchor" href="#find-out-more" aria-hidden="true"><span class="octicon octicon-link"></span></a>Find out more</h2>
+
+<p>The StreamFlow <a href="https://github.com/lmco/streamflow/wiki">Wiki</a> is the best place to go to learn more 
+about the StreamFlow architecture and how to install and configure a StreamFlow server in your 
+environment.</p>
+
+<p><a href="https://github.com/lmco/streamflow/wiki">https://github.com/lmco/streamflow/wiki</a>;</p>
+
+<p>Here are some quick links to help get you started with StreamFlow:</p>
+
+<ul>
+<li><a href="https://github.com/lmco/streamflow/wiki/Getting-Started">Getting Started with StreamFlow</a></li>
+<li><a href="https://github.com/lmco/streamflow/wiki/Getting-Started#startup">Installing and Running StreamFlow</a></li>
+<li><a href="https://github.com/lmco/streamflow/wiki/Configuration">Configuring StreamFlow</a></li>
+<li><a href="https://github.com/lmco/streamflow/wiki/How-It-Works">How Does StreamFlow Work?</a></li>
+<li><a href="https://github.com/lmco/streamflow/wiki/Developing-Frameworks">Developing StreamFlow Frameworks</a></li>
+</ul>
+
+<h2>
+<a id="questions-or-need-help" class="anchor" href="#questions-or-need-help" aria-hidden="true"><span class="octicon octicon-link"></span></a>Questions or need help?</h2>
+
+<p>Coming soon...</p>
+
+<h2>
+<a id="license" class="anchor" href="#license" aria-hidden="true"><span class="octicon octicon-link"></span></a>License</h2>
+
+<p>StreamFlow is copyright 2014 Lockheed Martin Corporation. </p>
+
+<p>Licensed under the <strong>[Apache License, Version 2.0] [license]</strong> (the "License");
+you may not use this software except in compliance with the License.</p>
+
+<p>Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.</p>
+
+<p>This product incorporates open source software components covered by the terms 
+of third party license agreements contained are contained in the /Licenses 
+folder of this project.</p>
+      </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+      <footer class="inner">
+        <p class="copyright">Streamflow maintained by <a href="https://github.com/lmco">lmco</a></p>
+        <p>Published with <a href="http://pages.github.com">GitHub Pages</a></p>
+      </footer>
+    </div>
+
+    
+
+  </body>
+</html>
