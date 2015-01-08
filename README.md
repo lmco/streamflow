@@ -8,12 +8,12 @@ such as Apache Storm easier, faster, and with "enterprise" like management funct
 StreamFlow also provides a mechanism for non-developers such as data scientists, analysts, or 
 operational users to rapidly build scalable data flows and analytics.
 
-StreamFlow provides the following capabilites: 
+StreamFlow provides the following capabilities: 
 
 1. A **responsive web interface** for building and monitoring Storm topologies.
 2. An interactive **drag and drop topology builder** for authoring new topologies
 3. A **dashboard** for monitoring the status and performance of topologies as well as viewing aggregated topology logs.
-4. A speciaized **topology engine** which solves some Storm complexities such as ClassLoader isolation and serialization and provides a mechanism for dependency injection.
+4. A specialized **topology engine** which solves some Storm complexities such as ClassLoader isolation and serialization and provides a mechanism for dependency injection.
 5. A **modular framework** for publishing and organizing new capabilities in the form of Spouts and Bolts.
 
 
@@ -31,16 +31,16 @@ which is used to bootstrap and execute a topology along with StreamFlow specific
 
 The following is a description of some core StreamFlow concepts and terminology.
 
-##### Component
-A component is either Storm Spout or a Storm Bolt
+#### Component
+Components represent business logic modules which are draggable in the StreamFlow UI.  Examples of Components include Storm Spouts and Storm Bolts.
 
-##### Framework
+#### Framework
 A grouping of related *Components* and their associated metadata. Ideally elements of a framework 
 should all be compatible when wired together on a topology as they share the same protocol. 
 Frameworks might be organized around a set of technologies or domains. An analogy would be a 
 Java Library or Objective C Framework. Topologies have frameworks as dependencies.
 
-##### Resource
+#### Resource
 A resource is an object used by spouts/bolts in order to externalize common state. For example, an 
 object which represents a technical asset in the environment/cluster such as a database or Kafka 
 queue. Alternatively, a resource might provide an uploaded file or container of global state. 
@@ -49,9 +49,11 @@ is used in several places in a topology or within multiple topologies. Resources
 useful mechanism for injecting parameters, connections, or state into a bolt/spout making the spout 
 or bolt simpler, easier to write, and more testable.
 
-##### Serialization
+#### Serialization
+Seriaizations allow for the definition of custorm serializers/deserializers.  Specifically these serializations should be specified in the Kryo format to properly integrate with Storm. 
 
-##### Topology
+#### Topology
+Topologies in Storm define the processing logic and link between nodes to describe the data flow.  StreamFlow utilizes registered components to allow users to dynamically build topologies in a drag and drop interface.  This allows topologies to be built using existing components without requiring additional code.
 
 
 ## Find out more
@@ -72,7 +74,11 @@ Here are some quick links to help get you started with StreamFlow:
 
 
 ## Questions or need help?
-Coming soon...
+
+If you have any questions or issues please feel free to contact the development team using one of the following methods.
+
+* [Google Group](https://groups.google.com/forum/#!forum/streamflow-user)
+* [GitHub Issues](https://github.com/lmco/streamflow/issues)
 
 
 ## License
@@ -94,7 +100,7 @@ folder of this project.
 
 ## Documentation Version
 
-*Last Updated: 11/16/2014*
+*Last Updated: 1/7/2015*
 
 
 [license]: http://www.apache.org/licenses/LICENSE-2.0
