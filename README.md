@@ -95,7 +95,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 
 This product incorporates open source software components covered by the terms 
-of third party license agreements contained are contained in the /Licenses 
+of third party license agreements contained in the /Licenses 
 folder of this project.
 
 ## Documentation Version
