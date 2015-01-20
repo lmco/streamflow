@@ -19,6 +19,8 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import java.util.Date;
 import java.util.List;
+
+import streamflow.common.exception.DaoMethodNotAllowedException;
 import streamflow.datastore.core.UserDao;
 import streamflow.service.util.IDUtils;
 import streamflow.model.PasswordChange;
@@ -26,6 +28,7 @@ import streamflow.model.User;
 import streamflow.service.exception.EntityConflictException;
 import streamflow.service.exception.EntityInvalidException;
 import streamflow.service.exception.EntityNotFoundException;
+import streamflow.service.exception.MethodNotAllowedException;
 import streamflow.service.util.CryptoUtils;
 
 @Singleton
@@ -95,42 +98,49 @@ public class UserService {
     }
 
     public void updateUser(String userId, User user) {
-        System.out.println("Updating user: " + user);
+    	try
+    	{
+	        System.out.println("Updating user: " + user);
         
-        User oldUser = getUser(userId);
+	        User oldUser = getUser(userId);
         
-        if (user == null) {
-            throw new EntityInvalidException("The provided user was NULL");
-        }
-        if (user.getUsername() == null || user.getEmail() == null
-                || user.getFirstName() == null || user.getLastName() == null) {
-            throw new EntityInvalidException("The user was missing required fields");
-        }
-        if (!oldUser.getUsername().equals(user.getUsername())) {
-            if (getUserByUsername(user.getUsername()) != null) {
-                throw new EntityConflictException(
-                        "User with the specified username already exists: Username = " 
-                                + user.getUsername());
-            }
-        }
-        if (!oldUser.getEmail().equals(user.getEmail())) {
-            if (getUserByEmail(user.getEmail()) != null) {
-                throw new EntityConflictException(
-                        "User with the specified email already exists: Email = " 
-                                + user.getEmail());
-            }
-        }
+	        if (user == null) {
+	            throw new EntityInvalidException("The provided user was NULL");
+	        }
+	        if (user.getUsername() == null || user.getEmail() == null
+	                || user.getFirstName() == null || user.getLastName() == null) {
+	            throw new EntityInvalidException("The user was missing required fields");
+	        }
+	        if (!oldUser.getUsername().equals(user.getUsername())) {
+	            if (getUserByUsername(user.getUsername()) != null) {
+	                throw new EntityConflictException(
+	                        "User with the specified username already exists: Username = " 
+	                                + user.getUsername());
+	            }
+	        }
+	        if (!oldUser.getEmail().equals(user.getEmail())) {
+	            if (getUserByEmail(user.getEmail()) != null) {
+	                throw new EntityConflictException(
+	                        "User with the specified email already exists: Email = " 
+	                                + user.getEmail());
+	            }
+	        }
         
-        System.out.println("User Old Password = " + oldUser.getPassword());
-        System.out.println("User Old Password Salt = " + oldUser.getPasswordSalt());
+	        System.out.println("User Old Password = " + oldUser.getPassword());
+	        System.out.println("User Old Password Salt = " + oldUser.getPasswordSalt());
 
-        user.setId(userId);
-        user.setModified(new Date());
-        user.setCreated(oldUser.getCreated());
-        user.setPassword(oldUser.getPassword());
-        user.setPasswordSalt(oldUser.getPasswordSalt());
+	        user.setId(userId);
+	        user.setModified(new Date());
+	        user.setCreated(oldUser.getCreated());
+	        user.setPassword(oldUser.getPassword());
+	        user.setPasswordSalt(oldUser.getPasswordSalt());
 
-        userDao.update(user);
+	        userDao.update(user);
+    	}
+    	catch (DaoMethodNotAllowedException ex)
+    	{
+    		throw new MethodNotAllowedException(ex.getMessage());
+    	}
     }
 
     public void updateUserPassword(String userId, PasswordChange passwordChange) {

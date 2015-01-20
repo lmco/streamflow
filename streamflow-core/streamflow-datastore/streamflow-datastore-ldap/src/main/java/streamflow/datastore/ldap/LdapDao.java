@@ -32,6 +32,7 @@ import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
 import javax.naming.ldap.LdapContext;
 
+import streamflow.common.exception.DaoMethodNotAllowedException;
 import streamflow.datastore.core.GenericDao;
 import streamflow.model.User;
 import streamflow.model.util.Entity;
@@ -67,71 +68,47 @@ public abstract class LdapDao<T extends Entity<ID>, ID extends Serializable>
 
     @Override
     public boolean exists(ID id) {
-		@SuppressWarnings("unused")
-		int ii = 0;
-		ii++;
-    	return false;
+    	throw new DaoMethodNotAllowedException("Exist has not been implemented for this LDAP DAO");
         //return datastore.get(persistentClass, id) != null;
     }
 
     @Override
     public List<T> findAll() {
-		return null;    	
+    	throw new DaoMethodNotAllowedException("FindAll has not been implemented for this LDAP DAO");
         //Query<T> q = datastore.createQuery(persistentClass);
         //return q.asList();
     }
 
 	@Override
 	public T findById(ID id) {
-		// TODO Auto-generated method stub
-		@SuppressWarnings("unused")
-		int ii = 0;
-		ii++;
-		return null;
+		throw new DaoMethodNotAllowedException("FindById has not been implemented for this LDAP DAO");
 	}
 
 	@Override
 	public T save(T entity) {
-		// TODO Auto-generated method stub
-		@SuppressWarnings("unused")
-		int ii = 0;
-		ii++;
-		return null;
+		throw new DaoMethodNotAllowedException("Save has not been implemented for this LDAP DAO");
 	}
 
 	@Override
 	public T update(T entity) {
-		// TODO Auto-generated method stub
-		@SuppressWarnings("unused")
-		int ii = 0;
-		ii++;
-		return null;
+		throw new DaoMethodNotAllowedException("Update has not been implemented for this LDAP DAO");
 	}
 
 	@Override
 	public void delete(T entity) {
-		@SuppressWarnings("unused")
-		int ii = 0;
-		ii++;
-		// TODO Auto-generated method stub
-		
+		throw new DaoMethodNotAllowedException("Delete has not been implemented for this LDAP DAO");
 	}
 
 	@Override
 	public void deleteById(ID id) {
-		// TODO Auto-generated method stub
-		@SuppressWarnings("unused")
-		int ii = 0;
-		ii++;
+		throw new DaoMethodNotAllowedException("Delete has not been implemented for this LDAP DAO");
 	}
 	
-    // TODO: throw Exception 
-    protected T AssertSingleResult(List<T> entities) 
+    protected T AssertSingleResult(List<T> entities) throws Exception 
     {
 		if (entities.size()>1)
 		{
-			// TODO: temporarily commented out
-			// throw new Exception("Result set contains more than a single result!");
+			throw new Exception("Result set contains ("+ entities.size() + ") instead of a single result!");
 		}
 		
 		return entities.get(0);
@@ -173,12 +150,9 @@ public abstract class LdapDao<T extends Entity<ID>, ID extends Serializable>
 
 			dc.close();          
 		} 
-    	catch (NamingException e) 
+    	catch (NamingException ex) 
     	{
-    		// TODO: this needs to be propagated up, will need to add exceptions 
-    		//   to an interface, which means mass changes.  best to do this change as a 
-    		//   separate commit/push so it doesn't obfuscate other changes.
-			e.printStackTrace();
+			throw new Exception(ex.getMessage());
 		}
     	
     	return entities;

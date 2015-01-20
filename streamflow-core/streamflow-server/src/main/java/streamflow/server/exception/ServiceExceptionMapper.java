@@ -25,7 +25,7 @@ import javax.ws.rs.ext.Provider;
 import streamflow.service.exception.EntityConflictException;
 import streamflow.service.exception.EntityInvalidException;
 import streamflow.service.exception.EntityNotFoundException;
-import streamflow.service.exception.ReadOnlyException;
+import streamflow.service.exception.MethodNotAllowedException;
 import streamflow.service.exception.ServiceException;
 
 @Provider
@@ -43,7 +43,7 @@ public class ServiceExceptionMapper implements ExceptionMapper<ServiceException>
             response = Response.status(Status.BAD_REQUEST);
         } else if (exception instanceof EntityNotFoundException) {
             response = Response.status(Status.NOT_FOUND);
-        } else if (exception instanceof ReadOnlyException) {
+        } else if (exception instanceof MethodNotAllowedException) {
         	response = Response.status(405); // 405 = Method not allowed
         } else {
             response = Response.status(Status.INTERNAL_SERVER_ERROR);
