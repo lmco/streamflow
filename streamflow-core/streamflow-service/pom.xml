@@ -32,6 +32,11 @@
     <dependencies>
         <dependency>
             <groupId>streamflow</groupId>
+            <artifactId>streamflow-common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>streamflow</groupId>
             <artifactId>streamflow-datastore-core</artifactId>
             <version>${project.version}</version>
         </dependency>

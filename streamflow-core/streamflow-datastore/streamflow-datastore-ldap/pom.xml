@@ -36,6 +36,11 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
+            <groupId>streamflow</groupId>
+            <artifactId>streamflow-common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
            <groupId>org.apache.isis.core</groupId>
 	        <artifactId>isis-core-security-shiro</artifactId>
            <version>1.6.0</version>
