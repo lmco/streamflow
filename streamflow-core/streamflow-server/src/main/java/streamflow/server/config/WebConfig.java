@@ -21,6 +21,7 @@ import com.google.inject.servlet.GuiceServletContextListener;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.annotation.WebListener;
+import streamflow.datastore.config.AuthstoreModule;
 import streamflow.datastore.config.DatastoreModule;
 import streamflow.engine.config.EngineModule;
 import streamflow.service.config.ServiceModule;
@@ -39,7 +40,7 @@ public class WebConfig extends GuiceServletContextListener {
         StreamflowEnvironment.setStreamflowHome(System.getenv("STREAMFLOW_HOME"));
         StreamflowEnvironment.initialize();
         
-        return Guice.createInjector(new ConfigModule(), new DatastoreModule(),
+        return Guice.createInjector(new ConfigModule(), new AuthstoreModule(), new DatastoreModule(), 
                 new ServiceModule(), new EngineModule(), new JerseyModule(),
                 new SecurityModule(servletContext), ShiroWebModule.guiceFilterModule());
     }

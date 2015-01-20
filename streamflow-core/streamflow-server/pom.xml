@@ -32,6 +32,11 @@
     <dependencies>
         <dependency>
             <groupId>streamflow</groupId>
+            <artifactId>streamflow-datastore-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>streamflow</groupId>
             <artifactId>streamflow-datastore-mongodb</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -40,6 +45,12 @@
             <artifactId>streamflow-datastore-jdbc</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>streamflow</groupId>
+            <artifactId>streamflow-datastore-ldap</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+                
         <dependency>
             <groupId>streamflow</groupId>
             <artifactId>streamflow-service</artifactId>
@@ -116,6 +127,18 @@
             <artifactId>shiro-guice</artifactId>
         </dependency>
         
+        <dependency>
+            <groupId>org.apache.isis.core</groupId>
+            <artifactId>isis-core-security-shiro</artifactId>
+            <version>1.6.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.isis.core</groupId>
+            <artifactId>isis-core-security-shiro</artifactId>
+            <version>1.6.0</version>
+            <classifier>sources</classifier>
+        </dependency>
+
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-validator</artifactId>

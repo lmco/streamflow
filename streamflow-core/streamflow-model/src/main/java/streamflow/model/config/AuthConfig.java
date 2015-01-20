@@ -33,6 +33,8 @@ public class AuthConfig implements Serializable {
     
     private String moduleClass;
     
+    private String authModuleClass;
+    
     private final Map<String, Object> properties = new HashMap<String, Object>();
 
     
@@ -61,6 +63,14 @@ public class AuthConfig implements Serializable {
 
     public void setModuleClass(String moduleClass) {
         this.moduleClass = moduleClass;
+    }
+    
+    public String getAuthModuleClass() {
+        return authModuleClass;
+    }
+
+    public void setAuthModuleClass(String moduleClass) {
+        this.authModuleClass = moduleClass;
     }
     
     @JsonAnyGetter

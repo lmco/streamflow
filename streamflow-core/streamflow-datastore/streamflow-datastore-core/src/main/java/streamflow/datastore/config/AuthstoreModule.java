@@ -16,35 +16,38 @@
 package streamflow.datastore.config;
 
 import com.google.inject.AbstractModule;
+
+import streamflow.model.config.AuthConfig;
 import streamflow.model.config.DatastoreConfig;
 import streamflow.util.config.ConfigLoader;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DatastoreModule extends AbstractModule {
+public class AuthstoreModule extends AbstractModule {
 
-    public static Logger LOG = LoggerFactory.getLogger(DatastoreModule.class);
-
+    public static Logger LOG = LoggerFactory.getLogger(AuthstoreModule.class);
     @Override
     protected void configure() {
-        DatastoreConfig datastoreConfig = ConfigLoader.getConfig().getDatastore();
-        
+        AuthConfig config = ConfigLoader.getConfig().getAuth();
+    	String moduleClass = config.getAuthModuleClass();
+    	
         try {
-            LOG.info("installing DATASTORE module ["+datastoreConfig.getModuleClass()+"]");
+            LOG.info("installing AUTHSTORE module ["+moduleClass+"]");
 
-            Class datastoreModuleClass = DatastoreModule.class.getClassLoader()
-                    .loadClass(datastoreConfig.getModuleClass());
+            Class datastoreModuleClass = AuthstoreModule.class.getClassLoader()
+            		.loadClass(moduleClass);
             
             // Make sure the datastore module class is an actual Guice AbstractModule
             if (AbstractModule.class.isAssignableFrom(datastoreModuleClass)) {
-                AbstractModule datastoreConcreteModule = 
-                        (AbstractModule) datastoreModuleClass.newInstance();
+                AbstractModule datastoreConcreteModule =  
+                		(AbstractModule) datastoreModuleClass.newInstance();
                 
                 // Install the concrete module for the datastore to initialize bindings
                 install(datastoreConcreteModule);
             } else {
                 LOG.error("Provided datastore module class does not extend AbstractModule: {}",
-                        datastoreConfig.getModuleClass());
+                        moduleClass);
             }
         } catch (ClassNotFoundException ex) {
             LOG.error("Unable to load datastore module class. Entities will not be saved: ", ex);

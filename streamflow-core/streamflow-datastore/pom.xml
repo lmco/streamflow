@@ -33,5 +33,6 @@
         <module>streamflow-datastore-core</module>
         <module>streamflow-datastore-mongodb</module>
         <module>streamflow-datastore-jdbc</module>
+        <module>streamflow-datastore-ldap</module>
     </modules>
 </project>
