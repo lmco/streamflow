@@ -45,8 +45,8 @@ public class SecurityModule extends ShiroWebModule {
         bindConstant().annotatedWith(Names.named("shiro.authcScheme")).to("Streamflow");
         
         // Attempt to load the custom realm class/module and use defaults if necessary
-        Class<AuthorizingRealm> realmClass = loadRealmClass(authConfig);
-        AbstractModule realmModule = loadRealmModule(authConfig);
+        Class<AuthorizingRealm> realmClass = loadRealmClass(authConfig.getRealmClass());
+        AbstractModule realmModule = loadRealmModule(authConfig.getModuleClass());
         
         // Bind the provided realm to this Shiro context
         bindRealm().to(realmClass);
@@ -65,24 +65,24 @@ public class SecurityModule extends ShiroWebModule {
         addFilterChain("/**", ANON);
     }
     
-    protected Class<AuthorizingRealm> loadRealmClass(AuthConfig authConfig) {
+    protected Class<AuthorizingRealm> loadRealmClass(String realmClassString) {
         Class realmClass = DatastoreRealm.class;
         
-        if (StringUtils.isNotBlank(authConfig.getRealmClass())) {
+        if (StringUtils.isNotBlank(realmClassString)) {
             try {
-                LOG.info("Loading custom realm class: " + authConfig.getRealmClass());
+                LOG.info("Loading custom realm class: " + realmClassString);
                 
                 Class loadedRealmClass = Thread.currentThread().getContextClassLoader()
-                        .loadClass(authConfig.getRealmClass());
+                        .loadClass(realmClassString);
 
                 // Make sure the datastore module class is an actual Guice AbstractModule
                 if (AuthorizingRealm.class.isAssignableFrom(loadedRealmClass)) {
                     realmClass = loadedRealmClass;
 
-                    LOG.info("Successfully loaded custom realm class: " + authConfig.getRealmClass());
+                    LOG.info("Successfully loaded custom realm class: " + realmClassString);
                 } else {
                     LOG.error("The custom realm class does not extend AuthorizingRealm: {}",
-                            authConfig.getRealmClass());
+                            realmClassString);
                     LOG.info("Using default DatastoreRealm implementation");
                 }
             } catch (Exception ex) {
@@ -96,24 +96,24 @@ public class SecurityModule extends ShiroWebModule {
         return realmClass;
     }
     
-    protected AbstractModule loadRealmModule(AuthConfig authConfig) {
+    protected AbstractModule loadRealmModule(String realmModuleClassString) {
         AbstractModule realmModule = new DatastoreRealmModule();
         
-        if (StringUtils.isNotBlank(authConfig.getModuleClass())) {
+        if (StringUtils.isNotBlank(realmModuleClassString)) {
             try {
-                LOG.info("Loading custom realm module: " + authConfig.getModuleClass());
+                LOG.info("Loading custom realm module: " + realmModuleClassString);
                 
                 Class datastoreModuleClass = Thread.currentThread().getContextClassLoader()
-                        .loadClass(authConfig.getModuleClass());
+                        .loadClass(realmModuleClassString);
 
                 // Make sure the datastore module class is an actual Guice AbstractModule
                 if (AbstractModule.class.isAssignableFrom(datastoreModuleClass)) {
                     realmModule = (AbstractModule) datastoreModuleClass.newInstance();
 
-                    LOG.info("Successfully loaded custom realm module: " + authConfig.getModuleClass());
+                    LOG.info("Successfully loaded custom realm module: " + realmModuleClassString);
                 } else {
                     LOG.error("The provided custom realm module class does not extend AbstractModule: {}",
-                            authConfig.getModuleClass());
+                            realmModuleClassString);
                     LOG.info("Using default DatastoreRealmModule implementation");
                 }
             } catch (Exception ex) {
