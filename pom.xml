@@ -65,6 +65,7 @@
     </properties>
 
     <modules>
+    	<module>streamflow-annotations</module>
         <module>streamflow-core</module>
         <module>streamflow-frameworks</module>
         <module>streamflow-dist</module>

@@ -116,5 +116,10 @@
             <artifactId>twitter4j-stream</artifactId>
             <version>4.0.1</version>
         </dependency>
+        <dependency>
+        	<groupId>streamflow</groupId>
+        	<artifactId>framework-annotations</artifactId>
+        	<version>0.9.1</version>
+        </dependency>
     </dependencies>
 </project>

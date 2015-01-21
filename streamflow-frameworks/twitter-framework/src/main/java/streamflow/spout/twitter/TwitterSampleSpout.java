@@ -23,16 +23,27 @@ import backtype.storm.topology.base.BaseRichSpout;
 import backtype.storm.tuple.Fields;
 import backtype.storm.tuple.Values;
 import backtype.storm.utils.Utils;
+
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
+
 import java.util.Map;
 import java.util.concurrent.LinkedBlockingQueue;
+
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 
+import streamflow.annotations.Component;
+import streamflow.annotations.ComponentOutputs;
+import streamflow.annotations.ComponentProperty;
+import streamflow.annotations.Description;
+import streamflow.annotations.ComponentInterface;
 import twitter4j.*;
 import twitter4j.conf.ConfigurationBuilder;
 
+@Component(label = "Twitter Sample Spout", name = "twitter-sample-spout", type = "storm-spout", icon="icons/twitter.png")
+@Description("Spouts and Bolts supporting Twitter functionality")
+@ComponentOutputs({@ComponentInterface(key = "default", description = "Twitter Status")})
 public class TwitterSampleSpout extends BaseRichSpout {
     
     private SpoutOutputCollector collector;
@@ -50,21 +61,29 @@ public class TwitterSampleSpout extends BaseRichSpout {
     private TwitterStream twitterStream;
 
 
+    @ComponentProperty(label = "OAuth Consumer Key", name = "oauth-consumer-key", required = true, type = "text", defaultValue = "")
+    @Description("Twitter OAuth Consumer Key")
     @Inject
     public void setConsumerKey(@Named("oauth-consumer-key") String consumerKey) {
         this.consumerKey = consumerKey;
     }
 
+    @ComponentProperty(label = "OAuth Consumer Secret", name = "oauth-consumer-secret", required = true, type = "text", defaultValue = "")
+    @Description("Twitter OAuth Consumer Secret")
     @Inject
     public void setConsumerSecret(@Named("oauth-consumer-secret") String consumerSecret) {
         this.consumerSecret = consumerSecret;
     }
 
+    @ComponentProperty(label = "OAuth Access Token", name = "oauth-access-token", required = true, type = "text", defaultValue = "")
+    @Description("Twitter OAuth Access Token")
     @Inject
     public void setAccessToken(@Named("oauth-access-token") String accessToken) {
         this.accessToken = accessToken;
     }
 
+    @ComponentProperty(label = "OAuth Access Token Secret", name = "oauth-access-token-secret", required = true, type = "text", defaultValue = "")
+    @Description("Twitter OAuth Access Token Secret")
     @Inject
     public void setAccessTokenSecret(@Named("oauth-access-token-secret") String accessTokenSecret) {
         this.accessTokenSecret = accessTokenSecret;
