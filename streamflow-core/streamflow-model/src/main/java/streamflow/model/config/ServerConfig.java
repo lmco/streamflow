@@ -25,6 +25,12 @@ public class ServerConfig implements Serializable {
     }
 
     public int getPort() {
+        if (System.getProperty("server.port") != null) {
+            try {
+                port = Integer.parseInt(System.getProperty("server.port"));
+            } catch (Exception ex) {
+            }
+        }
         return port;
     }
 

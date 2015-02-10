@@ -27,7 +27,7 @@ public class ProxyConfig implements Serializable {
     }
 
     public String getHost() {
-        return host;
+        return System.getProperty("proxy.host", host);
     }
 
     public void setHost(String host) {
@@ -35,6 +35,12 @@ public class ProxyConfig implements Serializable {
     }
 
     public int getPort() {
+        if (System.getProperty("proxy.port") != null) {
+            try {
+                port = Integer.parseInt(System.getProperty("proxy.port"));
+            } catch (Exception ex) {
+            }
+        }
         return port;
     }
 
