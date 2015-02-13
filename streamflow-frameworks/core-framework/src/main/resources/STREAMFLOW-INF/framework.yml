@@ -61,12 +61,25 @@ components:
         description: any
         
   - name: tuple-logger
-    label: Tuple Logger
+    label: Output Tuple Logger
     type: storm-bolt
     description: Prints out incoming tuples by serializing objects to JSON
-    mainClass: streamflow.bolt.core.TupleLogger
+    mainClass: streamflow.bolt.core.OutputTupleLogger
     properties: []
     inputs: 
+      - key: default
+        description: any
+        
+  - name: passthrough-tuple-logger
+    label: Passthrough Tuple Logger
+    type: storm-bolt
+    description: Prints out incoming tuples by serializing objects to JSON
+    mainClass: streamflow.bolt.core.PassthroughTupleLogger
+    properties: []
+    inputs: 
+      - key: default
+        description: any
+    outputs: 
       - key: default
         description: any
         

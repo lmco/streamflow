@@ -15,6 +15,7 @@
  */
 package streamflow.server.config;
 
+//import streamflow.auth.config.SecurityModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.servlet.GuiceServletContextListener;
@@ -26,6 +27,7 @@ import streamflow.engine.config.EngineModule;
 import streamflow.service.config.ServiceModule;
 import streamflow.util.config.ConfigModule;
 import org.apache.shiro.guice.web.ShiroWebModule;
+import streamflow.server.security.SecurityModule;
 import streamflow.util.environment.StreamflowEnvironment;
 
 @WebListener

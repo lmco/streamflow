@@ -21,21 +21,28 @@
 
     <parent>
         <groupId>streamflow</groupId>
-        <artifactId>streamflow</artifactId>
+        <artifactId>streamflow-auth</artifactId>
         <version>0.10.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>streamflow-core</artifactId>
-    <name>StreamFlow Core</name>
-    <packaging>pom</packaging>
+    <artifactId>streamflow-auth-datastore</artifactId>
+    <name>StreamFlow Auth Datastore</name>
+    <packaging>jar</packaging>
 
-    <modules>
-        <module>streamflow-util</module>
-        <module>streamflow-model</module>
-        <module>streamflow-datastore</module>
-        <module>streamflow-engine</module>
-        <module>streamflow-service</module>
-        <module>streamflow-server</module>
-        <module>streamflow-auth</module>
-    </modules>
+    <dependencies>
+        <dependency>
+            <groupId>streamflow</groupId>
+            <artifactId>streamflow-model</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>streamflow</groupId>
+            <artifactId>streamflow-util</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.inject</groupId>
+            <artifactId>guice</artifactId>
+        </dependency>
+    </dependencies>
 </project>

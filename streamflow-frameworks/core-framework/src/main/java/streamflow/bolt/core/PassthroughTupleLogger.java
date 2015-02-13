@@ -19,7 +19,9 @@ import backtype.storm.task.OutputCollector;
 import backtype.storm.task.TopologyContext;
 import backtype.storm.topology.OutputFieldsDeclarer;
 import backtype.storm.topology.base.BaseRichBolt;
+import backtype.storm.tuple.Fields;
 import backtype.storm.tuple.Tuple;
+import backtype.storm.tuple.Values;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -28,13 +30,15 @@ import java.util.Map;
 import javax.inject.Inject;
 import org.slf4j.Logger;
 
-public class TupleLogger extends BaseRichBolt {
+public class PassthroughTupleLogger extends BaseRichBolt {
 
     private Logger logger;
     
     private ObjectMapper objectMapper;
     
     private int counter = 0;
+    
+    private OutputCollector collector;
     
     @Inject
     public void setLogger(Logger logger) {
@@ -44,7 +48,9 @@ public class TupleLogger extends BaseRichBolt {
     @Override
     public void prepare(Map config, TopologyContext context,
             OutputCollector collector) {
-        logger.info("Tuple Logger Started");
+        logger.info("Passthrough Tuple Logger Started");
+        
+        this.collector = collector;
         
         // Initialize the object mapper with specific features
         objectMapper = new ObjectMapper();
@@ -59,16 +65,20 @@ public class TupleLogger extends BaseRichBolt {
             // Serialize the activity object to a JSON string
             logger.info("Printing Tuple (" + ++counter + "): ");
             logger.info(objectMapper.writeValueAsString(tuple));
+            
+            collector.emit(new Values(tuple));
+            
         } catch (JsonProcessingException ex) {
         }
     }
     
     @Override
     public void cleanup() {
-        logger.info("Tuple Logger Stopped");
+        logger.info("Passthrough Tuple Logger Stopped");
     }
 
     @Override
-    public void declareOutputFields(OutputFieldsDeclarer ofd) {
+    public void declareOutputFields(OutputFieldsDeclarer declarer) {
+        declarer.declare(new Fields("tuple"));
     }
 }

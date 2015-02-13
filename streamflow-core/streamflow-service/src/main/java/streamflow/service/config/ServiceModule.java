@@ -45,10 +45,10 @@ public class ServiceModule extends AbstractModule {
         bind(LogService.class);
         bind(ResourceEntryService.class);
         bind(ResourceService.class);
-        bind(RoleService.class);
+        //bind(RoleService.class);
         bind(SerializationService.class);
         bind(TopologyService.class);
-        bind(UserService.class);
+        //bind(UserService.class);
         bind(KafkaService.class);
     }
 }

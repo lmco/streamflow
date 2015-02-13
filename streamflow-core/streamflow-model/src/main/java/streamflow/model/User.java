@@ -156,8 +156,12 @@ public class User implements streamflow.model.util.Entity<String>, Serializable 
         this.roles = roles;
     }
 
-    public void addRole(String role) {
-        roles.add(role);
+    public void addRole(String roleId) {
+        roles.add(roleId);
+    }
+    
+    public void removeRole(String roleId) {
+        roles.remove(roleId);
     }
 
     @Override

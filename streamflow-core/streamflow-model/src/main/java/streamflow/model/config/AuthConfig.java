@@ -27,11 +27,11 @@ public class AuthConfig implements Serializable {
     
     static Logger LOG = LoggerFactory.getLogger(AuthConfig.class);
 
-    private boolean enabled;
+    private boolean enabled = true;
     
-    private String realmClass;
+    private String realmClass = "streamflow.auth.crowd.CrowdRealm";
     
-    private String moduleClass;
+    private String moduleClass = "streamflow.auth.crowd.CrowdRealmModule";
     
     private final Map<String, Object> properties = new HashMap<String, Object>();
 

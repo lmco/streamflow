@@ -27,17 +27,18 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import streamflow.auth.crowd.service.CrowdUserService;
+import streamflow.auth.service.UserService;
 import streamflow.model.PasswordChange;
 import streamflow.model.User;
-import streamflow.service.UserService;
 
 @Path("/users")
 public class UserResource {
 
-    private final UserService userService;
+    private final CrowdUserService userService;
 
     @Inject
-    public UserResource(UserService userService) {
+    public UserResource(CrowdUserService userService) {
         this.userService = userService;
     }
 

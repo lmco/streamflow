@@ -25,8 +25,8 @@ import java.util.HashSet;
 import streamflow.model.util.DateDeserializer;
 import streamflow.model.util.DateSerializer;
 
-@Entity("role")
-public class Role implements streamflow.model.util.Entity<String>, Serializable {
+@Entity("group")
+public class Group implements streamflow.model.util.Entity<String>, Serializable {
 
     @Id
     private String id;
@@ -40,11 +40,11 @@ public class Role implements streamflow.model.util.Entity<String>, Serializable 
     private Date created;
 
     private Date modified;
-
-    private HashSet<String> permissions = new HashSet<String>();
+    
+    private HashSet<String> users = new HashSet<String>();
 
     
-    public Role() {
+    public Group() {
     }
 
     @Override
@@ -100,12 +100,20 @@ public class Role implements streamflow.model.util.Entity<String>, Serializable 
         this.modified = modified;
     }
 
-    public HashSet<String> getPermissions() {
-        return permissions;
+    public HashSet<String> getUsers() {
+        return users;
     }
 
-    public void setPermissions(HashSet<String> permissions) {
-        this.permissions = permissions;
+    public void setUsers(HashSet<String> users) {
+        this.users = users;
+    }
+    
+    public void addUser(String userId) {
+        users.add(userId);
+    }
+    
+    public void removeUser(String userId) {
+        users.remove(userId);
     }
 
     @Override
@@ -116,7 +124,7 @@ public class Role implements streamflow.model.util.Entity<String>, Serializable 
         hash = 73 * hash + (this.enabled ? 1 : 0);
         hash = 73 * hash + (this.created != null ? this.created.hashCode() : 0);
         hash = 73 * hash + (this.modified != null ? this.modified.hashCode() : 0);
-        hash = 73 * hash + (this.permissions != null ? this.permissions.hashCode() : 0);
+        hash = 73 * hash + (this.users != null ? this.users.hashCode() : 0);
         return hash;
     }
 
@@ -128,7 +136,7 @@ public class Role implements streamflow.model.util.Entity<String>, Serializable 
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final Role other = (Role) obj;
+        final Group other = (Group) obj;
         if ((this.id == null) ? (other.id != null) 
                 : !this.id.equals(other.id)) {
             return false;
@@ -148,8 +156,8 @@ public class Role implements streamflow.model.util.Entity<String>, Serializable 
                 || !this.modified.equals(other.modified))) {
             return false;
         }
-        if (this.permissions != other.permissions && (this.permissions == null 
-                || !this.permissions.equals(other.permissions))) {
+        if (this.users != other.users && (this.users == null 
+                || !this.users.equals(other.users))) {
             return false;
         }
         return true;
@@ -157,8 +165,8 @@ public class Role implements streamflow.model.util.Entity<String>, Serializable 
 
     @Override
     public String toString() {
-        return "Role{" + "id=" + id + ", name=" + name + ", enabled=" + enabled 
+        return "Group{" + "id=" + id + ", name=" + name + ", enabled=" + enabled 
                 + ", created=" + created + ", modified=" + modified 
-                + ", permissions=" + permissions + '}';
+                + ", users=" + users + '}';
     }
 }

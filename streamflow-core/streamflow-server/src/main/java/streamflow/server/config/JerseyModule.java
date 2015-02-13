@@ -65,5 +65,8 @@ public class JerseyModule extends JerseyServletModule {
         params.put("com.sun.jersey.api.json.POJOMappingFeature", "true");
 
         serve("/api/*").with(GuiceContainer.class, params);
+        
+        // this is the important part - it will cause Jersey to get the child injector
+        binder().bind(GuiceContainer.class).asEagerSingleton();
     }
 }

@@ -21,21 +21,17 @@
 
     <parent>
         <groupId>streamflow</groupId>
-        <artifactId>streamflow</artifactId>
+        <artifactId>streamflow-core</artifactId>
         <version>0.10.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>streamflow-core</artifactId>
-    <name>StreamFlow Core</name>
+    <artifactId>streamflow-auth</artifactId>
+    <name>StreamFlow Auth</name>
     <packaging>pom</packaging>
 
     <modules>
-        <module>streamflow-util</module>
-        <module>streamflow-model</module>
-        <module>streamflow-datastore</module>
-        <module>streamflow-engine</module>
-        <module>streamflow-service</module>
-        <module>streamflow-server</module>
-        <module>streamflow-auth</module>
+        <module>streamflow-auth-core</module>
+        <module>streamflow-auth-datastore</module>
+        <module>streamflow-auth-crowd</module>
     </modules>
 </project>

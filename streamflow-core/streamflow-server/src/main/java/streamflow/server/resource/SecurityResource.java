@@ -30,20 +30,21 @@ import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.IncorrectCredentialsException;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.subject.Subject;
+import streamflow.auth.crowd.service.CrowdUserService;
+import streamflow.auth.service.UserService;
 import streamflow.model.User;
 import streamflow.model.UserCredentials;
 import streamflow.model.config.AuthConfig;
-import streamflow.service.UserService;
 
 @Path("/security")
 public class SecurityResource {
     
     private final AuthConfig authConfig;
 
-    private final UserService userService;
+    private final CrowdUserService userService;
 
     @Inject
-    public SecurityResource(AuthConfig authConfig, UserService userService) {
+    public SecurityResource(AuthConfig authConfig, CrowdUserService userService) {
         this.authConfig = authConfig;
         this.userService = userService;
     }

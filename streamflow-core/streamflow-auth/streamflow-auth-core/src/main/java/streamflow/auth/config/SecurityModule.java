@@ -13,14 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package streamflow.server.config;
+package streamflow.auth.config;
 
 import com.google.inject.AbstractModule;
+import com.google.inject.PrivateModule;
 import com.google.inject.name.Names;
 import javax.servlet.ServletContext;
 import streamflow.model.config.AuthConfig;
-import streamflow.server.security.DatastoreRealm;
-import streamflow.server.security.DatastoreRealmModule;
 import streamflow.util.config.ConfigLoader;
 import org.apache.commons.lang.StringUtils;
 import org.apache.shiro.guice.web.ShiroWebModule;
@@ -46,13 +45,13 @@ public class SecurityModule extends ShiroWebModule {
         
         // Attempt to load the custom realm class/module and use defaults if necessary
         Class<AuthorizingRealm> realmClass = loadRealmClass(authConfig);
-        AbstractModule realmModule = loadRealmModule(authConfig);
-        
-        // Bind the provided realm to this Shiro context
-        bindRealm().to(realmClass);
+        PrivateModule realmModule = loadRealmModule(authConfig);
         
         // Install the realm module class to fulfill any dependencies required by the realm
         install(realmModule);
+        
+        // Bind the provided realm to this Shiro context
+        bindRealm().to(realmClass);
         
         // Only add security based filter settings if auth is enabled
         if (authConfig.isEnabled()) {
@@ -66,7 +65,7 @@ public class SecurityModule extends ShiroWebModule {
     }
     
     protected Class<AuthorizingRealm> loadRealmClass(AuthConfig authConfig) {
-        Class realmClass = DatastoreRealm.class;
+        Class realmClass = null;
         
         if (StringUtils.isNotBlank(authConfig.getRealmClass())) {
             try {
@@ -96,19 +95,19 @@ public class SecurityModule extends ShiroWebModule {
         return realmClass;
     }
     
-    protected AbstractModule loadRealmModule(AuthConfig authConfig) {
-        AbstractModule realmModule = new DatastoreRealmModule();
+    protected PrivateModule loadRealmModule(AuthConfig authConfig) {
+        PrivateModule realmModule = null;
         
         if (StringUtils.isNotBlank(authConfig.getModuleClass())) {
             try {
                 LOG.info("Loading custom realm module: " + authConfig.getModuleClass());
                 
-                Class datastoreModuleClass = Thread.currentThread().getContextClassLoader()
+                Class realmModuleClass = Thread.currentThread().getContextClassLoader()
                         .loadClass(authConfig.getModuleClass());
 
                 // Make sure the datastore module class is an actual Guice AbstractModule
-                if (AbstractModule.class.isAssignableFrom(datastoreModuleClass)) {
-                    realmModule = (AbstractModule) datastoreModuleClass.newInstance();
+                if (PrivateModule.class.isAssignableFrom(realmModuleClass)) {
+                    realmModule = (PrivateModule) realmModuleClass.newInstance();
 
                     LOG.info("Successfully loaded custom realm module: " + authConfig.getModuleClass());
                 } else {
