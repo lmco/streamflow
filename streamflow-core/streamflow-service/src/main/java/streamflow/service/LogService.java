@@ -62,7 +62,7 @@ public class LogService {
         topologyLog.setCount(0);
         
         BufferedReader inputReader = null;
-
+        
         try {
             inputReader = new BufferedReader(new FileReader(new File(
                     streamflowConfig.getLogger().getBaseDir(), topology.getId() + ".log")));
@@ -157,7 +157,8 @@ public class LogService {
     }
     
     public void clearTopologyLog(Topology topology, Cluster cluster) {
-        File logFile = new File(streamflowConfig.getLogger().getBaseDir(), topology.getId() + ".log");
+        File logFile = new File(streamflowConfig.getLogger().getBaseDir(), 
+                topology.getId() + ".log");
         
         try {
             // Delete the local log file from the server

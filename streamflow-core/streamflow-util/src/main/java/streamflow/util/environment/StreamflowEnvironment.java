@@ -40,6 +40,8 @@ public class StreamflowEnvironment {
         // If streamflow home was set, update the streamflow home for the the environment
         if (System.getenv("STREAMFLOW_HOME") != null) {
             streamflowHome = System.getenv("STREAMFLOW_HOME");
+        } else if (System.getProperty("streamflow.home") != null) {
+            streamflowHome = System.getProperty("streamflow.home");
         }
         return streamflowHome;
     }
