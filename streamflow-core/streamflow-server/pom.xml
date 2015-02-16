@@ -27,7 +27,7 @@
 
     <artifactId>streamflow-server</artifactId>
     <name>StreamFlow Server</name>
-    <packaging>war</packaging>
+    <packaging>jar</packaging>
     
     <dependencies>
         <dependency>
@@ -142,7 +142,6 @@
             </resource>
            
             <!-- Relocate all static web files to a subdirectory for easy loading -->
-            <!--
             <resource>
                 <directory>src/main/webapp</directory>
                 <filtering>true</filtering>
@@ -151,12 +150,10 @@
                 </excludes>
                 <targetPath>${project.build.outputDirectory}/assets</targetPath>
             </resource>
-            -->
         </resources>
         
         <plugins>
             <!-- Maven Shade Plugin (Includes all dependencies) -->
-            <!--
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
@@ -189,7 +186,6 @@
                     </execution>
                 </executions>
             </plugin>
-            -->
             
             <!-- Embed streamflow-engine.jar in the application jar for enviornment setup -->
             <plugin>
