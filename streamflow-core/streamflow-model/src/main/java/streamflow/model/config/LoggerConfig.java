@@ -1,4 +1,4 @@
-/**
+ /**
  * Copyright 2014 Lockheed Martin Corporation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -33,7 +33,7 @@ public class LoggerConfig implements Serializable {
     }
 
     public String getLevel() {
-        return level;
+        return System.getProperty("logger.level", level);
     }
 
     public void setLevel(String level) {
@@ -41,7 +41,7 @@ public class LoggerConfig implements Serializable {
     }
 
     public String getBaseDir() {
-        return baseDir;
+        return System.getProperty("logger.baseDir", baseDir);
     }
 
     public void setBaseDir(String baseDir) {
@@ -49,7 +49,7 @@ public class LoggerConfig implements Serializable {
     }
 
     public String getFormatPattern() {
-        return formatPattern;
+        return System.getProperty("logger.formatPattern", formatPattern);
     }
 
     public void setFormatPattern(String formatPattern) {

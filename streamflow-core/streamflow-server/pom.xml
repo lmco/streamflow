@@ -221,7 +221,7 @@
                 <version>1.3.3</version>
                 <configuration>
                     <sourceDirectory>${project.basedir}/src/main/webapp</sourceDirectory>
-                    <outputDirectory>${project.build.directory}/${project.build.finalName}</outputDirectory>
+                    <outputDirectory>${project.build.outputDirectory}</outputDirectory>
                     <excludes>
                         <exclude>vendor/**/*.less</exclude>
                     </excludes>
@@ -262,7 +262,7 @@
                     <arguments>
                         <argument>-cp</argument>
                         <argument>${project.build.directory}/${project.build.finalName}.jar</argument>
-                        <argument>streamflow.server.StreamFlowServer</argument>
+                        <argument>streamflow.server.StreamflowServer</argument>
                     </arguments>
                 </configuration>
             </plugin>

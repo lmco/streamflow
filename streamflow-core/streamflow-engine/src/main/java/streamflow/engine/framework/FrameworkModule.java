@@ -127,7 +127,7 @@ public class FrameworkModule extends AbstractModule {
         logger.detachAndStopAllAppenders();
         logger.addAppender(fileAppender);
         logger.setAdditive(false);
-        logger.setLevel(Level.DEBUG);
+        logger.setLevel(Level.toLevel(streamflowConfig.getLogger().getLevel()));
         
         // Set the context for the topology/component when logging
         MDC.put("topology", topology.getId());

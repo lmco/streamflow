@@ -36,7 +36,7 @@ public class DatastoreConfig implements Serializable {
     }
     
     public String getModuleClass() {
-        return moduleClass;
+        return System.getProperty("datastore.moduleClass", moduleClass);
     }
     
     public void setModuleClass(String moduleClass) {
@@ -55,6 +55,11 @@ public class DatastoreConfig implements Serializable {
     
     public <T> T getProperty(String name, Class<T> clazz) {
         T value = null;
+        
+        // If the system property is found, add it to the properties object
+        if (System.getProperties().containsKey("datastore." + name)) {
+            properties.put(name, System.getProperties().get("datastore." + name));
+        }
         
         if (properties.containsKey(name)) {
             try {

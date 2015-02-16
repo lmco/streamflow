@@ -27,11 +27,11 @@ public class AuthConfig implements Serializable {
     
     static Logger LOG = LoggerFactory.getLogger(AuthConfig.class);
 
-    private boolean enabled;
+    private boolean enabled = false;
     
-    private String realmClass;
+    private String realmClass = "streamflow.server.security.DatastoreRealm";
     
-    private String moduleClass;
+    private String moduleClass = "streamflow.server.security.DatastoreRealmModule";
     
     private final Map<String, Object> properties = new HashMap<String, Object>();
 
@@ -40,7 +40,8 @@ public class AuthConfig implements Serializable {
     }
 
     public boolean isEnabled() {
-        return enabled;
+        return Boolean.parseBoolean(
+                System.getProperty("auth.enabled", Boolean.toString(enabled)));
     }
 
     public void setEnabled(boolean enabled) {
@@ -48,7 +49,7 @@ public class AuthConfig implements Serializable {
     }
 
     public String getRealmClass() {
-        return realmClass;
+        return System.getProperty("auth.realmClass", realmClass);
     }
 
     public void setRealmClass(String realmClass) {
@@ -56,7 +57,7 @@ public class AuthConfig implements Serializable {
     }
 
     public String getModuleClass() {
-        return moduleClass;
+        return System.getProperty("auth.moduleClass", moduleClass);
     }
 
     public void setModuleClass(String moduleClass) {
@@ -75,6 +76,11 @@ public class AuthConfig implements Serializable {
     
     public <T> T getProperty(String name, Class<T> clazz) {
         T value = null;
+        
+        // If the system property is found, add it to the properties object
+        if (System.getProperties().containsKey("auth." + name)) {
+            properties.put(name, System.getProperties().get("auth." + name));
+        }
         
         if (properties.containsKey(name)) {
             try {
