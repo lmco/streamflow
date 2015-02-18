@@ -136,6 +136,18 @@ public class FrameworkService {
         return frameworkJarContent;
     }
 
+    public FileInfo getFrameworkFileInfo(String frameworkId) {
+        Framework framework = getFramework(frameworkId);
+
+        FileInfo frameworkFileInfo = fileService.getFileInfo(framework.getJarId());
+        if (frameworkFileInfo == null) {
+            throw new ServiceException("Error retrieving framework file info: ID = "
+                    + frameworkId + ", Jar ID = " + framework.getJarId());
+        }
+
+        return frameworkFileInfo;
+    }
+
     public Framework processFrameworkJar(byte[] frameworkJar, boolean isPublic) {
         Framework framework = null;
         

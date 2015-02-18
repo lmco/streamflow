@@ -332,6 +332,9 @@ public class TopologyService {
                 
                 topologyComponent.setPropertyTypes(componentPropertyTypes);
                 topologyComponent.setMainClass(componentConfig.getMainClass());
+                topologyComponent.setFrameworkHash(
+                        frameworkService.getFrameworkFileInfo(
+                                component.getFramework()).getContentHash());
                 topologyComponent.setVersion(component.getVersion());
                 topologyComponent.getResources().clear();
 
@@ -357,18 +360,6 @@ public class TopologyService {
                         String resourceEntryId = topologyComponent.getProperties()
                                 .get(componentProperty.getName());
 
-                        /*
-                        // Now that a resource property was found, iterate to find its value
-                        for (Map.Entry<String, String> propertyEntry
-                                : topologyComponent.getProperties().entrySet()) {
-                            // The matching property is found, so now we can save the value
-                            if (propertyEntry.getKey().equalsIgnoreCase(componentProperty.getName())) {
-                                resourceEntryId = propertyEntry.getValue();
-                                break;
-                            }
-                        }
-                        */
-
                         if (resourceEntryId != null) {
                             ResourceEntry resourceEntry = resourceEntryService.getResourceEntry(resourceEntryId);
 
@@ -377,6 +368,9 @@ public class TopologyService {
                             topologyResource.setId(resourceEntryId);
                             topologyResource.setVersion(resource.getVersion());
                             topologyResource.setFramework(resourceFramework);
+                            topologyResource.setFrameworkHash(
+                                    frameworkService.getFrameworkFileInfo(
+                                            resource.getFramework()).getContentHash());
                             topologyResource.setResource(resourceName);
                             topologyResource.setName(resourceEntry.getName());
                             topologyResource.setDescription(resourceEntry.getDescription());
@@ -465,6 +459,9 @@ public class TopologyService {
                             topologySerialization.setTypeClass(serialization.getTypeClass());
                             topologySerialization.setSerializerClass(serialization.getSerializerClass());
                             topologySerialization.setFramework(serialization.getFramework());
+                            topologySerialization.setFrameworkHash(
+                                    frameworkService.getFrameworkFileInfo(
+                                            serialization.getFramework()).getContentHash());
                             topologySerialization.setVersion(serialization.getVersion());
 
                             topologyConfig.getSerializations().add(topologySerialization);
@@ -519,6 +516,9 @@ public class TopologyService {
                         topologySerialization.setTypeClass(serialization.getTypeClass());
                         topologySerialization.setSerializerClass(serialization.getSerializerClass());
                         topologySerialization.setFramework(topologyComponent.getFramework());
+                        topologySerialization.setFrameworkHash(
+                                frameworkService.getFrameworkFileInfo(
+                                        serialization.getFramework()).getContentHash());
                         topologySerialization.setVersion(topologyComponent.getVersion());
                         topologyConfig.getSerializations().add(topologySerialization);
 
@@ -533,17 +533,24 @@ public class TopologyService {
 
             // Iterate over all of the identified dependencies and add them to topology jar
             for (String frameworkDependency : frameworkDependencies) {
+                String frameworkHash = frameworkService.getFrameworkFileInfo(
+                            frameworkDependency).getContentHash();
+                
                 if (cluster.getId().equalsIgnoreCase(Cluster.LOCAL)) {
-                    File realmFrameworkJar = new File(realmFrameworkDir, frameworkDependency + ".jar");
+                    File frameworkJarFile = new File(StreamflowEnvironment.getFrameworksDir(), 
+                            frameworkHash + ".jar");
                     
-                    byte[] frameworkJarData = frameworkService.getFrameworkJar(frameworkDependency);
-                    
-                    FileUtils.writeByteArrayToFile(realmFrameworkJar, frameworkJarData);
+                    // Write out the file to disk only if it is not already there
+                    if (!frameworkJarFile.exists()) {
+                        byte[] frameworkJarData = frameworkService.getFrameworkJar(frameworkDependency);
+
+                        FileUtils.writeByteArrayToFile(frameworkJarFile, frameworkJarData);
+                    }
                     
                 } else {
                     // Only need to embed files within the topology jar for cluster deploys
                     String frameworkJarPath = "STREAMFLOW-INF" + File.separator + "lib"
-                            + File.separator + frameworkDependency + ".jar";
+                            + File.separator + frameworkHash + ".jar";
 
                     byte[] frameworkJarData = frameworkService.getFrameworkJar(frameworkDependency);
 
@@ -626,7 +633,8 @@ public class TopologyService {
                 // A resource file is defined as a non *.class file that is a real file
                 if (!jarEntry.isDirectory() && !jarEntry.getName().endsWith(".class")) {
                     // Ignore the resource files in the META-INF folder
-                    if (!jarEntry.getName().startsWith("META-INF") && !jarEntry.getName().startsWith("STREAMFLOW-INF")) {
+                    if (!jarEntry.getName().startsWith("META-INF") 
+                            && !jarEntry.getName().startsWith("STREAMFLOW-INF")) {
                         // Create the handle to the target resource file in the topology jar
                         if (!jarBuilder.addFile(jarEntry.getName(), IOUtils.toByteArray(jarInputStream))) {
                             LOG.error("Error occurred while writing a framework resource to the topology jar: "
@@ -644,9 +652,8 @@ public class TopologyService {
         if (projectId != null) {
             try {
                 // Delete the project folder from the server
-                FileUtils.forceDelete(new File(StreamflowEnvironment.getTopologiesDir(), projectId + ".jar"));
-                
-                FileUtils.forceDelete(new File(StreamflowEnvironment.getFrameworksDir(), projectId));
+                FileUtils.forceDelete(new File(StreamflowEnvironment.getTopologiesDir(), 
+                        projectId + ".jar"));
             } catch (IOException ex) {
                 LOG.error("Exception while clearing the topology project: ", ex);
             }

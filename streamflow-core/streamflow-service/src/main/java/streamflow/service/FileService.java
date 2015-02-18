@@ -46,7 +46,7 @@ public class FileService {
     }
 
     public FileInfo saveFile(FileInfo fileInfo) {
-        return FileService.this.saveFile(fileInfo, null);
+        return saveFile(fileInfo, null);
     }
 
     public FileInfo saveFile(FileInfo fileInfo, byte[] fileContent) {

@@ -20,11 +20,11 @@ import com.google.inject.Module;
 import com.google.inject.name.Names;
 import java.util.List;
 import java.util.Map.Entry;
-import streamflow.engine.framework.FrameworkLoader;
 import streamflow.model.Topology;
 import streamflow.model.TopologyResourceEntry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import streamflow.engine.framework.FrameworkUtils;
 
 public class ResourceModule extends AbstractModule {
 
@@ -53,8 +53,10 @@ public class ResourceModule extends AbstractModule {
                 }
 
                 // Use the FrameworkLoader to load the resource module class from the framework
-                Class resourceClass = FrameworkLoader.getInstance().loadFrameworkClass(
-                        topology.getProjectId(), resourceEntry.getFramework(), resourceEntry.getResourceClass());
+                //Class resourceClass = FrameworkLoader.getInstance().loadFrameworkClass(
+                //        topology.getProjectId(), resourceEntry.getFramework(), resourceEntry.getResourceClass());
+                Class resourceClass = FrameworkUtils.getInstance().loadFrameworkClass(
+                        resourceEntry.getFrameworkHash(), resourceEntry.getResourceClass());
 
                 if (resourceClass.isAssignableFrom(Module.class)) {
                     // Bind the specific resource class to the injector

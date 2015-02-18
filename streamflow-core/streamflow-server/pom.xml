@@ -243,6 +243,10 @@
                 <groupId>org.mortbay.jetty</groupId>
                 <artifactId>jetty-maven-plugin</artifactId>
                 <version>8.1.16.v20140903</version>
+                <configuration>
+                    <systemProperties>
+                    </systemProperties>
+                </configuration>
             </plugin>
             
             <!-- Execution plugin to run the application from the final jar -->

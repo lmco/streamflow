@@ -6,7 +6,6 @@ import com.google.inject.Module;
 import java.io.Serializable;
 import java.util.ArrayList;
 import streamflow.engine.framework.FrameworkException;
-import streamflow.engine.framework.FrameworkLoader;
 import streamflow.engine.framework.FrameworkModule;
 import streamflow.engine.resource.ResourceModule;
 import streamflow.model.Topology;
@@ -15,6 +14,7 @@ import streamflow.model.TopologyResourceEntry;
 import streamflow.model.config.StreamflowConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import streamflow.engine.framework.FrameworkUtils;
 
 public abstract class BaseWrapper<T> implements Serializable {
     
@@ -48,20 +48,24 @@ public abstract class BaseWrapper<T> implements Serializable {
         if (delegate == null) {
             try {
                 // Load the delegate class from the framework jar in an isolated class loader
-                delegate = FrameworkLoader.getInstance().loadFrameworkComponent(
-                        topology.getProjectId(), component.getFramework(), 
-                        component.getMainClass(), typeClass);
+                delegate = FrameworkUtils.getInstance().loadFrameworkClassInstance(
+                        component.getFrameworkHash(), component.getMainClass(), typeClass);
                 
-                ClassLoader loader = FrameworkLoader.getInstance()
-                    .loadRealm(component.getFramework());
+                //delegate = FrameworkLoader.getInstance().loadFrameworkComponent(
+                //        topology.getProjectId(), component.getFramework(), 
+                //        component.getMainClass(), typeClass);
                 
-                Thread.currentThread().setContextClassLoader(loader);
+                //ClassLoader loader = FrameworkUtils.getInstance()
+                //    .getFrameworkClassLoader(component.getFrameworkHash());
+                
+                //Thread.currentThread().setContextClassLoader(loader);
                 
                 injectModules();
                 
             } catch (Exception ex) {
+                ex.printStackTrace();
                 throw new FrameworkException("Unable to locate component class: "
-                    + component.getMainClass());
+                    + component.getMainClass() + ", Exception = " + ex.getMessage());
             }
         }
         return delegate;
@@ -84,9 +88,8 @@ public abstract class BaseWrapper<T> implements Serializable {
 
         for (TopologyResourceEntry resourceEntry : component.getResources()) {
             // Load the framework class instance from the framework
-            Class resourceClass = FrameworkLoader.getInstance().loadFrameworkClass(
-                    topology.getProjectId(), resourceEntry.getFramework(), 
-                    resourceEntry.getResourceClass());
+            Class resourceClass = FrameworkUtils.getInstance().loadFrameworkClass(
+                    resourceEntry.getFrameworkHash(), resourceEntry.getResourceClass());
 
             // Create an instance of each resource module save it for injection
             resourceModules.add((Module) injector.getInstance(resourceClass));
