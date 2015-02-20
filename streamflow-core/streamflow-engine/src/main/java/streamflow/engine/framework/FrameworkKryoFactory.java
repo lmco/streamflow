@@ -83,16 +83,14 @@ public class FrameworkKryoFactory implements IKryoFactory {
 
                 try {
                     // Retrieve the required serialization class from the Kryo Realm
-                    Class typeClass = FrameworkLoader.getInstance().loadFrameworkClass(
-                            FrameworkKryoFactory.KRYO_REALM + topology.getProjectId(), 
-                            serialization.getFramework(), serialization.getTypeClass());
+                    Class typeClass = FrameworkUtils.getInstance().loadFrameworkClass(
+                            serialization.getFrameworkHash(), serialization.getTypeClass());
 
                     // Retrieve the optional serializer class
-                    Class serializerClass = null;
+                    Class<Serializer> serializerClass = null;
                     if (serialization.getSerializerClass() != null) {
-                        serializerClass = FrameworkLoader.getInstance().loadFrameworkClass(
-                                FrameworkKryoFactory.KRYO_REALM + topology.getProjectId(),
-                                serialization.getFramework(), serialization.getSerializerClass());
+                        serializerClass = FrameworkUtils.getInstance().loadFrameworkClass(
+                                serialization.getFrameworkHash(), serialization.getSerializerClass());
                     }
 
                     if (serializerClass == null) {
@@ -103,7 +101,7 @@ public class FrameworkKryoFactory implements IKryoFactory {
                                 + serialization.getTypeClass());
                     } else {
                         // Register the type class using the custom serializer
-                        kryo.register(typeClass, (Serializer) serializerClass.newInstance());
+                        kryo.register(typeClass, serializerClass.newInstance());
 
                         LOG.info("Streamflow Registered serialization: Type Class = "
                                 + serialization.getTypeClass() + ", Serializer Class = "

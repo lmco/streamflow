@@ -122,7 +122,7 @@ public class TopologySubmitter extends Thread {
         // Kryo Factory is only required for clustered topologies
         if (isClusterMode) {
             // Initialize Storm with the Custom Kryo Factory
-            //stormConfig.setKryoFactory(FrameworkKryoFactory.class);
+            stormConfig.setKryoFactory(FrameworkKryoFactory.class);
         }
         
         return stormConfig;

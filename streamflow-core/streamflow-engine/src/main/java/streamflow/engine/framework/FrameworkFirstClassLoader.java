@@ -20,6 +20,10 @@ public class FrameworkFirstClassLoader extends ClassLoader {
 
         frameworkClassLoader = new FrameworkClassLoader(frameworkUrls, this.getParent());
     }
+    
+    public void includeURL(URL frameworkUrl) {
+        frameworkClassLoader.includeURL(frameworkUrl);
+    }
 
     @Override
     protected synchronized Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
@@ -43,10 +47,14 @@ public class FrameworkFirstClassLoader extends ClassLoader {
 
         private final ClassLoader parentClassLoader;
 
-        public FrameworkClassLoader(URL[] urls, ClassLoader parentClassLoader) {
-            super(urls, null);
+        public FrameworkClassLoader(URL[] frameworkUrls, ClassLoader parentClassLoader) {
+            super(frameworkUrls, null);
 
             this.parentClassLoader = parentClassLoader;
+        }
+        
+        public void includeURL(URL frameworkUrl) {
+            this.addURL(frameworkUrl);
         }
 
         @Override

@@ -1,9 +1,12 @@
 package streamflow.engine.framework;
 
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.HashMap;
+import java.util.concurrent.ExecutionException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
@@ -16,9 +19,7 @@ public class FrameworkUtils {
 
     private static FrameworkUtils singleton;
 
-    // FrameworkHash -> ClassLoader
-    private final HashMap<String, ClassLoader> frameworkClassLoaders
-            = new HashMap<String, ClassLoader>();
+    private LoadingCache<String, FrameworkFirstClassLoader> cache;
 
     private FrameworkUtils() {
     }
@@ -33,12 +34,12 @@ public class FrameworkUtils {
 
     @Override
     public Object clone() throws CloneNotSupportedException {
-        super.clone();
-
         throw new CloneNotSupportedException();
     }
     
     private void initialize() {
+        cache = CacheBuilder.newBuilder().build(new FrameworkCacheLoader());
+        
         // Initialize the frameworks directory where temporary frameworks will be stored
         File frameworksDir = new File(StreamflowEnvironment.getFrameworksDir());
         if (!frameworksDir.exists()) {
@@ -46,7 +47,7 @@ public class FrameworkUtils {
         }
     }
 
-    public synchronized Class loadFrameworkClass(
+    public Class loadFrameworkClass(
             String frameworkHash, String frameworkClass)
             throws FrameworkException {
         Class frameworkClazz = null;
@@ -54,16 +55,9 @@ public class FrameworkUtils {
         try {
             // Load the framework realm to isolate the class loading for the framework
             ClassLoader frameworkClassLoader = getFrameworkClassLoader(frameworkHash);
-
-            // Process the framework jar to load each of the underlying classes as constituents
-            if (frameworkClassLoader != null) {
-                // Load the module using the specified module class
-                frameworkClazz = frameworkClassLoader.loadClass(frameworkClass);
-            } else {
-                throw new FrameworkException(
-                    "Framework jar could not be loaded: Framework Hash = " 
-                            +  frameworkHash + ", Class = " + frameworkClass);
-            }
+            
+            // Load the module using the specified module class
+            frameworkClazz = frameworkClassLoader.loadClass(frameworkClass);
         } catch (ClassNotFoundException ex) {
             throw new FrameworkException(
                     "Framework class was not found in the framework jar: "
@@ -73,7 +67,7 @@ public class FrameworkUtils {
         return frameworkClazz;
     }
 
-    public synchronized <T> T loadFrameworkClassInstance(String frameworkHash,
+    public <T> T loadFrameworkClassInstance(String frameworkHash,
             String frameworkClass, Class<T> frameworkClassType) throws FrameworkException {
         try {
             // Load the framework class from the framework with specified coordinates
@@ -103,33 +97,17 @@ public class FrameworkUtils {
         }
     }
 
-    public synchronized ClassLoader getFrameworkClassLoader(String frameworkHash)
+    public FrameworkFirstClassLoader getFrameworkClassLoader(String frameworkHash)
             throws FrameworkException {
-        ClassLoader frameworkClassLoader = frameworkClassLoaders.get(frameworkHash);
-
-        if (frameworkClassLoader == null) {
-            URL frameworkUrl = getFrameworkJarUrl(frameworkHash);
-
-            if (frameworkUrl != null) {
-                // Add the framework jar URL to the list to be loaded by the classloader
-                URL[] frameworkUrls = new URL[]{frameworkUrl};
-
-                // Build the framework first class loader
-                frameworkClassLoader = new FrameworkFirstClassLoader(frameworkUrls);
-
-                // Save the class loader for reuse
-                frameworkClassLoaders.put(frameworkHash, frameworkClassLoader);
-
-                LOG.info("Framework Class Loader Initialized: Framework Hash = " 
-                        + frameworkHash);
-            } else {
-                LOG.error("Unable to load the framework jar: File was not available");
-            }
+        try {
+            return cache.get(frameworkHash);
+        } catch (ExecutionException ex) {
+            throw new FrameworkException("Framework class loader execution exception: " 
+                    + ex.getMessage());
         }
-        return frameworkClassLoader;
     }
 
-    private URL getFrameworkJarUrl(String frameworkHash) {
+    public URL getFrameworkJarUrl(String frameworkHash) {
         File frameworkJar = new File(StreamflowEnvironment.getFrameworksDir(), 
                     frameworkHash + ".jar");
             
@@ -154,6 +132,26 @@ public class FrameworkUtils {
             LOG.error("Unabled to load the framework jar URL: ", ex);
             
             return null;
+        }
+    }
+    
+    private class FrameworkCacheLoader extends CacheLoader<String, FrameworkFirstClassLoader> {
+        @Override
+        public FrameworkFirstClassLoader load(String frameworkHash) throws FrameworkException {
+            URL frameworkUrl = getFrameworkJarUrl(frameworkHash);
+
+            if (frameworkUrl != null) {
+                // Add the framework jar URL to the list to be loaded by the classloader
+                URL[] frameworkUrls = new URL[]{frameworkUrl};
+                
+                LOG.info("Framework Class Loader initialized by cache: Framework Hash = " 
+                        + frameworkHash);
+                
+                return new FrameworkFirstClassLoader(frameworkUrls);
+            } else {
+                throw new FrameworkException("Unable to load the framework jar, file was not available: " 
+                        + frameworkUrl);
+            }
         }
     }
 }
