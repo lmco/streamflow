@@ -35,6 +35,8 @@ public class TopologyComponent implements Serializable {
     private String name;
 
     private String framework;
+    
+    private String frameworkHash;
 
     private String version;
 
@@ -92,6 +94,14 @@ public class TopologyComponent implements Serializable {
 
     public void setFramework(String framework) {
         this.framework = framework;
+    }
+
+    public String getFrameworkHash() {
+        return frameworkHash;
+    }
+
+    public void setFrameworkHash(String frameworkHash) {
+        this.frameworkHash = frameworkHash;
     }
 
     public String getVersion() {
@@ -182,6 +192,7 @@ public class TopologyComponent implements Serializable {
         hash = 11 * hash + (this.label != null ? this.label.hashCode() : 0);
         hash = 11 * hash + (this.name != null ? this.name.hashCode() : 0);
         hash = 11 * hash + (this.framework != null ? this.framework.hashCode() : 0);
+        hash = 11 * hash + (this.frameworkHash != null ? this.frameworkHash.hashCode() : 0);
         hash = 11 * hash + (this.version != null ? this.version.hashCode() : 0);
         hash = 11 * hash + (this.mainClass != null ? this.mainClass.hashCode() : 0);
         hash = 11 * hash + this.parallelism;
@@ -225,6 +236,10 @@ public class TopologyComponent implements Serializable {
                 : !this.framework.equals(other.framework)) {
             return false;
         }
+        if ((this.frameworkHash == null) ? (other.frameworkHash != null) 
+                : !this.frameworkHash.equals(other.frameworkHash)) {
+            return false;
+        }
         if ((this.version == null) ? (other.version != null) 
                 : !this.version.equals(other.version)) {
             return false;
@@ -263,8 +278,9 @@ public class TopologyComponent implements Serializable {
 
     @Override
     public String toString() {
-        return "TopologyComponent{" + "key=" + key + ", type=" + type + ", label=" + label 
-                + ", name=" + name + ", framework=" + framework + ", version=" + version 
+        return "TopologyComponent{" + "key=" + key + ", type=" + type 
+                + ", label=" + label + ", name=" + name + ", framework=" + framework 
+                + ", frameworkHash=" + frameworkHash + ", version=" + version 
                 + ", mainClass=" + mainClass + ", parallelism=" + parallelism 
                 + ", posX=" + posX + ", posY=" + posY + ", properties=" + properties 
                 + ", propertyTypes=" + propertyTypes + ", resources=" + resources 
