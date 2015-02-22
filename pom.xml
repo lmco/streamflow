@@ -451,6 +451,7 @@
             </plugin>
             
             <!-- Source Packaging -->
+            <!--
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
@@ -464,16 +465,13 @@
                     </execution>
                 </executions>
             </plugin>
+            -->
             
             <!-- Resource Processing -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
                 <version>2.6</version>
-                <configuration>
-                    <outputDirectory />
-                    <encoding>UTF-8</encoding>
-                </configuration>
             </plugin>
             
             <!-- Jar Builder -->

@@ -51,19 +51,16 @@ public abstract class BaseWrapper<T> implements Serializable {
                 delegate = FrameworkUtils.getInstance().loadFrameworkClassInstance(
                         component.getFrameworkHash(), component.getMainClass(), typeClass);
                 
-                //delegate = FrameworkLoader.getInstance().loadFrameworkComponent(
-                //        topology.getProjectId(), component.getFramework(), 
-                //        component.getMainClass(), typeClass);
+                ClassLoader loader = FrameworkUtils.getInstance()
+                    .getFrameworkClassLoader(component.getFrameworkHash());
                 
-                //ClassLoader loader = FrameworkUtils.getInstance()
-                //    .getFrameworkClassLoader(component.getFrameworkHash());
-                
-                //Thread.currentThread().setContextClassLoader(loader);
+                Thread.currentThread().setContextClassLoader(loader);
                 
                 injectModules();
                 
             } catch (Exception ex) {
-                ex.printStackTrace();
+                LOG.error("Unabled to load component class: Class = " + component.getMainClass(), ex);
+                
                 throw new FrameworkException("Unable to locate component class: "
                     + component.getMainClass() + ", Exception = " + ex.getMessage());
             }

@@ -35,6 +35,13 @@
             <artifactId>storm-core</artifactId>
             <scope>provided</scope>
         </dependency>
+        
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>13.0</version>
+        </dependency>
+        
         <dependency>
             <groupId>streamflow</groupId>
             <artifactId>streamflow-model</artifactId>

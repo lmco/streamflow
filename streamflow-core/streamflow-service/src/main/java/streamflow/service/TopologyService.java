@@ -572,6 +572,8 @@ public class TopologyService {
 
             // Write out the config file to the topology jar with the modified changes
             String configJsonPath = "STREAMFLOW-INF" + File.separator + "config.json";
+            
+            streamflowConfig.setSelectedCluster(cluster);
 
             if (!jarBuilder.addFile(configJsonPath, objectMapper.writeValueAsBytes(streamflowConfig))) {
                 LOG.error("Error while writing the config.json file to the topology jar");
