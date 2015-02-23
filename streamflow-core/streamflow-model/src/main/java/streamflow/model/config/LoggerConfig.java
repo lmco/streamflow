@@ -27,7 +27,7 @@ public class LoggerConfig implements Serializable {
             + File.separator + ".streamflow" + File.separator + "logs";
 
     private String formatPattern = 
-            "%d{ISO8601,GMT} %p %X{topology} %X{component} %c - %m%n";
+            "%d{ISO8601,GMT} %p %X{topology} %X{project} %X{component} %c - %m%n";
 
     public LoggerConfig() {
     }

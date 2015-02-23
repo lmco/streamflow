@@ -65,7 +65,8 @@ public class LogService {
         
         try {
             inputReader = new BufferedReader(new FileReader(new File(
-                    streamflowConfig.getLogger().getBaseDir(), topology.getId() + ".log")));
+                    streamflowConfig.getLogger().getBaseDir(), 
+                    "topology-" + topology.getId() + ".log")));
 
             String currentLine;
 
@@ -119,6 +120,9 @@ public class LogService {
         if (criteria.getCategory() != null) {
             query.must(QueryBuilders.termQuery("category.raw", criteria.getCategory()));
         }
+        if (!criteria.getShowHistoric()) {
+            query.must(QueryBuilders.termQuery("project.raw", topology.getProjectId()));
+        }
 
         // TODO: HANDLE THE AGE CRITERIA
 
@@ -158,12 +162,11 @@ public class LogService {
     
     public void clearTopologyLog(Topology topology, Cluster cluster) {
         File logFile = new File(streamflowConfig.getLogger().getBaseDir(), 
-                topology.getId() + ".log");
+                "topology-" + topology.getId() + ".log");
         
         try {
             // Delete the local log file from the server
             FileUtils.forceDelete(logFile);
-            
         } catch (IOException ex) {
             LOG.error("Error deleting local topology log file: " + logFile.getAbsolutePath());
         }
@@ -171,6 +174,8 @@ public class LogService {
         if (cluster != null) {
             // If the topology was deployed to the cluster also clear the log entries from the server
             if (!cluster.getId().equals(Cluster.LOCAL)) {
+                // Disable delete of log data from elasticsearch for historic purposes
+                /*
                 try {
                     Response searchResponse = Request.Delete(
                             String.format("http://%s:%d/_all/topology/_query?q=topology:%s", 
@@ -183,6 +188,7 @@ public class LogService {
                 } catch (IOException ex) {
                     LOG.error("Error deleting cluster topology log data from server: " + ex.getMessage());
                 }
+                */
             }
         }
     }

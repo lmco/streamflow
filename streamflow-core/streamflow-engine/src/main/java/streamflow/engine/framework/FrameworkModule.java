@@ -39,15 +39,12 @@ public class FrameworkModule extends AbstractModule {
     
     private final TopologyComponent component;
     
-    private final boolean isCluster;
-    
     private final StreamflowConfig streamflowConfig;
 
     public FrameworkModule(Topology topology, TopologyComponent component,
-            boolean isCluster, StreamflowConfig streamflowConfig) {
+            StreamflowConfig streamflowConfig) {
         this.topology = topology;
         this.component = component;
-        this.isCluster = isCluster;
         this.streamflowConfig = streamflowConfig;
     }
 
@@ -92,11 +89,6 @@ public class FrameworkModule extends AbstractModule {
                 bindConstant().annotatedWith(
                         Names.named("streamflow.cluster.displayName")).to(cluster.getDisplayName());
             }
-
-            if (cluster.getJmsURI() != null) {
-                bindConstant().annotatedWith(
-                        Names.named("streamflow.cluster.jmsUri")).to(cluster.getJmsURI());
-            }
         }
     }
     
@@ -113,7 +105,7 @@ public class FrameworkModule extends AbstractModule {
         // TODO: NEED TO ENSURE THE PROJECT ID IS PASSED TO THE FRAMEWORK MODULE
         
         String logPath = streamflowConfig.getLogger().getBaseDir() 
-                + File.separator + topology.getId() + ".log";
+                + File.separator + "topology-" + topology.getId() + ".log";
 
         FileAppender<ILoggingEvent> fileAppender = new FileAppender<ILoggingEvent>();
         fileAppender.setName("FILE");

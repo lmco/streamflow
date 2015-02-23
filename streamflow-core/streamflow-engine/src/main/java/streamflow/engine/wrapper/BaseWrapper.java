@@ -71,7 +71,7 @@ public abstract class BaseWrapper<T> implements Serializable {
     private void injectModules() throws FrameworkException {
         // Create the new FrameworkModule to inject proxy and property information
         FrameworkModule frameworkModule = new FrameworkModule(
-                topology, component, isCluster, configuration);
+                topology, component, configuration);
 
         // Create the resource module which will inject resource properties
         ResourceModule resourceModule = new ResourceModule(

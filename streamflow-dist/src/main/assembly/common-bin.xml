@@ -83,6 +83,11 @@
             </includes>
             <filtered>true</filtered>
         </fileSet>
+        <fileSet>
+            <directory>src/main/resources/deploy/docker</directory>
+            <outputDirectory>/deploy/docker</outputDirectory>
+            <filtered>false</filtered>
+        </fileSet>
     </fileSets>
     <files>
         <file>

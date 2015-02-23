@@ -48,7 +48,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         
         <!-- Dependency Versions -->
-        <storm.version>0.9.1-incubating</storm.version>
+        <storm.version>0.9.3</storm.version>
         <jetty.version>9.0.0.RC2</jetty.version>
         <jackson.version>2.1.5</jackson.version>
         <jersey.version>1.17.1</jersey.version>
@@ -409,16 +409,6 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
         </dependency>
-        <!--
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-        </dependency>
-        -->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
