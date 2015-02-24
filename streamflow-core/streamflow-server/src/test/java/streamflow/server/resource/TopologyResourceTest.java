@@ -278,23 +278,25 @@ public class TopologyResourceTest extends JerseyTest {
     public void killTopologyWhileAuthenticated() {
         final String requestTopologyId = "topology-test";
         final int requestWaitTimeSecs = 10;
+        final boolean async = true;
         
         doNothing()
                 .when(topologyServiceMock)
-                .killTopology(requestTopologyId, requestWaitTimeSecs, TEST_SUBJECT_ID);
+                .killTopology(requestTopologyId, requestWaitTimeSecs, async, TEST_SUBJECT_ID);
         
         mockAuthenticatedSubject();
               
         ClientResponse clientResponse = resource()
             .path("/api/topologies/" + requestTopologyId + "/kill")
             .queryParam("waitTimeSecs", Integer.toString(requestWaitTimeSecs))
+            .queryParam("async", Boolean.toString(async))
             .get(ClientResponse.class);
         
         assertEquals("Response HTTP status code should be 200 (OK)", 
                 clientResponse.getStatus(), 200);
         
         verify(topologyServiceMock)
-                .killTopology(requestTopologyId, requestWaitTimeSecs, TEST_SUBJECT_ID);
+                .killTopology(requestTopologyId, requestWaitTimeSecs, async, TEST_SUBJECT_ID);
     }
     
     @Test

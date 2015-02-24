@@ -59,6 +59,8 @@ public class StormEngine {
     
     private final HashMap<String, Cluster> clusters = new HashMap<String, Cluster>();
     
+    private static final int KILL_BUFFER_SECS = 60;
+    
     @Inject
     public StormEngine(LocalCluster stormCluster, StreamflowConfig streamflowConfig) {
         this.stormCluster = stormCluster;
@@ -95,7 +97,7 @@ public class StormEngine {
         return topology;
     }
     
-    public boolean killTopology(Topology topology, int waitTimeSecs) {
+    public boolean killTopology(Topology topology, int waitTimeSecs, boolean async) {
         boolean killed = true;
         
         if (isDeployed(topology)) {
@@ -118,8 +120,10 @@ public class StormEngine {
                     client.killTopologyWithOpts(topology.getId(), killOptions);
                 }
                 
-                // Check for final removal of topology 60 times (60 seconds)
-                killed = waitForTopologyRemoval(topology, 60);
+                if (!async) {
+                    // Check for final removal of topology waitTime plus 60 second buffer
+                    killed = waitForTopologyRemoval(topology, waitTimeSecs + KILL_BUFFER_SECS);
+                }
                 
             } catch (Exception ex) {
                 LOG.error("Exception occurred while killing the remote topology: ID = " +

@@ -133,9 +133,10 @@ public class TopologyResource {
     @GET
     @Path("/{topologyId}/kill")
     public Response killTopology(@PathParam("topologyId") String topologyId,
-            @QueryParam("waitTimeSecs") @DefaultValue("0") int waitTimeSecs) {
+            @QueryParam("waitTimeSecs") @DefaultValue("0") int waitTimeSecs,
+            @QueryParam("async") @DefaultValue("false") boolean async) {
         String userId = (String) SecurityUtils.getSubject().getPrincipal();
-        topologyService.killTopology(topologyId, waitTimeSecs, userId);
+        topologyService.killTopology(topologyId, waitTimeSecs, async, userId);
 
         return Response.ok().build();
     }

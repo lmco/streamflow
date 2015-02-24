@@ -206,7 +206,7 @@ public class TopologyService {
         LOG.info("Submitting topology: Topology ID = " + topologyId + ", Cluster ID = " + clusterId);
         
         // Always attempt to kill the topology before submitting it in case it is already active
-        killTopology(topologyId, 0, userId);
+        killTopology(topologyId, 0, false, userId);
         
         // Clear out all previous project artifacts before building a new one
         clearTopology(topologyId, userId);
@@ -239,10 +239,10 @@ public class TopologyService {
         return topology;
     }
 
-    public void killTopology(String topologyId, int waitTimeSecs, String userId) {
+    public void killTopology(String topologyId, int waitTimeSecs, boolean async, String userId) {
         Topology topology = getTopology(topologyId, userId);
 
-        if (stormEngine.killTopology(topology, waitTimeSecs)) {
+        if (stormEngine.killTopology(topology, waitTimeSecs, async)) {
             // Update the topology entity status and update the killed date to now
             topology.setStatus("KILLED");
             topology.setKilled(new Date());

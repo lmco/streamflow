@@ -76,7 +76,10 @@ topologyModule.factory('Topology', ['$resource', function($resource) {
         },
         kill: {
             method: 'GET', 
-            url: 'api/topologies/:id/kill'
+            url: 'api/topologies/:id/kill',
+            params: {
+                waitTimeSecs: 0
+            }
         },
         log: {
             method: 'GET', 
@@ -128,9 +131,13 @@ topologyModule.service('TopologyService', ['$modal', 'Topology',
             }).result.then(
                 function(topology) {
                     if (topology) {
-                        successCallback(topology);
+                        if (angular.isFunction(successCallback)) {
+                            successCallback(topology);
+                        }
                     } else {
-                        errorCallback();
+                        if (angular.isFunction(errorCallback)) {
+                            errorCallback();
+                        }
                     }
                 }
             );
@@ -142,7 +149,9 @@ topologyModule.service('TopologyService', ['$modal', 'Topology',
                 controller: 'TopologyImportController'
             }).result.then(
                 function() {
-                    successCallback();
+                    if (angular.isFunction(successCallback)) {
+                        successCallback();
+                    }
                 }
             );
         };
@@ -174,25 +183,19 @@ topologyModule.service('TopologyService', ['$modal', 'Topology',
         this.killTopology = function(topology, successCallback, errorCallback) {
             $modal.open({
                 templateUrl: 'app/topology/topology.tpl.kill.html',
-                controller: function($scope) {
-                    $scope.topology = topology;
+                controller: 'TopologyKillController',
+                resolve: {
+                    topology: function() {
+                        return angular.copy(topology);
+                    },
+                    successCallback: function() {
+                        return successCallback;
+                    },
+                    errorCallback: function() {
+                        return errorCallback;
+                    }
                 }
-            }).result.then(
-                function() {
-                    Topology.kill({id: topology.id},
-                        function() {
-                            if (angular.isFunction(successCallback)) {
-                                successCallback();
-                            }
-                        },
-                        function() {
-                            if (angular.isFunction(errorCallback)) {
-                                errorCallback();
-                            }
-                        }
-                    );
-                }
-            );
+            });
         };
 
         this.clearTopology = function(topology, successCallback, errorCallback) {
@@ -299,12 +302,10 @@ topologyModule.controller('TopologyListController', [
         $scope.killTopology = function(topology) {
             TopologyService.killTopology(topology,
                 function() {
-                    streamflowNotify.success('The topology was killed successfully.');
-
                     $scope.listTopologies();
                 },
                 function() {
-                    streamflowNotify.error('The topology was not killed due to a server error.');
+                    $scope.listTopologies();
                 }
             );
         };
@@ -416,12 +417,10 @@ topologyModule.controller('TopologyViewController', [
         $scope.killTopology = function() {
             TopologyService.killTopology($scope.topology,
                 function() {
-                    streamflowNotify.success('The topology was killed successfully.');
-
                     $scope.topology = Topology.get({id: $routeParams.id});
                 },
                 function() {
-                    streamflowNotify.error('The topology was not killed due to a server error.');
+                    $scope.topology = Topology.get({id: $routeParams.id});
                 }
             );
         };
@@ -624,6 +623,72 @@ topologyModule.controller('TopologyCreateController', [
 
         $scope.cancel = function() {
             $modalInstance.dismiss();
+        };
+    }
+]);
+
+topologyModule.controller('TopologyKillController', [
+    '$scope', '$modalInstance', 'topology', 'successCallback', 'errorCallback', 'Topology',
+    function($scope, $modalInstance, topology, successCallback, errorCallback, Topology) {
+        $scope.topology = topology;
+        $scope.waitTimeSecs = 0;
+        $scope.state = 'INITIALIZED';
+        $scope.message = null;
+        $scope.cancelHandle;
+
+        $scope.isStarted = function() {
+            return ($scope.state !== 'INITIALIZED');
+        };
+
+        $scope.isActive = function() {
+            return ($scope.state === 'ACTIVE');
+        };
+
+        $scope.isFinished = function() {
+            return ($scope.state === 'COMPLETED'
+                    || $scope.state === 'CANCELED'
+                    || $scope.state === 'FAILED');
+        };
+        
+        $scope.isValid = function() {
+            return angular.isNumber($scope.waitTimeSecs) && $scope.waitTimeSecs >= 0;
+        };
+
+        $scope.kill = function() {
+            $scope.state = 'ACTIVE';
+
+            // Execute the ajax request to submit the topology to Storm
+            Topology.kill({id: $scope.topology.id, waitTimeSecs: $scope.waitTimeSecs},
+                function() {
+                    $scope.state = 'COMPLETED';
+                    $scope.message = 'The topology was killed successfully!';
+
+                    if (angular.isFunction(successCallback)) {
+                        successCallback();
+                    }
+                },
+                function() {
+                    $scope.state = 'FAILED';
+                    $scope.message = 'The topology kill failed!';
+
+                    if (angular.isFunction(errorCallback)) {
+                        errorCallback();
+                    }
+                }
+            );
+        };
+
+        $scope.close = function() {
+            $modalInstance.dismiss();
+        };
+
+        $scope.cancel = function() {
+            ////////////////////////////////////////////////////////////////////////
+            // TODO: NEED WAY TO CANCEL ACTIVE TOPOLOGY SUBMISSION
+            ////////////////////////////////////////////////////////////////////////
+
+            $scope.state = 'CANCELED';
+            $scope.message = 'The topology kill was cancelled!';
         };
     }
 ]);
