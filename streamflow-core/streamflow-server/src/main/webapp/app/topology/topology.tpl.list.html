@@ -60,7 +60,7 @@
                         {{ topology.status}}
                     </span>
                 </td>
-                <td>{{ topology.modified | date:'medium' }}</td>
+                <td>{{ topology.modified | momentFromNow }}</td>
                 <td>
                     <a class="btn btn-sm btn-success" ng-href="#/topologies/{{ topology.id}}">
                         <i class="fa fa-pencil"></i> Edit</a>

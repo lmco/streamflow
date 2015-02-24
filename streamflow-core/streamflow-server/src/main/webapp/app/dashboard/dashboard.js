@@ -86,12 +86,10 @@ dashboardModule.controller('DashboardController', [
         $scope.killTopology = function(topology) {
             TopologyService.killTopology(topology,
                 function() {
-                    streamflowNotify.success('The topology was killed successfully.');
-
                     $scope.listTopologies();
                 },
                 function() {
-                    streamflowNotify.error('The topology was not killed due to a server error.');
+                    $scope.listTopologies();
                 }
             );
         };

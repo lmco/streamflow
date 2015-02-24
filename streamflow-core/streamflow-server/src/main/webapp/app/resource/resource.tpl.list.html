@@ -38,7 +38,7 @@
                 </td>
                 <td>{{ resource.framework }}</td>
                 <td>{{ resource.version }}</td>
-                <td>{{ resource.modified | date:'medium' }}</td>
+                <td>{{ resource.modified | momentFromNow }}</td>
                 <td>
                     <a class="btn btn-sm btn-success" ng-href="#/resources/{{ resource.id }}">
                         <i class="fa fa-eye"></i> View Entries</a>

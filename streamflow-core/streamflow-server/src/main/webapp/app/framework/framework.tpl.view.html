@@ -49,7 +49,7 @@
                 <td>{{ framework.description }}</td>
                 <td>{{ framework.name }}</td>
                 <td>{{ framework.version }}</td>
-                <td>{{ framework.modified | date:'medium' }}</td>
+                <td>{{ framework.modified | momentFromNow }}</td>
             </tr>
         </tbody>
     </table>

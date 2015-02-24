@@ -41,7 +41,7 @@
                 </td>
                 <td><span class="streamflow-badge topology-status-active">ACTIVE</span></td>
                 <td>{{ topology.clusterName }}</td>
-                <td>{{ topology.created | date:'medium' }}</td>
+                <td>{{ topology.submitted | momentFromNow }}</td>
                 <td>
                     <a class="btn btn-sm btn-success" ng-href="#/topologies/{{ topology.id }}">
                         <i class="fa fa-pencil"></i> Edit</a>
@@ -102,7 +102,7 @@
                 </td>
                 <td><span class="streamflow-badge topology-status-killed">KILLED</span></td>
                 <td>{{ topology.clusterName }}</td>
-                <td>{{ topology.created | date:'medium' }}</td>
+                <td>{{ topology.killed | momentFromNow }}</td>
                 <td>
                     <a class="btn btn-sm btn-success" ng-href="#/topologies/{{ topology.id }}">
                         <i class="fa fa-pencil"></i> Edit</a>

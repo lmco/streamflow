@@ -49,7 +49,7 @@
                     </h3>
                     <p>{{ resourceEntry.description }}</p>
                 </td>
-                <td>{{ resourceEntry.modified | date:'medium' }}</td>
+                <td>{{ resourceEntry.modified | momentFromNow }}</td>
                 <td>
                     <a class="btn btn-sm btn-success" 
                        ng-href="#/resources/{{ resource.id }}/entries/{{ resourceEntry.id }}">

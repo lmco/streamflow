@@ -46,7 +46,7 @@
                     <p>{{ framework.description }}</p>
                 </td>
                 <td>{{ framework.version }}</td>
-                <td>{{ framework.modified | date:'medium' }}</td>
+                <td>{{ framework.modified | momentFromNow }}</td>
                 <td>
                     <a class="btn btn-sm btn-success" ng-href="#/frameworks/{{ framework.name }}">
                         <i class="fa fa-eye"></i> View</a>
