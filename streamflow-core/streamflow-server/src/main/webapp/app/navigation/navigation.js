@@ -27,12 +27,12 @@ navigationModule.controller('NavigationController', [
     function($scope, $window, $location, $http, $modal, AuthService) {
         // Navigation menu items (possibly load these from config file so new pages can be added)
         $scope.items = [
-            {label: 'Dashboard', path: '#/dashboard', icon: 'icon-dashboard'},
-            {label: 'Topologies', path: '#/topologies', icon: 'icon-sitemap icon-rotate-270'},
-            {label: 'Resources', path: '#/resources', icon: 'icon-cloud'},
-            {label: 'Services', path: '#/services', icon: 'icon-wrench'},
-            {label: 'Frameworks', path: '#/frameworks', icon: 'icon-gears'},
-            {label: 'Users', path: '#/users', icon: 'icon-group'}
+            {label: 'Dashboard', path: '#/dashboard', icon: 'fa fa-dashboard'},
+            {label: 'Topologies', path: '#/topologies', icon: 'fa fa-sitemap fa-rotate-270'},
+            {label: 'Resources', path: '#/resources', icon: 'fa fa-cloud'},
+            //{label: 'Services', path: '#/services', icon: 'fa fa-wrench'},
+            {label: 'Frameworks', path: '#/frameworks', icon: 'fa fa-gears'},
+            {label: 'Accounts', path: '#/users', icon: 'fa fa-group'}
         ];
 
         // Check if the current path is selected to highlight the proper navigation item
