@@ -209,6 +209,8 @@ public class LogService {
                 TopologyLogEntry logEntry = new TopologyLogEntry();
                 logEntry.setTimestamp((String) sourceObject.get("timestamp"));
                 logEntry.setLevel((String) sourceObject.get("level"));
+                logEntry.setHost((String) sourceObject.get("host"));
+                logEntry.setTask((String) sourceObject.get("task"));
                 logEntry.setComponent((String) sourceObject.get("component"));
                 logEntry.setCategory((String) sourceObject.get("category"));
                 logEntry.setText((String) sourceObject.get("text"));

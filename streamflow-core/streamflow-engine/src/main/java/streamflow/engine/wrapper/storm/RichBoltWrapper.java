@@ -42,6 +42,8 @@ public class RichBoltWrapper extends BaseWrapper<IRichBolt> implements IRichBolt
 
     @Override
     public void prepare(Map conf, TopologyContext context, OutputCollector collector) {
+        this.context = context;
+        
         try {
             // Register the metrics hook for this bolt to track statistics
             context.addTaskHook(new BoltMetricsHook());

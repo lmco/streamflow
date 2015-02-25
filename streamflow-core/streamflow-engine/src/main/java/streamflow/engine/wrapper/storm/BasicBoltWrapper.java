@@ -42,6 +42,8 @@ public class BasicBoltWrapper extends BaseWrapper<IBasicBolt> implements IBasicB
     
     @Override
     public void prepare(Map conf, TopologyContext context) {
+        this.context = context;
+        
         try {
             // Register the metrics hook for this bolt to track statistics
             context.addTaskHook(new BoltMetricsHook());

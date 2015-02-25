@@ -1,5 +1,6 @@
 package streamflow.engine.wrapper;
 
+import backtype.storm.task.TopologyContext;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
@@ -27,6 +28,8 @@ public abstract class BaseWrapper<T> implements Serializable {
     protected Topology topology;
     
     protected TopologyComponent component;
+    
+    protected TopologyContext context;
     
     protected boolean isCluster;
     
@@ -59,9 +62,9 @@ public abstract class BaseWrapper<T> implements Serializable {
                 injectModules();
                 
             } catch (Exception ex) {
-                LOG.error("Unabled to load component class: Class = " + component.getMainClass(), ex);
+                LOG.error("Unable to load component class: Class = " + component.getMainClass(), ex);
                 
-                throw new FrameworkException("Unable to locate component class: "
+                throw new FrameworkException("Unable to load component class: "
                     + component.getMainClass() + ", Exception = " + ex.getMessage());
             }
         }
@@ -71,7 +74,7 @@ public abstract class BaseWrapper<T> implements Serializable {
     private void injectModules() throws FrameworkException {
         // Create the new FrameworkModule to inject proxy and property information
         FrameworkModule frameworkModule = new FrameworkModule(
-                topology, component, configuration);
+                topology, component, configuration, context);
 
         // Create the resource module which will inject resource properties
         ResourceModule resourceModule = new ResourceModule(

@@ -41,6 +41,8 @@ public class RichSpoutWrapper extends BaseWrapper<IRichSpout> implements IRichSp
 
     @Override
     public void open(Map conf, TopologyContext context, SpoutOutputCollector collector) {
+        this.context = context;
+        
         try {
             // Register the metrics hook for this bolt to track statistics
             context.addTaskHook(new SpoutMetricsHook());
