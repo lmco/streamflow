@@ -17,7 +17,7 @@ public class FrameworkUtils {
 
     private static final Logger LOG = LoggerFactory.getLogger(FrameworkUtils.class);
     
-    public static final boolean DEFAULT_FRAMEWORK_FIRST_POLICY = false;
+    private static final boolean DEFAULT_FRAMEWORK_FIRST_POLICY = true;
 
     private static FrameworkUtils singleton;
 
