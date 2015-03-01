@@ -69,15 +69,25 @@ public class FrameworkModule extends AbstractModule {
                     streamflowConfig.getProxy().getPort());
         }
 
-        if (component.getKey() != null) {
-            bindConstant().annotatedWith(
-                    Names.named("streamflow.component.key")).to(component.getKey());
-        }
-
-        if (topology.getId() != null) {
-            bindConstant().annotatedWith(
-                    Names.named("streamflow.topology.id")).to(topology.getId());
-        }
+        // Bind streamflow specific properties in case underlying bolts/resources require them
+        bindConstant().annotatedWith(
+                Names.named("streamflow.topology.id")).to(topology.getId());
+        bindConstant().annotatedWith(
+                Names.named("streamflow.topology.name")).to(topology.getName());
+        bindConstant().annotatedWith(
+                Names.named("streamflow.component.key")).to(component.getKey());
+        bindConstant().annotatedWith(
+                Names.named("streamflow.component.label")).to(component.getLabel());
+        bindConstant().annotatedWith(
+                Names.named("streamflow.component.name")).to(component.getName());
+        bindConstant().annotatedWith(
+                Names.named("streamflow.component.framework")).to(component.getFramework());
+        bindConstant().annotatedWith(
+                Names.named("streamflow.user.id")).to(topology.getUserId());
+        bindConstant().annotatedWith(
+                Names.named("streamflow.cluster.id")).to(topology.getClusterId());
+        bindConstant().annotatedWith(
+                Names.named("streamflow.cluster.name")).to(topology.getClusterName());
     }
     
     @Provides
