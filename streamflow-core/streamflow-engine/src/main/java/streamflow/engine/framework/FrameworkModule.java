@@ -26,7 +26,6 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.name.Names;
 import java.io.File;
-import java.net.InetAddress;
 import java.util.Map.Entry;
 import streamflow.model.Topology;
 import streamflow.model.TopologyComponent;
@@ -111,7 +110,11 @@ public class FrameworkModule extends AbstractModule {
         MDC.put("topology", topology.getId());
         MDC.put("project", topology.getProjectId());
         MDC.put("component", component.getKey());
-        MDC.put("task", component.getName() + "-" + context.getThisTaskIndex());
+        if (context != null) {
+            MDC.put("task", component.getName() + "-" + context.getThisTaskIndex());
+        } else {
+            MDC.put("task", component.getName());
+        }
         
         return logger;
     }

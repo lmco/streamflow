@@ -54,11 +54,6 @@ public abstract class BaseWrapper<T> implements Serializable {
                 delegate = FrameworkUtils.getInstance().loadFrameworkClassInstance(
                         component.getFrameworkHash(), component.getMainClass(), typeClass);
                 
-                ClassLoader loader = FrameworkUtils.getInstance()
-                    .getFrameworkClassLoader(component.getFrameworkHash());
-                
-                Thread.currentThread().setContextClassLoader(loader);
-                
                 injectModules();
                 
             } catch (Exception ex) {

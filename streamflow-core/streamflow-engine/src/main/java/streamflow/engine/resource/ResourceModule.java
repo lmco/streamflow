@@ -53,8 +53,6 @@ public class ResourceModule extends AbstractModule {
                 }
 
                 // Use the FrameworkLoader to load the resource module class from the framework
-                //Class resourceClass = FrameworkLoader.getInstance().loadFrameworkClass(
-                //        topology.getProjectId(), resourceEntry.getFramework(), resourceEntry.getResourceClass());
                 Class resourceClass = FrameworkUtils.getInstance().loadFrameworkClass(
                         resourceEntry.getFrameworkHash(), resourceEntry.getResourceClass());
 

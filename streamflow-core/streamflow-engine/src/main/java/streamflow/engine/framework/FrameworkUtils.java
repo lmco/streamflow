@@ -4,8 +4,8 @@ import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import java.io.File;
-import java.io.IOException;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.concurrent.ExecutionException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -16,10 +16,14 @@ import streamflow.util.environment.StreamflowEnvironment;
 public class FrameworkUtils {
 
     private static final Logger LOG = LoggerFactory.getLogger(FrameworkUtils.class);
+    
+    public static final boolean DEFAULT_FRAMEWORK_FIRST_POLICY = false;
 
     private static FrameworkUtils singleton;
 
-    private LoadingCache<String, FrameworkFirstClassLoader> cache;
+    private LoadingCache<String, ClassLoader> frameworkFirstCache;
+
+    private LoadingCache<String, ClassLoader> frameworkLastCache;
 
     private FrameworkUtils() {
     }
@@ -38,7 +42,8 @@ public class FrameworkUtils {
     }
     
     private void initialize() {
-        cache = CacheBuilder.newBuilder().build(new FrameworkCacheLoader());
+        frameworkFirstCache = CacheBuilder.newBuilder().build(new FrameworkFirstCacheLoader());
+        frameworkLastCache = CacheBuilder.newBuilder().build(new FrameworkLastCacheLoader());
         
         // Initialize the frameworks directory where temporary frameworks will be stored
         File frameworksDir = new File(StreamflowEnvironment.getFrameworksDir());
@@ -47,8 +52,13 @@ public class FrameworkUtils {
         }
     }
 
-    public Class loadFrameworkClass(
-            String frameworkHash, String frameworkClass)
+    public Class loadFrameworkClass(String frameworkHash, String frameworkClass) 
+            throws FrameworkException {
+        // Default policy is to load frameworks first
+        return loadFrameworkClass(frameworkHash, frameworkClass, DEFAULT_FRAMEWORK_FIRST_POLICY);
+    }
+    
+    public Class loadFrameworkClass(String frameworkHash, String frameworkClass, boolean frameworkFirst) 
             throws FrameworkException {
         Class frameworkClazz = null;
 
@@ -66,12 +76,19 @@ public class FrameworkUtils {
 
         return frameworkClazz;
     }
+    
+    public <T> T loadFrameworkClassInstance(String frameworkHash, String frameworkClass, 
+            Class<T> frameworkClassType) throws FrameworkException {
+        // Defaut policy is to load frameworks first
+        return loadFrameworkClassInstance(
+                frameworkHash, frameworkClass, frameworkClassType, DEFAULT_FRAMEWORK_FIRST_POLICY);
+    }
 
-    public <T> T loadFrameworkClassInstance(String frameworkHash,
-            String frameworkClass, Class<T> frameworkClassType) throws FrameworkException {
+    public <T> T loadFrameworkClassInstance(String frameworkHash, String frameworkClass, 
+            Class<T> frameworkClassType, boolean frameworkFirst) throws FrameworkException {
         try {
             // Load the framework class from the framework with specified coordinates
-            Class frameworkClazz = loadFrameworkClass(frameworkHash, frameworkClass);
+            Class frameworkClazz = loadFrameworkClass(frameworkHash, frameworkClass, frameworkFirst);
 
             // Check to make sure that the library loaded matches the class type
             if (frameworkClassType.isAssignableFrom(frameworkClazz)) {
@@ -92,15 +109,26 @@ public class FrameworkUtils {
             throw new FrameworkException(
                     "Component class was illegally accessed: " + frameworkClass);
         } catch (Exception ex) {
+            LOG.error("Component loading failed due to an unexpected exception: ", ex);
+            
             throw new FrameworkException(
                     "Component loading failed due to an unexpected exception: " + ex.getMessage());
         }
     }
+    
+    public ClassLoader getFrameworkClassLoader(String frameworkHash)
+            throws FrameworkException {
+        return getFrameworkClassLoader(frameworkHash, DEFAULT_FRAMEWORK_FIRST_POLICY);
+    }
 
-    public FrameworkFirstClassLoader getFrameworkClassLoader(String frameworkHash)
+    public ClassLoader getFrameworkClassLoader(String frameworkHash, boolean frameworkFirst)
             throws FrameworkException {
         try {
-            return cache.get(frameworkHash);
+            if (frameworkFirst) {
+                return frameworkFirstCache.get(frameworkHash);
+            } else {
+                return frameworkLastCache.get(frameworkHash);
+            }
         } catch (ExecutionException ex) {
             throw new FrameworkException("Framework class loader execution exception: " 
                     + ex.getMessage());
@@ -121,7 +149,7 @@ public class FrameworkUtils {
                 // Copy the framework jar out of the topology jar and into the temp directory
                 FileUtils.writeByteArrayToFile(frameworkJar, 
                         IOUtils.toByteArray(embeddedFrameworkUrl));
-            } catch (IOException ex) {
+            } catch (Exception ex) {
                 LOG.error("An exception occurred while copying the inbuilt framework jar to the temp directory", ex);
             }
         }
@@ -135,19 +163,41 @@ public class FrameworkUtils {
         }
     }
     
-    private class FrameworkCacheLoader extends CacheLoader<String, FrameworkFirstClassLoader> {
+    private class FrameworkFirstCacheLoader extends CacheLoader<String, ClassLoader> {
         @Override
-        public FrameworkFirstClassLoader load(String frameworkHash) throws FrameworkException {
+        public ClassLoader load(String frameworkHash) throws FrameworkException {
             URL frameworkUrl = getFrameworkJarUrl(frameworkHash);
 
             if (frameworkUrl != null) {
                 // Add the framework jar URL to the list to be loaded by the classloader
                 URL[] frameworkUrls = new URL[]{frameworkUrl};
                 
-                LOG.info("Framework Class Loader initialized by cache: Framework Hash = " 
+                LOG.info("Framework First Class Loader initialized by cache: Framework Hash = " 
                         + frameworkHash);
                 
-                return new FrameworkFirstClassLoader(frameworkUrls);
+                return new FrameworkFirstClassLoader(
+                        frameworkUrls, Thread.currentThread().getContextClassLoader());
+            } else {
+                throw new FrameworkException("Unable to load the framework jar, file was not available: " 
+                        + frameworkUrl);
+            }
+        }
+    }
+    
+    private class FrameworkLastCacheLoader extends CacheLoader<String, ClassLoader> {
+        @Override
+        public ClassLoader load(String frameworkHash) throws FrameworkException {
+            URL frameworkUrl = getFrameworkJarUrl(frameworkHash);
+
+            if (frameworkUrl != null) {
+                // Add the framework jar URL to the list to be loaded by the classloader
+                URL[] frameworkUrls = new URL[]{frameworkUrl};
+                
+                LOG.info("Framework Last Class Loader initialized by cache: Framework Hash = " 
+                        + frameworkHash);
+                
+                return new URLClassLoader(
+                        frameworkUrls, Thread.currentThread().getContextClassLoader());
             } else {
                 throw new FrameworkException("Unable to load the framework jar, file was not available: " 
                         + frameworkUrl);
