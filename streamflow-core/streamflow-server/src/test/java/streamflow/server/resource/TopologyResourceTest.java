@@ -254,11 +254,14 @@ public class TopologyResourceTest extends JerseyTest {
     @Test
     public void submitTopologyWhileAuthenticated() {
         final String requestClusterId = "LOCAL";
+        final String requestLogLevel = "INFO";
+        final String requestClassLoaderPolicy = "FRAMEWORK_FIRST";
         final Topology mockedTopology = RandomGenerator.randomObject(Topology.class);
         
         doReturn(mockedTopology)
                 .when(topologyServiceMock)
-                .submitTopology(mockedTopology.getId(), TEST_SUBJECT_ID, requestClusterId);
+                .submitTopology(mockedTopology.getId(), TEST_SUBJECT_ID, requestClusterId,
+                        requestLogLevel, requestClassLoaderPolicy);
         
         mockAuthenticatedSubject();
               
@@ -271,7 +274,8 @@ public class TopologyResourceTest extends JerseyTest {
                 mockedTopology, responseTopology);
         
         verify(topologyServiceMock)
-                .submitTopology(mockedTopology.getId(), TEST_SUBJECT_ID, requestClusterId);
+                .submitTopology(mockedTopology.getId(), TEST_SUBJECT_ID, requestClusterId,
+                        requestLogLevel, requestClassLoaderPolicy);
     }
     
     @Test

@@ -125,9 +125,11 @@ public class TopologyResource {
     @Path("/{topologyId}/submit")
     @Produces(MediaType.APPLICATION_JSON)
     public Topology submitTopology(@PathParam("topologyId") String topologyId,
-            @QueryParam("clusterId") String clusterId) {
+            @QueryParam("clusterId") String clusterId,
+            @QueryParam("logLevel") @DefaultValue("INFO") String logLevel,
+            @QueryParam("classLoaderPolicy") @DefaultValue("FRAMEWORK_FIRST") String classLoaderPolicy) {
         String userId = (String) SecurityUtils.getSubject().getPrincipal();
-        return topologyService.submitTopology(topologyId, userId, clusterId);
+        return topologyService.submitTopology(topologyId, userId, clusterId, logLevel, classLoaderPolicy);
     }
 
     @GET

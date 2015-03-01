@@ -52,7 +52,8 @@ public abstract class BaseWrapper<T> implements Serializable {
             try {
                 // Load the delegate class from the framework jar in an isolated class loader
                 delegate = FrameworkUtils.getInstance().loadFrameworkClassInstance(
-                        component.getFrameworkHash(), component.getMainClass(), typeClass);
+                        component.getFrameworkHash(), component.getMainClass(), 
+                        typeClass, topology.getClassLoaderPolicy());
                 
                 injectModules();
                 
@@ -84,7 +85,8 @@ public abstract class BaseWrapper<T> implements Serializable {
         for (TopologyResourceEntry resourceEntry : component.getResources()) {
             // Load the framework class instance from the framework
             Class resourceClass = FrameworkUtils.getInstance().loadFrameworkClass(
-                    resourceEntry.getFrameworkHash(), resourceEntry.getResourceClass());
+                    resourceEntry.getFrameworkHash(), resourceEntry.getResourceClass(),
+                    topology.getClassLoaderPolicy());
 
             // Create an instance of each resource module save it for injection
             resourceModules.add((Module) injector.getInstance(resourceClass));

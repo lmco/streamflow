@@ -17,7 +17,7 @@ public class FrameworkUtils {
 
     private static final Logger LOG = LoggerFactory.getLogger(FrameworkUtils.class);
     
-    private static final boolean DEFAULT_FRAMEWORK_FIRST_POLICY = true;
+    private static final String DEFAULT_CLASS_LOADER_POLICY = "FRAMEWORK_FIRST";
 
     private static FrameworkUtils singleton;
 
@@ -55,16 +55,16 @@ public class FrameworkUtils {
     public Class loadFrameworkClass(String frameworkHash, String frameworkClass) 
             throws FrameworkException {
         // Default policy is to load frameworks first
-        return loadFrameworkClass(frameworkHash, frameworkClass, DEFAULT_FRAMEWORK_FIRST_POLICY);
+        return loadFrameworkClass(frameworkHash, frameworkClass, DEFAULT_CLASS_LOADER_POLICY);
     }
     
-    public Class loadFrameworkClass(String frameworkHash, String frameworkClass, boolean frameworkFirst) 
+    public Class loadFrameworkClass(String frameworkHash, String frameworkClass, String classLoaderPolicy) 
             throws FrameworkException {
         Class frameworkClazz = null;
 
         try {
             // Load the framework realm to isolate the class loading for the framework
-            ClassLoader frameworkClassLoader = getFrameworkClassLoader(frameworkHash);
+            ClassLoader frameworkClassLoader = getFrameworkClassLoader(frameworkHash, classLoaderPolicy);
             
             // Load the module using the specified module class
             frameworkClazz = frameworkClassLoader.loadClass(frameworkClass);
@@ -81,14 +81,14 @@ public class FrameworkUtils {
             Class<T> frameworkClassType) throws FrameworkException {
         // Defaut policy is to load frameworks first
         return loadFrameworkClassInstance(
-                frameworkHash, frameworkClass, frameworkClassType, DEFAULT_FRAMEWORK_FIRST_POLICY);
+                frameworkHash, frameworkClass, frameworkClassType, DEFAULT_CLASS_LOADER_POLICY);
     }
 
     public <T> T loadFrameworkClassInstance(String frameworkHash, String frameworkClass, 
-            Class<T> frameworkClassType, boolean frameworkFirst) throws FrameworkException {
+            Class<T> frameworkClassType, String classLoaderPolicy) throws FrameworkException {
         try {
             // Load the framework class from the framework with specified coordinates
-            Class frameworkClazz = loadFrameworkClass(frameworkHash, frameworkClass, frameworkFirst);
+            Class frameworkClazz = loadFrameworkClass(frameworkHash, frameworkClass, classLoaderPolicy);
 
             // Check to make sure that the library loaded matches the class type
             if (frameworkClassType.isAssignableFrom(frameworkClazz)) {
@@ -118,16 +118,17 @@ public class FrameworkUtils {
     
     public ClassLoader getFrameworkClassLoader(String frameworkHash)
             throws FrameworkException {
-        return getFrameworkClassLoader(frameworkHash, DEFAULT_FRAMEWORK_FIRST_POLICY);
+        return getFrameworkClassLoader(frameworkHash, DEFAULT_CLASS_LOADER_POLICY);
     }
 
-    public ClassLoader getFrameworkClassLoader(String frameworkHash, boolean frameworkFirst)
+    public ClassLoader getFrameworkClassLoader(String frameworkHash, String classLoaderPolicy)
             throws FrameworkException {
         try {
-            if (frameworkFirst) {
-                return frameworkFirstCache.get(frameworkHash);
-            } else {
+            if (classLoaderPolicy.equalsIgnoreCase("FRAMEWORK_LAST")) {
                 return frameworkLastCache.get(frameworkHash);
+            } else {
+                // Default class loader policy is framework first
+                return frameworkFirstCache.get(frameworkHash);
             }
         } catch (ExecutionException ex) {
             throw new FrameworkException("Framework class loader execution exception: " 

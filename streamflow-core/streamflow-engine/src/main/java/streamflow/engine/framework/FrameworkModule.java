@@ -92,7 +92,7 @@ public class FrameworkModule extends AbstractModule {
         String logPath = streamflowConfig.getLogger().getBaseDir() 
                 + File.separator + "topology-" + topology.getId() + ".log";
 
-        FileAppender<ILoggingEvent> fileAppender = new FileAppender<ILoggingEvent>();
+        FileAppender<ILoggingEvent> fileAppender = new FileAppender<>();
         fileAppender.setName("FILE");
         fileAppender.setFile(logPath);
         fileAppender.setContext(loggerContext);
@@ -104,7 +104,7 @@ public class FrameworkModule extends AbstractModule {
         logger.detachAndStopAllAppenders();
         logger.addAppender(fileAppender);
         logger.setAdditive(false);
-        logger.setLevel(Level.toLevel(streamflowConfig.getLogger().getLevel()));
+        logger.setLevel(Level.toLevel(topology.getLogLevel()));
         
         // Set the context for the topology/component when logging
         MDC.put("topology", topology.getId());

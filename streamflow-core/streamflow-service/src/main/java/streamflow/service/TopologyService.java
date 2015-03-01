@@ -201,9 +201,11 @@ public class TopologyService {
         topologyDao.update(topology);
     }
 
-    public Topology submitTopology(String topologyId, String userId, String clusterId) {
+    public Topology submitTopology(String topologyId, String userId, String clusterId,
+            String logLevel, String classLoaderPolicy) {
         
-        LOG.info("Submitting topology: Topology ID = " + topologyId + ", Cluster ID = " + clusterId);
+        LOG.info("Submitting topology: Topology ID = " + topologyId + ", Cluster ID = " + clusterId
+                 + ", Log Level = " + logLevel + ", Class Loader Policy = " + classLoaderPolicy);
         
         // Always attempt to kill the topology before submitting it in case it is already active
         killTopology(topologyId, 0, false, userId);
@@ -224,6 +226,8 @@ public class TopologyService {
                 topology.setSubmitted(new Date());
                 topology.setClusterId(cluster.getId());
                 topology.setClusterName(cluster.getDisplayName());
+                topology.setLogLevel(logLevel);
+                topology.setClassLoaderPolicy(classLoaderPolicy);
                 topology.setStatus("ACTIVE");
                 
                 topology = stormEngine.submitTopology(topology, cluster);
@@ -266,6 +270,8 @@ public class TopologyService {
         topology.setProjectId(null);
         topology.setClusterId(null);
         topology.setClusterName(null);
+        topology.setLogLevel(null);
+        topology.setClassLoaderPolicy(null);
         topology.setSubmitted(null);
         topology.setKilled(null);
 

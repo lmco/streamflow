@@ -701,6 +701,8 @@ topologyModule.controller('TopologyDeployController', [
     function($scope, $modalInstance, topology, successCallback, errorCallback, Topology, Cluster) {
         $scope.clusters = Cluster.query();
         $scope.cluster = null;
+        $scope.logLevel = 'INFO';
+        $scope.classLoaderPolicy = 'FRAMEWORK_FIRST';
         $scope.topology = topology;
         $scope.state = 'INITIALIZED';
         $scope.message = null;
@@ -724,7 +726,12 @@ topologyModule.controller('TopologyDeployController', [
             $scope.state = 'ACTIVE';
 
             // Execute the ajax request to submit the topology to Storm
-            Topology.submit({id: $scope.topology.id, clusterId: $scope.cluster.id},
+            Topology.submit({
+                    id: $scope.topology.id, 
+                    clusterId: $scope.cluster.id,
+                    logLevel: $scope.logLevel,
+                    classLoaderPolicy: $scope.classLoaderPolicy
+                },
                 function() {
                     $scope.state = 'COMPLETED';
                     $scope.message = 'The Topology was submitted successfully!';
