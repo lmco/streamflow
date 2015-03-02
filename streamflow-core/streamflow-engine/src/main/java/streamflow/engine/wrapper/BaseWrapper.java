@@ -1,5 +1,6 @@
 package streamflow.engine.wrapper;
 
+import backtype.storm.task.TopologyContext;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
@@ -28,6 +29,8 @@ public abstract class BaseWrapper<T> implements Serializable {
     
     protected TopologyComponent component;
     
+    protected TopologyContext context;
+    
     protected boolean isCluster;
     
     protected StreamflowConfig configuration;
@@ -49,22 +52,15 @@ public abstract class BaseWrapper<T> implements Serializable {
             try {
                 // Load the delegate class from the framework jar in an isolated class loader
                 delegate = FrameworkUtils.getInstance().loadFrameworkClassInstance(
-                        component.getFrameworkHash(), component.getMainClass(), typeClass);
-                
-                //delegate = FrameworkLoader.getInstance().loadFrameworkComponent(
-                //        topology.getProjectId(), component.getFramework(), 
-                //        component.getMainClass(), typeClass);
-                
-                //ClassLoader loader = FrameworkUtils.getInstance()
-                //    .getFrameworkClassLoader(component.getFrameworkHash());
-                
-                //Thread.currentThread().setContextClassLoader(loader);
+                        component.getFrameworkHash(), component.getMainClass(), 
+                        typeClass, topology.getClassLoaderPolicy());
                 
                 injectModules();
                 
             } catch (Exception ex) {
-                ex.printStackTrace();
-                throw new FrameworkException("Unable to locate component class: "
+                LOG.error("Unable to load component class: Class = " + component.getMainClass(), ex);
+                
+                throw new FrameworkException("Unable to load component class: "
                     + component.getMainClass() + ", Exception = " + ex.getMessage());
             }
         }
@@ -74,7 +70,7 @@ public abstract class BaseWrapper<T> implements Serializable {
     private void injectModules() throws FrameworkException {
         // Create the new FrameworkModule to inject proxy and property information
         FrameworkModule frameworkModule = new FrameworkModule(
-                topology, component, isCluster, configuration);
+                topology, component, configuration, context);
 
         // Create the resource module which will inject resource properties
         ResourceModule resourceModule = new ResourceModule(
@@ -84,12 +80,13 @@ public abstract class BaseWrapper<T> implements Serializable {
         Injector injector = Guice.createInjector(
                 (Module) frameworkModule, (Module) resourceModule);
 
-        ArrayList<Module> resourceModules = new ArrayList<Module>();
+        ArrayList<Module> resourceModules = new ArrayList<>();
 
         for (TopologyResourceEntry resourceEntry : component.getResources()) {
             // Load the framework class instance from the framework
             Class resourceClass = FrameworkUtils.getInstance().loadFrameworkClass(
-                    resourceEntry.getFrameworkHash(), resourceEntry.getResourceClass());
+                    resourceEntry.getFrameworkHash(), resourceEntry.getResourceClass(),
+                    topology.getClassLoaderPolicy());
 
             // Create an instance of each resource module save it for injection
             resourceModules.add((Module) injector.getInstance(resourceClass));

@@ -201,12 +201,14 @@ public class TopologyService {
         topologyDao.update(topology);
     }
 
-    public Topology submitTopology(String topologyId, String userId, String clusterId) {
+    public Topology submitTopology(String topologyId, String userId, String clusterId,
+            String logLevel, String classLoaderPolicy) {
         
-        LOG.info("Submitting topology: Topology ID = " + topologyId + ", Cluster ID = " + clusterId);
+        LOG.info("Submitting topology: Topology ID = " + topologyId + ", Cluster ID = " + clusterId
+                 + ", Log Level = " + logLevel + ", Class Loader Policy = " + classLoaderPolicy);
         
         // Always attempt to kill the topology before submitting it in case it is already active
-        killTopology(topologyId, 0, userId);
+        killTopology(topologyId, 0, false, userId);
         
         // Clear out all previous project artifacts before building a new one
         clearTopology(topologyId, userId);
@@ -224,6 +226,8 @@ public class TopologyService {
                 topology.setSubmitted(new Date());
                 topology.setClusterId(cluster.getId());
                 topology.setClusterName(cluster.getDisplayName());
+                topology.setLogLevel(logLevel);
+                topology.setClassLoaderPolicy(classLoaderPolicy);
                 topology.setStatus("ACTIVE");
                 
                 topology = stormEngine.submitTopology(topology, cluster);
@@ -239,10 +243,10 @@ public class TopologyService {
         return topology;
     }
 
-    public void killTopology(String topologyId, int waitTimeSecs, String userId) {
+    public void killTopology(String topologyId, int waitTimeSecs, boolean async, String userId) {
         Topology topology = getTopology(topologyId, userId);
 
-        if (stormEngine.killTopology(topology, waitTimeSecs)) {
+        if (stormEngine.killTopology(topology, waitTimeSecs, async)) {
             // Update the topology entity status and update the killed date to now
             topology.setStatus("KILLED");
             topology.setKilled(new Date());
@@ -266,6 +270,8 @@ public class TopologyService {
         topology.setProjectId(null);
         topology.setClusterId(null);
         topology.setClusterName(null);
+        topology.setLogLevel(null);
+        topology.setClassLoaderPolicy(null);
         topology.setSubmitted(null);
         topology.setKilled(null);
 
@@ -572,6 +578,8 @@ public class TopologyService {
 
             // Write out the config file to the topology jar with the modified changes
             String configJsonPath = "STREAMFLOW-INF" + File.separator + "config.json";
+            
+            streamflowConfig.setSelectedCluster(cluster);
 
             if (!jarBuilder.addFile(configJsonPath, objectMapper.writeValueAsBytes(streamflowConfig))) {
                 LOG.error("Error while writing the config.json file to the topology jar");

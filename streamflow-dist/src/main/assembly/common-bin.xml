@@ -20,13 +20,23 @@
     <dependencySets>
         <dependencySet>
             <outputDirectory>/lib</outputDirectory>
+            <useProjectArtifact>false</useProjectArtifact>
             <useTransitiveDependencies>false</useTransitiveDependencies>
             <includes>
-                <include>streamflow:streamflow-server</include>
+                <include>streamflow:streamflow-app-jar</include>
+            </includes>
+        </dependencySet>
+        <dependencySet>
+            <outputDirectory>/deploy</outputDirectory>
+            <useProjectArtifact>false</useProjectArtifact>
+            <useTransitiveDependencies>false</useTransitiveDependencies>
+            <includes>
+                <include>streamflow:streamflow-app-war</include>
             </includes>
         </dependencySet>
         <dependencySet>
             <outputDirectory>/sample</outputDirectory>
+            <useProjectArtifact>false</useProjectArtifact>
             <useTransitiveDependencies>false</useTransitiveDependencies>
             <includes>
                 <include>streamflow:core-framework</include>
@@ -72,6 +82,11 @@
                 <include>streamflow</include>
             </includes>
             <filtered>true</filtered>
+        </fileSet>
+        <fileSet>
+            <directory>src/main/resources/deploy/docker</directory>
+            <outputDirectory>/deploy/docker</outputDirectory>
+            <filtered>false</filtered>
         </fileSet>
     </fileSets>
     <files>

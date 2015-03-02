@@ -9,26 +9,26 @@ server:
 #    port: 80
 
 # Authentication Configuration
-auth:
-    enabled: false
-    realmClass: streamflow.server.security.DatastoreRealm
-    moduleClass: streamflow.server.security.DatastoreRealmModule
+#auth:
+#    enabled: false
+#    realmClass: streamflow.server.security.DatastoreRealm
+#    moduleClass: streamflow.server.security.DatastoreRealmModule
 
 # Logging Configuration
-logger:
-    level: INFO
-    baseDir: /var/log/storm
-    formatPattern: "%d{ISO8601,GMT} %p %X{topology} %X{component} %c - %m%n"
+#logger:
+#    level: INFO
+#    baseDir: /var/log/storm
+#    formatPattern: "%d{ISO8601,GMT} %p %X{topology} %X{component} %c - %m%n"
     
 # Datastore configuration
-datastore:
-    moduleClass: streamflow.datastore.jdbc.config.JDBCDatastoreModule
+#datastore:
+#    moduleClass: streamflow.datastore.jdbc.config.JDBCDatastoreModule
     
 # Cluster Configuration
-clusters:
-    - id: storm-cluster
-      displayName: Storm Cluster
-      nimbusHost: cluster.host 
-      nimbusPort: 6627 
-      logServerHost: localhost
-      logServerPort: 9200
+#clusters:
+#    - id: storm-cluster
+#      displayName: Storm Cluster
+#      nimbusHost: cluster.host 
+#      nimbusPort: 6627 
+#      logServerHost: localhost
+#      logServerPort: 9200

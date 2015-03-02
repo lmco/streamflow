@@ -44,6 +44,9 @@ public class SecurityModule extends ShiroWebModule {
         // Basic auth - change auth scheme to hide native browser basic auth dialog box
         bindConstant().annotatedWith(Names.named("shiro.authcScheme")).to("Streamflow");
         
+        // 12 hour session timeout in milliseconds
+        bindConstant().annotatedWith(Names.named("shiro.globalSessionTimeout")).to(43200000L);
+        
         // Attempt to load the custom realm class/module and use defaults if necessary
         Class<AuthorizingRealm> realmClass = loadRealmClass(authConfig);
         AbstractModule realmModule = loadRealmModule(authConfig);

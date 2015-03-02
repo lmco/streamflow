@@ -21,7 +21,8 @@
             <h2 class="topology-view-name pull-left">
                 <i class="fa fa-sitemap fa-rotate-270"></i> {{ topology.name}}
             </h2>
-            <span class="streamflow-badge topology-status-header topology-status-{{ topology.status | lowercase }}">
+            <span class="streamflow-badge topology-status-header 
+                    topology-status-{{ topology.status | lowercase }}">
                 {{ topology.status}}
             </span>
             <!--<p class="topology-view-description">{{ topology.description }}</p>-->
@@ -124,7 +125,8 @@
             
             <div class="topology-palette-content">
                 <accordion id="accordion" close-others="false">
-                    <accordion-group ng-repeat="(category, components) in componentsProcessed" is-open="status.open">
+                    <accordion-group ng-repeat="(category, components) in componentsProcessed" 
+                                     is-open="status.open">
                         <accordion-heading>
                             <div class="component-group">
                                 <i class="pull-right fa" ng-class="{'fa-chevron-down': status.open, 'fa-chevron-right': !status.open}"></i>

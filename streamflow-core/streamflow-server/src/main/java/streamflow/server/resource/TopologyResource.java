@@ -125,17 +125,20 @@ public class TopologyResource {
     @Path("/{topologyId}/submit")
     @Produces(MediaType.APPLICATION_JSON)
     public Topology submitTopology(@PathParam("topologyId") String topologyId,
-            @QueryParam("clusterId") String clusterId) {
+            @QueryParam("clusterId") String clusterId,
+            @QueryParam("logLevel") @DefaultValue("INFO") String logLevel,
+            @QueryParam("classLoaderPolicy") @DefaultValue("FRAMEWORK_FIRST") String classLoaderPolicy) {
         String userId = (String) SecurityUtils.getSubject().getPrincipal();
-        return topologyService.submitTopology(topologyId, userId, clusterId);
+        return topologyService.submitTopology(topologyId, userId, clusterId, logLevel, classLoaderPolicy);
     }
 
     @GET
     @Path("/{topologyId}/kill")
     public Response killTopology(@PathParam("topologyId") String topologyId,
-            @QueryParam("waitTimeSecs") @DefaultValue("0") int waitTimeSecs) {
+            @QueryParam("waitTimeSecs") @DefaultValue("0") int waitTimeSecs,
+            @QueryParam("async") @DefaultValue("false") boolean async) {
         String userId = (String) SecurityUtils.getSubject().getPrincipal();
-        topologyService.killTopology(topologyId, waitTimeSecs, userId);
+        topologyService.killTopology(topologyId, waitTimeSecs, async, userId);
 
         return Response.ok().build();
     }

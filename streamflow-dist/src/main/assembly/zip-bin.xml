@@ -21,9 +21,6 @@
     <formats>
         <format>zip</format>
     </formats>
-
-    <includeBaseDirectory>true</includeBaseDirectory>
-
     <componentDescriptors>
         <componentDescriptor>src/main/assembly/common-bin.xml</componentDescriptor>
     </componentDescriptors>

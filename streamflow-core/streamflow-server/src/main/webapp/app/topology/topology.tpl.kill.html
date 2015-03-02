@@ -20,15 +20,31 @@
 </div>
 
 <div class="modal-body">
-    Are you sure you want to kill the topology: 
-    <span style="font-weight: bold; font-style: italic;">
-        {{ topology.name }}
-    </span>
+    
+    <div ng-show="!isStarted()">
+        <form name="form" class="form-horizontal">
+            <div class="form-group">
+                <label class="col-sm-4 control-label" for="waitTimeSecs">Wait Time (seconds)</label>
+                <div class="col-sm-8">
+                    <input id="waitTimeSecs" type="number" class="form-control" ng-model="waitTimeSecs"/>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div ng-show="isActive()">
+        <h4>Killing the topology...</h4>
+        <progressbar value="100" class="progress-striped active"></progressbar>
+    </div>
+    <div ng-show="isFinished()">
+        <h4>{{ message }}</h4>
+    </div>
 </div>
 
 <div class="modal-footer">
-    <button class="btn btn-default" ng-click="$dismiss()">
+    <button class="btn btn-warning" ng-show="isActive()" ng-click="cancel()">
         <i class="fa fa-ban"></i> Cancel</button>
-    <button class="btn btn-primary" ng-click="$close()" ng-disabled="form.$invalid">
+    <button class="btn btn-default" ng-show="!isStarted() || isFinished()" ng-click="close()">
+        <i class="fa fa-times"></i> Close</button>
+    <button class="btn btn-primary" ng-show="!isStarted()" ng-click="kill()" ng-disabled="!isValid()">
         <i class="fa fa-pause"></i> Kill</button>
 </div>

@@ -84,13 +84,15 @@ public class FrameworkKryoFactory implements IKryoFactory {
                 try {
                     // Retrieve the required serialization class from the Kryo Realm
                     Class typeClass = FrameworkUtils.getInstance().loadFrameworkClass(
-                            serialization.getFrameworkHash(), serialization.getTypeClass());
+                            serialization.getFrameworkHash(), serialization.getTypeClass(),
+                            topology.getClassLoaderPolicy());
 
                     // Retrieve the optional serializer class
                     Class<Serializer> serializerClass = null;
                     if (serialization.getSerializerClass() != null) {
                         serializerClass = FrameworkUtils.getInstance().loadFrameworkClass(
-                                serialization.getFrameworkHash(), serialization.getSerializerClass());
+                                serialization.getFrameworkHash(), serialization.getSerializerClass(),
+                                topology.getClassLoaderPolicy());
                     }
 
                     if (serializerClass == null) {

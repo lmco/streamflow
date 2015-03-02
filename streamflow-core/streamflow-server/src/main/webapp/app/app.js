@@ -29,7 +29,8 @@ var app = angular.module('streamflow', [
     'streamflow.fileupload',
     'streamflow.notify',
     'streamflow.resize',
-    'streamflow.same'
+    'streamflow.same',
+    'streamflow.moment'
 ]);
 
 // Route configuration for the various views

@@ -30,7 +30,7 @@
 
 <div class="topology-log-filters clearfix">
     <form class="form-inline well well-sm form-search" role="form">
-        <div class="form-group">
+        <div class="form-group" style="padding-right: 10px;">
             <label for="pageSize">Show: </label>
             <select id="pageSize" class="form-control" ng-model="criteria.pageSize">
                 <option>10</option>
@@ -39,16 +39,23 @@
                 <option>100</option>
             </select>
         </div>
-        &nbsp;&nbsp;
-        <div class="form-group">
+        <div class="form-group" style="padding-right: 10px;">
             <label for="sortOrder">Sort By: </label>
             <select id="sortOrder" class="form-control" ng-model="criteria.sortOrder">
                 <option value="DESC">Newest First</option>
                 <option value="ASC">Oldest First</option>
             </select>
         </div>
-        &nbsp;&nbsp;
-        <div class="form-group">
+        <div class="form-group" style="padding-right: 10px;">
+            <div class="checkbox">
+                <label>
+                    <input id="showHistoric" ng-model="criteria.showHistoric" type="checkbox" 
+                        class="form-control"/> Show Historic
+                </label>
+            </div>
+        </div>
+        
+        <div class="form-group" style="padding-right: 10px;">
             <label for="query">Query:</label>
             <input id="query" ng-model="criteria.query" type="text" 
                    class="form-control search-query"/>
@@ -81,12 +88,12 @@
     </div>
 
     <div class="topology-log-data row-fluid clearfix">
-        <table class="table table-striped table-hover">
+        <table class="table table-striped table-hover table-condensed">
             <tbody>
                 <tr ng-repeat="logEntry in logPage.results">
                     <td>{{ logEntry.timestamp }}</td>
                     <td>{{ logEntry.level }}</td>
-                    <td>{{ logEntry.category }}</td>
+                    <td>{{ logEntry.task }}</td>
                     <td>{{ logEntry.text }}</td>
                 </tr>
             </tbody>

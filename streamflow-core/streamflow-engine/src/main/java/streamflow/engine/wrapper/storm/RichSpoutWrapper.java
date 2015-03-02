@@ -41,6 +41,8 @@ public class RichSpoutWrapper extends BaseWrapper<IRichSpout> implements IRichSp
 
     @Override
     public void open(Map conf, TopologyContext context, SpoutOutputCollector collector) {
+        this.context = context;
+        
         try {
             // Register the metrics hook for this bolt to track statistics
             context.addTaskHook(new SpoutMetricsHook());
@@ -48,6 +50,8 @@ public class RichSpoutWrapper extends BaseWrapper<IRichSpout> implements IRichSp
             getDelegate().open(conf, context, collector);
         } catch (FrameworkException ex) {
             LOG.error("open() not delegated due to a Framework exception: ", ex);
+            
+            throw new RuntimeException(ex);
         } catch (Exception ex) {
             LOG.error("open() threw an uncaught exception: ", ex);
         }

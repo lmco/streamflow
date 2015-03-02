@@ -30,11 +30,12 @@
     <packaging>pom</packaging>
 
     <modules>
-        <module>streamflow-util</module>
         <module>streamflow-model</module>
+        <module>streamflow-util</module>
         <module>streamflow-datastore</module>
         <module>streamflow-engine</module>
         <module>streamflow-service</module>
         <module>streamflow-server</module>
+        <module>streamflow-app</module>
     </modules>
 </project>

@@ -42,6 +42,8 @@ public class RichBoltWrapper extends BaseWrapper<IRichBolt> implements IRichBolt
 
     @Override
     public void prepare(Map conf, TopologyContext context, OutputCollector collector) {
+        this.context = context;
+        
         try {
             // Register the metrics hook for this bolt to track statistics
             context.addTaskHook(new BoltMetricsHook());
@@ -49,6 +51,10 @@ public class RichBoltWrapper extends BaseWrapper<IRichBolt> implements IRichBolt
             getDelegate().prepare(conf, context, collector);
         } catch (FrameworkException ex) {
             LOG.error("prepare() not delegated due to a Framework exception: ", ex);
+            
+            throw new RuntimeException(ex);
+        } catch (Exception ex) {
+            LOG.error("prepare() threw an uncaught exception: ", ex);
         }
     }
 

@@ -42,6 +42,8 @@ public class BasicBoltWrapper extends BaseWrapper<IBasicBolt> implements IBasicB
     
     @Override
     public void prepare(Map conf, TopologyContext context) {
+        this.context = context;
+        
         try {
             // Register the metrics hook for this bolt to track statistics
             context.addTaskHook(new BoltMetricsHook());
@@ -49,6 +51,8 @@ public class BasicBoltWrapper extends BaseWrapper<IBasicBolt> implements IBasicB
             getDelegate().prepare(conf, context);
         } catch (FrameworkException ex) {
             LOG.error("prepare() not delegated due to a Framework exception: ", ex);
+            
+            throw new RuntimeException(ex);
         } catch (Exception ex) {
             LOG.error("prepare() threw an uncaught exception: ", ex);
         }

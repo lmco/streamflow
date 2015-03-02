@@ -63,6 +63,10 @@ public class Topology implements streamflow.model.util.Entity<String>, Serializa
     private String clusterId;
 
     private String clusterName;
+    
+    private String logLevel;
+    
+    private String classLoaderPolicy;
 
     private Date submitted;
 
@@ -199,6 +203,22 @@ public class Topology implements streamflow.model.util.Entity<String>, Serializa
         this.clusterName = clusterName;
     }
 
+    public String getLogLevel() {
+        return logLevel;
+    }
+
+    public void setLogLevel(String logLevel) {
+        this.logLevel = logLevel;
+    }
+
+    public String getClassLoaderPolicy() {
+        return classLoaderPolicy;
+    }
+
+    public void setClassLoaderPolicy(String classLoaderPolicy) {
+        this.classLoaderPolicy = classLoaderPolicy;
+    }
+
     public Date getSubmitted() {
         return submitted;
     }
@@ -232,6 +252,8 @@ public class Topology implements streamflow.model.util.Entity<String>, Serializa
         hash = 41 * hash + (this.projectId != null ? this.projectId.hashCode() : 0);
         hash = 41 * hash + (this.clusterId != null ? this.clusterId.hashCode() : 0);
         hash = 41 * hash + (this.clusterName != null ? this.clusterName.hashCode() : 0);
+        hash = 41 * hash + (this.logLevel != null ? this.logLevel.hashCode() : 0);
+        hash = 41 * hash + (this.classLoaderPolicy != null ? this.classLoaderPolicy.hashCode() : 0);
         hash = 41 * hash + (this.submitted != null ? this.submitted.hashCode() : 0);
         hash = 41 * hash + (this.killed != null ? this.killed.hashCode() : 0);
         return hash;
@@ -301,6 +323,14 @@ public class Topology implements streamflow.model.util.Entity<String>, Serializa
                 : !this.clusterName.equals(other.clusterName)) {
             return false;
         }
+        if ((this.logLevel == null) ? (other.logLevel != null) 
+                : !this.logLevel.equals(other.logLevel)) {
+            return false;
+        }
+        if ((this.classLoaderPolicy == null) ? (other.classLoaderPolicy != null) 
+                : !this.classLoaderPolicy.equals(other.classLoaderPolicy)) {
+            return false;
+        }
         if (this.submitted != other.submitted && (this.submitted == null 
                 || !this.submitted.equals(other.submitted))) {
             return false;
@@ -320,6 +350,7 @@ public class Topology implements streamflow.model.util.Entity<String>, Serializa
                 + ", currentConfig=" + currentConfig + ", deployedConfig=" + deployedConfig 
                 + ", status=" + status + ", projectId=" + projectId 
                 + ", clusterId=" + clusterId + ", clusterName=" + clusterName 
+                + ", logLevel=" + logLevel + ", classLoaderPolicy=" + classLoaderPolicy 
                 + ", submitted=" + submitted + ", killed=" + killed + '}';
     }
 }
