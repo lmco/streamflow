@@ -143,7 +143,8 @@ public class FrameworkUtils {
         // Check if the framework jar has already been added
         if (!frameworkJar.exists()) {
             // URL to the framework jar embedded within the topology jar
-            URL embeddedFrameworkUrl = Thread.currentThread().getContextClassLoader()
+            //URL embeddedFrameworkUrl = Thread.currentThread().getContextClassLoader()
+            URL embeddedFrameworkUrl = this.getClass().getClassLoader()
                     .getResource("STREAMFLOW-INF/lib/" + frameworkHash + ".jar");
 
             try {

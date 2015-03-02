@@ -80,7 +80,7 @@ public abstract class BaseWrapper<T> implements Serializable {
         Injector injector = Guice.createInjector(
                 (Module) frameworkModule, (Module) resourceModule);
 
-        ArrayList<Module> resourceModules = new ArrayList<Module>();
+        ArrayList<Module> resourceModules = new ArrayList<>();
 
         for (TopologyResourceEntry resourceEntry : component.getResources()) {
             // Load the framework class instance from the framework

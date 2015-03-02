@@ -34,6 +34,8 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
 public class FrameworkModule extends AbstractModule {
+    
+    private final org.slf4j.Logger LOG = LoggerFactory.getLogger(FrameworkModule.class);
 
     private final Topology topology;
     
@@ -68,12 +70,14 @@ public class FrameworkModule extends AbstractModule {
             bindConstant().annotatedWith(Names.named("http.proxy.port")).to(
                     streamflowConfig.getProxy().getPort());
         }
+        
+        LOG.info("Topology Configuration: " + topology);
 
         // Bind streamflow specific properties in case underlying bolts/resources require them
         bindConstant().annotatedWith(
                 Names.named("streamflow.topology.id")).to(topology.getId());
-        bindConstant().annotatedWith(
-                Names.named("streamflow.topology.name")).to(topology.getName());
+        //bindConstant().annotatedWith(
+        //        Names.named("streamflow.topology.name")).to(topology.getName());
         bindConstant().annotatedWith(
                 Names.named("streamflow.component.key")).to(component.getKey());
         bindConstant().annotatedWith(
@@ -82,12 +86,12 @@ public class FrameworkModule extends AbstractModule {
                 Names.named("streamflow.component.name")).to(component.getName());
         bindConstant().annotatedWith(
                 Names.named("streamflow.component.framework")).to(component.getFramework());
-        bindConstant().annotatedWith(
-                Names.named("streamflow.user.id")).to(topology.getUserId());
-        bindConstant().annotatedWith(
-                Names.named("streamflow.cluster.id")).to(topology.getClusterId());
-        bindConstant().annotatedWith(
-                Names.named("streamflow.cluster.name")).to(topology.getClusterName());
+        //bindConstant().annotatedWith(
+        //        Names.named("streamflow.user.id")).to(topology.getUserId());
+        //bindConstant().annotatedWith(
+        //        Names.named("streamflow.cluster.id")).to(topology.getClusterId());
+        //bindConstant().annotatedWith(
+        //        Names.named("streamflow.cluster.name")).to(topology.getClusterName());
     }
     
     @Provides

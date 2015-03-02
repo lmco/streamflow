@@ -152,7 +152,7 @@ public class LogService {
                     logPage, criteria, searchResponse.returnContent().asString());
             
         } catch (IOException ex) {
-            LOG.error("Unable to parse log search response: ", ex);
+            //LOG.error("Unable to parse log search response: ", ex);
             
             throw new ServiceException("Unable to parse log search response: " + ex.getMessage());
         }

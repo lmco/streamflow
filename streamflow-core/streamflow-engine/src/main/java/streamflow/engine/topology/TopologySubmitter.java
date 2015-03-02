@@ -19,10 +19,19 @@ import backtype.storm.Config;
 import backtype.storm.LocalCluster;
 import backtype.storm.StormSubmitter;
 import backtype.storm.generated.AlreadyAliveException;
+import backtype.storm.generated.ClusterSummary;
 import backtype.storm.generated.InvalidTopologyException;
 import backtype.storm.generated.StormTopology;
+import backtype.storm.generated.SubmitOptions;
+import backtype.storm.generated.TopologySummary;
+import backtype.storm.utils.NimbusClient;
+import backtype.storm.utils.Utils;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import org.apache.thrift7.TException;
+import org.json.simple.JSONValue;
 import streamflow.engine.framework.FrameworkException;
 import streamflow.model.Cluster;
 import streamflow.model.Topology;
@@ -74,8 +83,8 @@ public class TopologySubmitter extends Thread {
                     + ", Cluster ID = " + targetCluster.getId());
 
             if (isClusterMode(targetCluster)) {
-                String topologyJarPath = StreamflowEnvironment.getTopologiesDir() + File.separator
-                        + topology.getProjectId() + ".jar";
+                String topologyJarPath = StreamflowEnvironment.getTopologiesDir() 
+                        + File.separator + topology.getProjectId() + ".jar";
                 
                 // Set the required config properties which specify the cluster endpoints
                 stormConfig.put(Config.NIMBUS_HOST, targetCluster.getNimbusHost());
@@ -84,8 +93,11 @@ public class TopologySubmitter extends Thread {
                 // StormSubmitter requires that the path to the jar be set as a system property
                 System.setProperty("storm.jar", topologyJarPath);
                 
-                // Submit the topology to the remote cluster using the topology.id for the ID
-                StormSubmitter.submitTopology(topology.getId(), stormConfig, stormTopology);
+                // Note: This should work but current version does not allow for reuse.  Replace
+                //       with native StormSubmitter
+                //StormSubmitter.submitTopology(topology.getId(), stormConfig, stormTopology);
+                
+                submitTopology(topology.getId(), stormConfig, stormTopology, topologyJarPath);
             } else { 
                 localCluster.submitTopology(topology.getId(), stormConfig, stormTopology);
             }
@@ -97,6 +109,65 @@ public class TopologySubmitter extends Thread {
             LOG.error("The topology was unable to load a dependent framework: {}", ex);
         } catch (Exception ex) {
             LOG.error("The topology threw an uncaught exception: {}", ex);
+        }
+    }
+    
+    private void submitTopology(String name, Map stormConf, StormTopology stormTopology, String topologyJarPath) 
+            throws AlreadyAliveException, InvalidTopologyException {
+        
+        if(!Utils.isValidConf(stormConf)) {
+            throw new IllegalArgumentException("Storm conf is not valid. Must be json-serializable");
+        }
+        stormConf = new HashMap(stormConf);
+        stormConf.putAll(Utils.readCommandLineOpts());
+        Map conf = Utils.readStormConfig();
+        conf.putAll(stormConf);
+        
+        try {
+            String serConf = JSONValue.toJSONString(stormConf);
+            
+            NimbusClient client = NimbusClient.getConfiguredClient(conf);
+            if(topologyNameExists(conf, name)) {
+                throw new RuntimeException("Topology with name '" + name + "' already exists on cluster");
+            }
+            
+            String uploadedJarLocation = StormSubmitter.submitJar(conf, topologyJarPath);
+            
+            try {
+                LOG.info("Submitting topology " + name + " in distributed mode with conf " + serConf);
+                
+                client.getClient().submitTopology(name, uploadedJarLocation, serConf, stormTopology);
+            } catch(InvalidTopologyException e) {
+                LOG.warn("Topology submission exception: "+ e.get_msg());
+                throw e;
+            } catch(AlreadyAliveException e) {
+                LOG.warn("Topology already alive exception", e);
+                throw e;
+            } finally {
+                client.close();
+            }
+            
+            LOG.info("Finished submitting topology: " +  name);
+        } catch(TException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    
+    private boolean topologyNameExists(Map conf, String name) {
+        NimbusClient client = NimbusClient.getConfiguredClient(conf);
+        try {
+            ClusterSummary summary = client.getClient().getClusterInfo();
+            for(TopologySummary topologySummary : summary.get_topologies()) {
+                if(topologySummary.get_name().equals(name)) {  
+                    return true;
+                } 
+            }  
+            return false;
+
+        } catch(Exception e) {
+            throw new RuntimeException(e);
+        } finally {
+            client.close();
         }
     }
     

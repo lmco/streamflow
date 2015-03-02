@@ -50,6 +50,8 @@ public class RichSpoutWrapper extends BaseWrapper<IRichSpout> implements IRichSp
             getDelegate().open(conf, context, collector);
         } catch (FrameworkException ex) {
             LOG.error("open() not delegated due to a Framework exception: ", ex);
+            
+            throw new RuntimeException(ex);
         } catch (Exception ex) {
             LOG.error("open() threw an uncaught exception: ", ex);
         }

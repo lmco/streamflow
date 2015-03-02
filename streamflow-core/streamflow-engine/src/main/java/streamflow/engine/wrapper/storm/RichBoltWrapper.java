@@ -51,6 +51,10 @@ public class RichBoltWrapper extends BaseWrapper<IRichBolt> implements IRichBolt
             getDelegate().prepare(conf, context, collector);
         } catch (FrameworkException ex) {
             LOG.error("prepare() not delegated due to a Framework exception: ", ex);
+            
+            throw new RuntimeException(ex);
+        } catch (Exception ex) {
+            LOG.error("prepare() threw an uncaught exception: ", ex);
         }
     }
 
