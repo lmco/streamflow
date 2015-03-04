@@ -40,6 +40,8 @@ public class ResourcePropertyOptions implements Serializable {
     private String dateFormat;
 
     private Integer minuteStep;
+    
+    private Integer numRows;
 
     @Embedded
     private ArrayList<String> listItems = new ArrayList<String>();
@@ -112,6 +114,14 @@ public class ResourcePropertyOptions implements Serializable {
         this.minuteStep = minuteStep;
     }
 
+    public Integer getNumRows() {
+        return numRows;
+    }
+
+    public void setNumRows(Integer numRows) {
+        this.numRows = numRows;
+    }
+
     @Override
     public int hashCode() {
         int hash = 5;
@@ -122,6 +132,7 @@ public class ResourcePropertyOptions implements Serializable {
         hash = 59 * hash + (this.displayUnits != null ? this.displayUnits.hashCode() : 0);
         hash = 59 * hash + (this.dateFormat != null ? this.dateFormat.hashCode() : 0);
         hash = 59 * hash + (this.minuteStep != null ? this.minuteStep.hashCode() : 0);
+        hash = 59 * hash + (this.numRows != null ? this.numRows.hashCode() : 0);
         hash = 59 * hash + (this.listItems != null ? this.listItems.hashCode() : 0);
         return hash;
     }
@@ -163,6 +174,10 @@ public class ResourcePropertyOptions implements Serializable {
                 || !this.minuteStep.equals(other.minuteStep))) {
             return false;
         }
+        if (this.numRows != other.numRows && (this.numRows == null 
+                || !this.numRows.equals(other.numRows))) {
+            return false;
+        }
         if (this.listItems != other.listItems && (this.listItems == null 
                 || !this.listItems.equals(other.listItems))) {
             return false;
@@ -176,6 +191,6 @@ public class ResourcePropertyOptions implements Serializable {
                 + ", maxNumber=" + maxNumber + ", minNumber=" + minNumber 
                 + ", floatStep=" + floatStep + ", displayUnits=" + displayUnits 
                 + ", dateFormat=" + dateFormat + ", minuteStep=" + minuteStep 
-                + ", listItems=" + listItems + '}';
+                + ", numRows=" + numRows + ", listItems=" + listItems + '}';
     }
 }
