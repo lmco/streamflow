@@ -18,7 +18,7 @@ server:
 #logger:
 #    level: INFO
 #    baseDir: /var/log/storm
-#    formatPattern: "%d{ISO8601,GMT} %p %X{topology} %X{component} %c - %m%n"
+#    formatPattern: "%d{yyyy-MM-dd'T'HH:mm:ss.sss'Z',GMT} %p %X{topology} %X{project} %X{task} %X{component} %c - %m%n"
     
 # Datastore configuration
 #datastore:
