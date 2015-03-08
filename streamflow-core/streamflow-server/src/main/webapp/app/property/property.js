@@ -157,8 +157,13 @@ propertyModule.directive('streamflowProperty',
                     }
                     case 'textarea':
                     case 'text-area': {
-                        propertyInput = $('<textarea rows="5"></textarea>')
+                        var numRows = 5;
+                        if (propertyOptions.numRows) {
+                            numRows = propertyOptions.numRows;
+                        }
+                        propertyInput = $('<textarea></textarea>')
                                 .attr('ng-model', 'propertyObject')
+                                .attr('rows', numRows)
                                 .attr('name', propertyName)
                                 .addClass('form-control');
                         break;

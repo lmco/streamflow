@@ -91,7 +91,7 @@
         <table class="table table-striped table-hover table-condensed">
             <tbody>
                 <tr ng-repeat="logEntry in logPage.results">
-                    <td>{{ logEntry.timestamp }}</td>
+                    <td>{{ logEntry.timestamp | date:'medium' }}</td>
                     <td>{{ logEntry.level }}</td>
                     <td>{{ logEntry.task }}</td>
                     <td>{{ logEntry.text }}</td>

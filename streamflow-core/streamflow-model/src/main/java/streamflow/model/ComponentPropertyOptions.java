@@ -40,6 +40,8 @@ public class ComponentPropertyOptions implements Serializable {
     private String dateFormat;
 
     private Integer minuteStep;
+    
+    private Integer numRows;
 
     private String resourceFramework;
 
@@ -115,6 +117,14 @@ public class ComponentPropertyOptions implements Serializable {
         this.minuteStep = minuteStep;
     }
 
+    public Integer getNumRows() {
+        return numRows;
+    }
+
+    public void setNumRows(Integer numRows) {
+        this.numRows = numRows;
+    }
+
     public String getResourceFramework() {
         return resourceFramework;
     }
@@ -141,6 +151,7 @@ public class ComponentPropertyOptions implements Serializable {
         hash = 41 * hash + (this.displayUnits != null ? this.displayUnits.hashCode() : 0);
         hash = 41 * hash + (this.dateFormat != null ? this.dateFormat.hashCode() : 0);
         hash = 41 * hash + (this.minuteStep != null ? this.minuteStep.hashCode() : 0);
+        hash = 41 * hash + (this.numRows != null ? this.numRows.hashCode() : 0);
         hash = 41 * hash + (this.resourceFramework != null ? this.resourceFramework.hashCode() : 0);
         hash = 41 * hash + (this.resourceName != null ? this.resourceName.hashCode() : 0);
         hash = 41 * hash + (this.listItems != null ? this.listItems.hashCode() : 0);
@@ -184,6 +195,10 @@ public class ComponentPropertyOptions implements Serializable {
                 || !this.minuteStep.equals(other.minuteStep))) {
             return false;
         }
+        if (this.numRows != other.numRows && (this.numRows == null 
+                || !this.numRows.equals(other.numRows))) {
+            return false;
+        }
         if ((this.resourceFramework == null) ? (other.resourceFramework != null) 
                 : !this.resourceFramework.equals(other.resourceFramework)) {
             return false;
@@ -205,7 +220,7 @@ public class ComponentPropertyOptions implements Serializable {
                 + ", maxNumber=" + maxNumber + ", minNumber=" + minNumber 
                 + ", floatStep=" + floatStep + ", displayUnits=" + displayUnits 
                 + ", dateFormat=" + dateFormat + ", minuteStep=" + minuteStep 
-                + ", resourceFramework=" + resourceFramework 
+                 + ", numRows=" + numRows + ", resourceFramework=" + resourceFramework 
                 + ", resourceName=" + resourceName + ", listItems=" + listItems + '}';
     }
 }
