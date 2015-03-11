@@ -70,8 +70,6 @@ public class FrameworkModule extends AbstractModule {
             bindConstant().annotatedWith(Names.named("http.proxy.port")).to(
                     streamflowConfig.getProxy().getPort());
         }
-        
-        LOG.info("Topology Configuration: " + topology);
 
         // Bind streamflow specific properties in case underlying bolts/resources require them
         bindConstant().annotatedWith(

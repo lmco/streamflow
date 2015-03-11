@@ -36,31 +36,21 @@
 <div class="topology-content clearfix" streamflow-resize>
     <!-- Topology Canvas -->
     <div class="well span12 topology-metrics topology-panel">
-        <div class="row-fluid" style="margin-left: 0px;">
-            <span class="span2" ng-show="metrics.length > 0"><b > Number of Metrics:&nbsp;&nbsp;{{ (metrics | filter:{component: component} | filter:{className: className} | filter:{metricName: metricName}).length}}</b></span>
-            <span class="span10" ng-show="metrics.length > 0"> <b>Component:&nbsp;</b>
-                <select  ng-model="component" ng-options="cID as c.name for (cID, c) in components">
-                    <option value="">-- All Components --</option>
-                </select>&nbsp;&nbsp;
-                <b>Class:&nbsp;</b>
-                <select  ng-model="className" ng-options="cID as c.name for (cID, c) in classNames">
-                    <option value="">-- All Classes --</option>
-                </select>&nbsp;&nbsp;
-                <b>Metric:&nbsp;</b>
-                <select  ng-model="metricName" ng-options="cID as c.name for (cID, c) in metricNames">
-                    <option value="">-- All Metrics --</option>
-                </select>
-            </span>
-            <b ng-show="metricsMsg != null" class="span12">{{ metricsMsg}}</b>
-            <div ng-repeat="metric in metrics| filter:{component: component} | filter:{className: className} | filter:{metricName: metricName}" class="thumbnail span4" style="display: table; padding: 5px; background-color: #FFFFFF; margin: 5px;">
-                <img ng-src="{{metric.graphUrl}}" style="display: block" />
-                <div class="caption">
-                    <h4>{{ metric.metricName}}</h4>
-                    <span style="display: block"><b>Value:</b> {{ metric.value}}</span>
-                    <span style="display: block"><b>Class:</b> {{ metric.className}}</span>
-                    <span style="display: block"><b>Component:</b> {{ metric.component}} <b>Task:</b> {{ metric.task}}</span>
-                </div>
-            </div>
+        <div class="topology-legacy text-center clearfix" 
+                ng-if="topology && !topologyLoaded && !topology.legacy">
+            <h4 class="topology-legacy-message">
+                <i class="fa fa-spinner fa-spin fa-lg"></i> Loading Topology...
+            </h4>
+        </div>
+        <div class="topology-legacy text-center clearfix" 
+                ng-if="topology && topologyLoaded && topologyFailed && !topology.legacy">
+            <h4 class="topology-legacy-message">
+                <i class="fa fa-warning-sign"></i> Unable to load the topology.
+            </h4>
+        </div>
+        <div streamflow-canvas topology-config="topologyConfig" topology-disabled="true" 
+                ng-if="topology && topologyLoaded && !topologyFailed && !topology.legacy"
+                topology-state="topologyState" topology-type="topology.type" class="topology-canvas">
         </div>
     </div>
 </div>
