@@ -51,10 +51,7 @@ public class BasicBoltWrapper extends BaseWrapper<IBasicBolt> implements IBasicB
             getDelegate().prepare(conf, context);
         } catch (FrameworkException ex) {
             LOG.error("prepare() not delegated due to a Framework exception: ", ex);
-            
             throw new RuntimeException(ex);
-        } catch (Exception ex) {
-            LOG.error("prepare() threw an uncaught exception: ", ex);
         }
     }
 
@@ -64,8 +61,6 @@ public class BasicBoltWrapper extends BaseWrapper<IBasicBolt> implements IBasicB
             getDelegate().execute(tuple, collector);
         } catch (FrameworkException ex) {
             LOG.error("execute() not delegated due to a Framework exception: ", ex);
-        } catch (Exception ex) {
-            LOG.error("execute() threw an uncaught exception: ", ex);
         }
     }
 
@@ -75,8 +70,6 @@ public class BasicBoltWrapper extends BaseWrapper<IBasicBolt> implements IBasicB
             getDelegate().cleanup();
         } catch (FrameworkException ex) {
             LOG.error("cleanup() not delegated due to a Framework exception: ", ex);
-        } catch (Exception ex) {
-            LOG.error("cleanup() threw an uncaught exception: ", ex);
         }
     }
 
@@ -86,8 +79,6 @@ public class BasicBoltWrapper extends BaseWrapper<IBasicBolt> implements IBasicB
             getDelegate().declareOutputFields(declarer);
         } catch (FrameworkException ex) {
             LOG.error("declareOutputFields() not delegated due to a Framework exception: ", ex);
-        } catch (Exception ex) {
-            LOG.error("declareOutputFields() threw an uncaught exception: ", ex);
         }
     }
 
@@ -97,9 +88,6 @@ public class BasicBoltWrapper extends BaseWrapper<IBasicBolt> implements IBasicB
             return getDelegate().getComponentConfiguration();
         } catch (FrameworkException ex) {
             LOG.error("getComponentConfiguration() not delegated due to a Framework exception: ", ex);
-            return new HashMap();
-        } catch (Exception ex) {
-            LOG.error("getComponentConfiguration() threw an uncaught exception: ", ex);
             return new HashMap();
         }
     }
