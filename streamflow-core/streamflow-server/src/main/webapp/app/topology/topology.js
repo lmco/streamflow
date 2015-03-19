@@ -89,10 +89,9 @@ topologyModule.factory('Topology', ['$resource', function($resource) {
             method: 'POST', 
             url: 'api/topologies/:id/log'
         },
-        metrics: {
+        info: {
             method: 'GET', 
-            isArray: true, 
-            url: 'api/topologies/:id/metrics'
+            url: 'api/topologies/:id/info'
         },
         updateCurrentConfig: {
             method: 'PUT', 
@@ -1111,6 +1110,7 @@ topologyModule.controller('TopologyMetricsController', [
         );
 
         $scope.topologyConfig = Topology.getDeployedConfig({id: $routeParams.id});
+        $scope.topologyInfo = Topology.info({id: $routeParams.id});
     }
 ]);
 
