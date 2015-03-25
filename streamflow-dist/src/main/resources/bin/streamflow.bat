@@ -3,13 +3,12 @@
 SETLOCAL
 
 rem Change this value to modify any JAVA_OPTS provided to the Streamflow server
-set STREAMFLOW_OPTS="-Xms512m -Xmx1g"
+set STREAMFLOW_OPTS=-Xms512m -Xmx1g
 
 if NOT DEFINED JAVA_HOME goto err
 
 set SCRIPT_DIR=%~dp0
-for %%I in ("%SCRIPT_DIR%..") 
-    do set STREAMFLOW_HOME=%%~dpfI
+for %%I in ("%SCRIPT_DIR%..") do set STREAMFLOW_HOME=%%~dpfI
 
 TITLE Streamflow Server ${project.version}
 
