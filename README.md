@@ -1,5 +1,7 @@
 # StreamFlow&trade;
 
+[![Join the chat at https://gitter.im/lmco/streamflow](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/lmco/streamflow?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 ## Overview
 
 StreamFlow&trade; is a stream processing tool designed to help build and monitor processing 
