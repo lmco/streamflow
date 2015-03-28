@@ -37,6 +37,7 @@ ui:
 logstash:
   image: pblittle/docker-logstash
   ports:
+    - "9200:9200"
     - "9292:9292"
   volumes_from:
     - supervisor
