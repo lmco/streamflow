@@ -84,6 +84,12 @@
     </build>
 
     <dependencies>
+        
+        <dependency>
+            <groupId>streamflow</groupId>
+            <artifactId>framework-annotations</artifactId>
+            <version>${project.version}</version>
+        </dependency>
             
         <!-- Storm Core Library (Provided) -->
         <dependency>
@@ -137,11 +143,6 @@
             <groupId>org.twitter4j</groupId>
             <artifactId>twitter4j-stream</artifactId>
             <version>4.0.1</version>
-        </dependency>
-        <dependency>
-        	<groupId>streamflow</groupId>
-        	<artifactId>framework-annotations</artifactId>
-        	<version>0.9.1</version>
         </dependency>
     </dependencies>
 </project>
