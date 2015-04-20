@@ -22,7 +22,7 @@
     <parent>
         <groupId>streamflow</groupId>
         <artifactId>streamflow-core</artifactId>
-        <version>0.9.1</version>
+        <version>0.10.0</version>
     </parent>
 
     <artifactId>streamflow-engine</artifactId>
@@ -30,11 +30,6 @@
     <packaging>jar</packaging>
 
     <dependencies>
-        <dependency>
-            <groupId>org.apache.storm</groupId>
-            <artifactId>storm-core</artifactId>
-            <scope>provided</scope>
-        </dependency>
         <dependency>
             <groupId>streamflow</groupId>
             <artifactId>streamflow-model</artifactId>
@@ -44,6 +39,18 @@
             <groupId>streamflow</groupId>
             <artifactId>streamflow-util</artifactId>
             <version>${project.version}</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>org.apache.storm</groupId>
+            <artifactId>storm-core</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>13.0</version>
         </dependency>
         <dependency>
             <groupId>com.google.inject</groupId>
@@ -56,21 +63,6 @@
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-log4j12</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-            <scope>provided</scope>
         </dependency>
     </dependencies>
     

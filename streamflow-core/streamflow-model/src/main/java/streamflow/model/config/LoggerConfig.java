@@ -1,4 +1,4 @@
-/**
+ /**
  * Copyright 2014 Lockheed Martin Corporation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -27,13 +27,13 @@ public class LoggerConfig implements Serializable {
             + File.separator + ".streamflow" + File.separator + "logs";
 
     private String formatPattern = 
-            "%d{ISO8601,GMT} %p %X{topology} %X{component} %c - %m%n";
+            "%d{yyyy-MM-dd'T'HH:mm:ss.sss'Z',GMT} %p %X{topology} %X{project} %X{task} %X{component} %c - %m%n";
 
     public LoggerConfig() {
     }
 
     public String getLevel() {
-        return level;
+        return System.getProperty("logger.level", level);
     }
 
     public void setLevel(String level) {
@@ -41,7 +41,7 @@ public class LoggerConfig implements Serializable {
     }
 
     public String getBaseDir() {
-        return baseDir;
+        return System.getProperty("logger.baseDir", baseDir);
     }
 
     public void setBaseDir(String baseDir) {
@@ -49,7 +49,7 @@ public class LoggerConfig implements Serializable {
     }
 
     public String getFormatPattern() {
-        return formatPattern;
+        return System.getProperty("logger.formatPattern", formatPattern);
     }
 
     public void setFormatPattern(String formatPattern) {

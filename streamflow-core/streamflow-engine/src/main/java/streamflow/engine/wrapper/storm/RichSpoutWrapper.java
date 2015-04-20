@@ -41,6 +41,8 @@ public class RichSpoutWrapper extends BaseWrapper<IRichSpout> implements IRichSp
 
     @Override
     public void open(Map conf, TopologyContext context, SpoutOutputCollector collector) {
+        this.context = context;
+        
         try {
             // Register the metrics hook for this bolt to track statistics
             context.addTaskHook(new SpoutMetricsHook());
@@ -48,8 +50,7 @@ public class RichSpoutWrapper extends BaseWrapper<IRichSpout> implements IRichSp
             getDelegate().open(conf, context, collector);
         } catch (FrameworkException ex) {
             LOG.error("open() not delegated due to a Framework exception: ", ex);
-        } catch (Exception ex) {
-            LOG.error("open() threw an uncaught exception: ", ex);
+            throw new RuntimeException(ex);
         }
     }
 
@@ -59,8 +60,6 @@ public class RichSpoutWrapper extends BaseWrapper<IRichSpout> implements IRichSp
             getDelegate().close();
         } catch (FrameworkException ex) {
             LOG.error("close() not delegated due to a Framework exception: ", ex);
-        } catch (Exception ex) {
-            LOG.error("close() threw an uncaught exception: ", ex);
         }
     }
 
@@ -70,8 +69,6 @@ public class RichSpoutWrapper extends BaseWrapper<IRichSpout> implements IRichSp
             getDelegate().activate();
         } catch (FrameworkException ex) {
             LOG.error("activate() not delegated due to a Framework exception: ", ex);
-        } catch (Exception ex) {
-            LOG.error("activate() threw an uncaught exception: ", ex);
         }
     }
 
@@ -81,8 +78,6 @@ public class RichSpoutWrapper extends BaseWrapper<IRichSpout> implements IRichSp
             getDelegate().deactivate();
         } catch (FrameworkException ex) {
             LOG.error("deactivate() not delegated due to a Framework exception: ", ex);
-        } catch (Exception ex) {
-            LOG.error("deactivate() threw an uncaught exception: ", ex);
         }
     }
 
@@ -92,8 +87,6 @@ public class RichSpoutWrapper extends BaseWrapper<IRichSpout> implements IRichSp
             getDelegate().nextTuple();
         } catch (FrameworkException ex) {
             LOG.error("nextTuple() not delegated due to a Framework exception: ", ex);
-        } catch (Exception ex) {
-            LOG.error("nextTuple() threw an uncaught exception: ", ex);
         }
     }
 
@@ -103,8 +96,6 @@ public class RichSpoutWrapper extends BaseWrapper<IRichSpout> implements IRichSp
             getDelegate().ack(msgId);
         } catch (FrameworkException ex) {
             LOG.error("ack() not delegated due to a Framework exception: ", ex);
-        } catch (Exception ex) {
-            LOG.error("ack() threw an uncaught exception: ", ex);
         }
     }
 
@@ -114,8 +105,6 @@ public class RichSpoutWrapper extends BaseWrapper<IRichSpout> implements IRichSp
             getDelegate().fail(msgId);
         } catch (FrameworkException ex) {
             LOG.error("fail() not delegated due to a Framework exception: ", ex);
-        } catch (Exception ex) {
-            LOG.error("fail() threw an uncaught exception: ", ex);
         }
     }
 
@@ -125,8 +114,6 @@ public class RichSpoutWrapper extends BaseWrapper<IRichSpout> implements IRichSp
             getDelegate().declareOutputFields(declarer);
         } catch (FrameworkException ex) {
             LOG.error("declareOutputFields() not delegated due to a Framework exception: ", ex);
-        } catch (Exception ex) {
-            LOG.error("declareOutputFields() threw an uncaught exception: ", ex);
         }
     }
 
@@ -136,9 +123,6 @@ public class RichSpoutWrapper extends BaseWrapper<IRichSpout> implements IRichSp
             return getDelegate().getComponentConfiguration();
         } catch (FrameworkException ex) {
             LOG.error("getComponentConfiguration() not delegated due to a Framework exception: ", ex);
-            return new HashMap();
-        } catch (Exception ex) {
-            LOG.error("getComponentConfiguration() threw an uncaught exception: ", ex);
             return new HashMap();
         }
     }

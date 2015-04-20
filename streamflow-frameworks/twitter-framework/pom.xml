@@ -22,7 +22,7 @@
     <parent>
         <groupId>streamflow</groupId>
         <artifactId>streamflow-frameworks</artifactId>
-        <version>0.9.1</version>
+        <version>0.10.0</version>
     </parent>
 
     <artifactId>twitter-framework</artifactId>
@@ -84,7 +84,7 @@
     </build>
 
     <dependencies>
-        
+            
         <!-- Storm Core Library (Provided) -->
         <dependency>
             <groupId>org.apache.storm</groupId>
@@ -96,6 +96,28 @@
         <dependency>
             <groupId>com.google.inject</groupId>
             <artifactId>guice</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        
+        <!-- SLF4J Logging (Provided) -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>log4j-over-slf4j</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-core</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
             <scope>provided</scope>
         </dependency>
         

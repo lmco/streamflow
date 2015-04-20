@@ -57,7 +57,9 @@ public class StormEngine {
     
     private final StreamflowConfig streamflowConfig;
     
-    private final HashMap<String, Cluster> clusters = new HashMap<String, Cluster>();
+    private final HashMap<String, Cluster> clusters = new HashMap<>();
+    
+    private static final int KILL_BUFFER_SECS = 60;
     
     @Inject
     public StormEngine(LocalCluster stormCluster, StreamflowConfig streamflowConfig) {
@@ -95,7 +97,7 @@ public class StormEngine {
         return topology;
     }
     
-    public boolean killTopology(Topology topology, int waitTimeSecs) {
+    public boolean killTopology(Topology topology, int waitTimeSecs, boolean async) {
         boolean killed = true;
         
         if (isDeployed(topology)) {
@@ -118,8 +120,10 @@ public class StormEngine {
                     client.killTopologyWithOpts(topology.getId(), killOptions);
                 }
                 
-                // Check for final removal of topology 60 times (60 seconds)
-                killed = waitForTopologyRemoval(topology, 60);
+                if (!async) {
+                    // Check for final removal of topology waitTime plus 60 second buffer
+                    killed = waitForTopologyRemoval(topology, waitTimeSecs + KILL_BUFFER_SECS);
+                }
                 
             } catch (Exception ex) {
                 LOG.error("Exception occurred while killing the remote topology: ID = " +
@@ -166,7 +170,7 @@ public class StormEngine {
             clusterSummary.setNimbusUptimeSecs(summary.get_nimbus_uptime_secs());
             clusterSummary.setNimbusConf(nimbusConf);
 
-            List<SupervisorSummary> supervisors = new ArrayList<SupervisorSummary>();
+            List<SupervisorSummary> supervisors = new ArrayList<>();
             for (backtype.storm.generated.SupervisorSummary ss : summary.get_supervisors()) {
                 SupervisorSummary supervisor = new SupervisorSummary();
                 supervisor.setHost(ss.get_host());
@@ -179,7 +183,7 @@ public class StormEngine {
             }
             clusterSummary.setSupervisors(supervisors);
 
-            List<TopologySummary> topologies = new ArrayList<TopologySummary>();
+            List<TopologySummary> topologies = new ArrayList<>();
             for (backtype.storm.generated.TopologySummary ts : summary.get_topologies()) {
                 TopologySummary topology = new TopologySummary();
                 topology.setId(ts.get_id());
@@ -211,7 +215,7 @@ public class StormEngine {
             return topologyInfo;
         }
         
-        // Convert the topology ID of the jetstram topology to the id recognized by Storm
+        // Convert the topology ID of the streamflow topology to the id recognized by Storm
         String stormTopologyId = resolveStormTopologyId(topology);
         
         // The topology should be running, but found no matching name. Topology must have been killed
@@ -241,19 +245,21 @@ public class StormEngine {
                 topologyConf = client.getTopologyConf(stormTopologyId);
                 
             } catch (NotAliveException ex) {
-                LOG.error("The requested topology was not found in the cluster: ID = {}", 
-                        stormTopologyId);
-                
-                ex.printStackTrace();
+                LOG.error("The requested topology was not found in the cluster: ID = " + stormTopologyId);
             } catch (TException ex) {
-                LOG.error("Exception while retrieving the remote topology info: {}", 
-                        ex.getMessage());
-                
-                ex.printStackTrace();
+                LOG.error("Exception while retrieving the remote topology info: ", ex);
             } finally {
                 tTransport.close();
             }
         }
+        
+        /*
+        // Make sure the specified topology was found on the storm cluster
+        if (info == null) {
+            LOG.error("Unable to retrieve topology info from the storm cluster");
+            return null;
+        }
+        */
 
         TopologyInfo topologyInfo = new TopologyInfo();
         topologyInfo.setId(info.get_id());
@@ -264,11 +270,13 @@ public class StormEngine {
 
         for (Map.Entry<String, List<backtype.storm.generated.ErrorInfo>> error
                 : info.get_errors().entrySet()) {
-            List<ErrorInfo> errorInfoList = new ArrayList<ErrorInfo>();
+            List<ErrorInfo> errorInfoList = new ArrayList<>();
             for (backtype.storm.generated.ErrorInfo ei : error.getValue()) {
                 ErrorInfo errorInfo = new ErrorInfo();
                 errorInfo.setError(ei.get_error());
                 errorInfo.setErrorTimeSecs(ei.get_error_time_secs());
+                errorInfo.setHost(ei.get_host());
+                errorInfo.setPort(ei.get_port());
 
                 errorInfoList.add(errorInfo);
             }
@@ -276,7 +284,7 @@ public class StormEngine {
             topologyInfo.getErrors().put(error.getKey(), errorInfoList);
         }
 
-        List<ExecutorSummary> executorSummaries = new ArrayList<ExecutorSummary>();
+        List<ExecutorSummary> executorSummaries = new ArrayList<>();
         for (backtype.storm.generated.ExecutorSummary es : info.get_executors()) {
             ExecutorSummary executor = new ExecutorSummary();
             executor.setComponentId(es.get_component_id());
@@ -310,14 +318,13 @@ public class StormEngine {
 
                             for (Map.Entry<String, Map<backtype.storm.generated.GlobalStreamId, Long>> ae
                                     : bs.get_acked().entrySet()) {
-                                Map<String, Long> ackedMap = new HashMap<String, Long>();
+                                Map<String, Long> ackedMap = new HashMap<>();
 
                                 for (Map.Entry<backtype.storm.generated.GlobalStreamId, Long> aem
                                         : ae.getValue().entrySet()) {
                                     backtype.storm.generated.GlobalStreamId gsi = aem.getKey();
 
-                                    String globalStreamId = gsi.get_componentId() 
-                                            + "(" + gsi.get_streamId() + ")";
+                                    String globalStreamId = gsi.get_componentId() + ":" + gsi.get_streamId();
 
                                     ackedMap.put(globalStreamId, aem.getValue());
                                 }
@@ -327,14 +334,13 @@ public class StormEngine {
 
                             for (Map.Entry<String, Map<backtype.storm.generated.GlobalStreamId, Long>> fe
                                     : bs.get_failed().entrySet()) {
-                                Map<String, Long> failedMap = new HashMap<String, Long>();
+                                Map<String, Long> failedMap = new HashMap<>();
 
                                 for (Map.Entry<backtype.storm.generated.GlobalStreamId, Long> fem
                                         : fe.getValue().entrySet()) {
                                     backtype.storm.generated.GlobalStreamId gsi = fem.getKey();
 
-                                    String globalStreamId = gsi.get_componentId() 
-                                            + "(" + gsi.get_streamId() + ")";
+                                    String globalStreamId = gsi.get_componentId() + ":" + gsi.get_streamId();
 
                                     failedMap.put(globalStreamId, fem.getValue());
                                 }
@@ -344,14 +350,13 @@ public class StormEngine {
 
                             for (Map.Entry<String, Map<backtype.storm.generated.GlobalStreamId, Long>> ee
                                     : bs.get_executed().entrySet()) {
-                                Map<String, Long> executedMap = new HashMap<String, Long>();
+                                Map<String, Long> executedMap = new HashMap<>();
 
                                 for (Map.Entry<backtype.storm.generated.GlobalStreamId, Long> eem
                                         : ee.getValue().entrySet()) {
                                     backtype.storm.generated.GlobalStreamId gsi = eem.getKey();
 
-                                    String globalStreamId = gsi.get_componentId() 
-                                            + "(" + gsi.get_streamId() + ")";
+                                    String globalStreamId = gsi.get_componentId() + ":" + gsi.get_streamId();
 
                                     executedMap.put(globalStreamId, eem.getValue());
                                 }
@@ -361,14 +366,13 @@ public class StormEngine {
 
                             for (Map.Entry<String, Map<backtype.storm.generated.GlobalStreamId, Double>> ema
                                     : bs.get_execute_ms_avg().entrySet()) {
-                                Map<String, Double> executedMap = new HashMap<String, Double>();
+                                Map<String, Double> executedMap = new HashMap<>();
 
                                 for (Map.Entry<backtype.storm.generated.GlobalStreamId, Double> emam
                                         : ema.getValue().entrySet()) {
                                     backtype.storm.generated.GlobalStreamId gsi = emam.getKey();
 
-                                    String globalStreamId = gsi.get_componentId() 
-                                            + "(" + gsi.get_streamId() + ")";
+                                    String globalStreamId = gsi.get_componentId() + ":" + gsi.get_streamId();
 
                                     executedMap.put(globalStreamId, emam.getValue());
                                 }
@@ -378,14 +382,13 @@ public class StormEngine {
 
                             for (Map.Entry<String, Map<backtype.storm.generated.GlobalStreamId, Double>> pma
                                     : bs.get_process_ms_avg().entrySet()) {
-                                Map<String, Double> processMap = new HashMap<String, Double>();
+                                Map<String, Double> processMap = new HashMap<>();
 
                                 for (Map.Entry<backtype.storm.generated.GlobalStreamId, Double> pmam
                                         : pma.getValue().entrySet()) {
                                     backtype.storm.generated.GlobalStreamId gsi = pmam.getKey();
 
-                                    String globalStreamId = gsi.get_componentId() 
-                                            + "(" + gsi.get_streamId() + ")";
+                                    String globalStreamId = gsi.get_componentId() + ":" + gsi.get_streamId();
 
                                     processMap.put(globalStreamId, pmam.getValue());
                                 }

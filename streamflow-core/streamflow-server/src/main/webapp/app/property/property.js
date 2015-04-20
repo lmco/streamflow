@@ -105,20 +105,44 @@ propertyModule.directive('streamflowProperty',
                 // Build the correct property input based on the property type
                 switch (propertyType) {
                     // Input type which is defined as an integer number
-                    case 'float':
+                    case 'float': {
+                        propertyInput = $('<input type="number"></input>')
+                                .attr('ng-model', 'propertyObject')
+                                .attr('name', propertyName)
+                                .addClass('form-control');
+
+                        if (propertyOptions && !isNaN(propertyOptions.maxNumber)) {
+                            propertyInput.attr('max', propertyOptions.maxNumber);
+                        }
+                        if (propertyOptions && !isNaN(propertyOptions.minNumber)) {
+                            propertyInput.attr('min', propertyOptions.minNumber);
+                        }
+                        if (propertyOptions && !isNaN(propertyOptions.floatStep)) {
+                            propertyInput.attr('step', propertyOptions.floatStep);
+                        }
+                        
+                        // Watch the property object so the string can be converted to a number
+                        scope.$watch('propertyObject', function(numberObject) {
+                            if (angular.isString(numberObject)) {
+                                scope.propertyObject = parseFloat(numberObject);
+                            }
+                        });
+                        
+                        break;
+                    }
                     case 'number': {
                         propertyInput = $('<input type="number"></input>')
                                 .attr('ng-model', 'propertyObject')
                                 .attr('name', propertyName)
                                 .addClass('form-control');
 
-                        if (propertyOptions && propertyOptions.maxNumber) {
+                        if (propertyOptions && !isNaN(propertyOptions.maxNumber)) {
                             propertyInput.attr('max', propertyOptions.maxNumber);
                         }
-                        if (propertyOptions && propertyOptions.minNumber) {
+                        if (propertyOptions && !isNaN(propertyOptions.minNumber)) {
                             propertyInput.attr('min', propertyOptions.minNumber);
                         }
-                        if (propertyOptions && propertyOptions.numericStep) {
+                        if (propertyOptions && !isNaN(propertyOptions.numericStep)) {
                             propertyInput.attr('step', propertyOptions.numericStep);
                         }
                         
@@ -157,8 +181,13 @@ propertyModule.directive('streamflowProperty',
                     }
                     case 'textarea':
                     case 'text-area': {
-                        propertyInput = $('<textarea rows="5"></textarea>')
+                        var numRows = 5;
+                        if (propertyOptions.numRows) {
+                            numRows = propertyOptions.numRows;
+                        }
+                        propertyInput = $('<textarea></textarea>')
                                 .attr('ng-model', 'propertyObject')
+                                .attr('rows', numRows)
                                 .attr('name', propertyName)
                                 .addClass('form-control');
                         break;

@@ -22,7 +22,7 @@
     <parent>
         <groupId>streamflow</groupId>
         <artifactId>streamflow-core</artifactId>
-        <version>0.9.1</version>
+        <version>0.10.0</version>
     </parent>
 
     <artifactId>streamflow-server</artifactId>
@@ -141,11 +141,23 @@
                 <directory>src/main/resources</directory>
             </resource>
            
-            <!-- Relocate all static web files to a subdirectory for easy loading -->
+            <!-- Relocate all static web files using default location for WAR support -->
             <resource>
                 <directory>src/main/webapp</directory>
-                <filtering>true</filtering>
+                <filtering>false</filtering>
                 <excludes>
+                    <exclude>**/META-INF/**</exclude>
+                    <exclude>**/WEB-INF/**</exclude>
+                </excludes>
+                <targetPath>${project.build.outputDirectory}</targetPath>
+            </resource>
+           
+            <!-- Relocate all static web files to a subdirectory for Jetty support -->
+            <resource>
+                <directory>src/main/webapp</directory>
+                <filtering>false</filtering>
+                <excludes>
+                    <exclude>**/META-INF/**</exclude>
                     <exclude>**/WEB-INF/**</exclude>
                 </excludes>
                 <targetPath>${project.build.outputDirectory}/assets</targetPath>
@@ -153,41 +165,7 @@
         </resources>
         
         <plugins>
-            <!-- Maven Shade Plugin (Includes all dependencies) -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <version>2.3</version>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
-                        <configuration>
-                            <createDependencyReducedPom>false</createDependencyReducedPom>
-                            <filters>
-                                <filter>
-                                    <artifact>*:*</artifact>
-                                    <excludes>
-                                        <exclude>META-INF/*.SF</exclude>
-                                        <exclude>META-INF/*.DSA</exclude>
-                                        <exclude>META-INF/*.RSA</exclude>
-                                    </excludes>
-                                </filter>
-                            </filters>
-                            <transformers>
-                                <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer" />
-                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>streamflow.server.StreamflowServer</mainClass>
-                                </transformer>
-                            </transformers> 
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            
-            <!-- Embed streamflow-engine.jar in the application jar for enviornment setup -->
+            <!-- Embed streamflow-engine.jar in the application jar for environment setup -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
@@ -214,57 +192,11 @@
                 </executions>
             </plugin>
             
-            <!-- Compile all LESS files into CSS -->
-            <plugin>
-                <groupId>org.lesscss</groupId>
-                <artifactId>lesscss-maven-plugin</artifactId>
-                <version>1.3.3</version>
-                <configuration>
-                    <sourceDirectory>${project.basedir}/src/main/webapp</sourceDirectory>
-                    <outputDirectory>${project.build.directory}/${project.build.finalName}</outputDirectory>
-                    <excludes>
-                        <exclude>vendor/**/*.less</exclude>
-                    </excludes>
-                    <includes>
-                        <include>**/*.less</include>
-                    </includes>
-                </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>compile</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            
             <!-- Jetty plugin to run application in a Jetty container for live editing -->
             <plugin>
                 <groupId>org.mortbay.jetty</groupId>
                 <artifactId>jetty-maven-plugin</artifactId>
                 <version>8.1.16.v20140903</version>
-            </plugin>
-            
-            <!-- Execution plugin to run the application from the final jar -->
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>exec-maven-plugin</artifactId>
-                <version>1.3.2</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>exec</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <executable>java</executable>
-                    <arguments>
-                        <argument>-cp</argument>
-                        <argument>${project.build.directory}/${project.build.finalName}.jar</argument>
-                        <argument>streamflow.server.StreamFlowServer</argument>
-                    </arguments>
-                </configuration>
             </plugin>
         </plugins>
     </build>

@@ -23,6 +23,10 @@ public class TopologyLogEntry implements Serializable {
     
     private String level;
     
+    private String host;
+    
+    private String task;
+    
     private String component;
     
     private String category;
@@ -47,6 +51,22 @@ public class TopologyLogEntry implements Serializable {
 
     public void setLevel(String level) {
         this.level = level;
+    }
+
+    public String getHost() {
+        return host;
+    }
+
+    public void setHost(String host) {
+        this.host = host;
+    }
+
+    public String getTask() {
+        return task;
+    }
+
+    public void setTask(String task) {
+        this.task = task;
     }
 
     public String getComponent() {
@@ -78,6 +98,8 @@ public class TopologyLogEntry implements Serializable {
         int hash = 3;
         hash = 97 * hash + (this.timestamp != null ? this.timestamp.hashCode() : 0);
         hash = 97 * hash + (this.level != null ? this.level.hashCode() : 0);
+        hash = 97 * hash + (this.host != null ? this.host.hashCode() : 0);
+        hash = 97 * hash + (this.task != null ? this.task.hashCode() : 0);
         hash = 97 * hash + (this.component != null ? this.component.hashCode() : 0);
         hash = 97 * hash + (this.category != null ? this.category.hashCode() : 0);
         hash = 97 * hash + (this.text != null ? this.text.hashCode() : 0);
@@ -99,6 +121,12 @@ public class TopologyLogEntry implements Serializable {
         if ((this.level == null) ? (other.level != null) : !this.level.equals(other.level)) {
             return false;
         }
+        if ((this.host == null) ? (other.host != null) : !this.host.equals(other.host)) {
+            return false;
+        }
+        if ((this.task == null) ? (other.task != null) : !this.task.equals(other.task)) {
+            return false;
+        }
         if ((this.component == null) ? (other.component != null) : !this.component.equals(other.component)) {
             return false;
         }
@@ -114,6 +142,7 @@ public class TopologyLogEntry implements Serializable {
     @Override
     public String toString() {
         return "TopologyLogEntry{" + "timestamp=" + timestamp + ", level=" + level 
-                + ", component=" + component + ", category=" + category + ", text=" + text + '}';
+                + ", host=" + host + ", task=" + task + ", component=" + component 
+                + ", category=" + category + ", text=" + text + '}';
     }
 }

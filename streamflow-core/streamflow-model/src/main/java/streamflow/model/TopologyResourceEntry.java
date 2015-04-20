@@ -34,6 +34,8 @@ public class TopologyResourceEntry implements Serializable {
     private String version;
 
     private String framework;
+    
+    private String frameworkHash;
 
     private String resource;
 
@@ -87,6 +89,14 @@ public class TopologyResourceEntry implements Serializable {
         this.framework = framework;
     }
 
+    public String getFrameworkHash() {
+        return frameworkHash;
+    }
+
+    public void setFrameworkHash(String frameworkHash) {
+        this.frameworkHash = frameworkHash;
+    }
+
     public String getResource() {
         return resource;
     }
@@ -127,6 +137,7 @@ public class TopologyResourceEntry implements Serializable {
         hash = 61 * hash + (this.description != null ? this.description.hashCode() : 0);
         hash = 61 * hash + (this.version != null ? this.version.hashCode() : 0);
         hash = 61 * hash + (this.framework != null ? this.framework.hashCode() : 0);
+        hash = 61 * hash + (this.frameworkHash != null ? this.frameworkHash.hashCode() : 0);
         hash = 61 * hash + (this.resource != null ? this.resource.hashCode() : 0);
         hash = 61 * hash + (this.resourceClass != null ? this.resourceClass.hashCode() : 0);
         hash = 61 * hash + (this.properties != null ? this.properties.hashCode() : 0);
@@ -163,6 +174,10 @@ public class TopologyResourceEntry implements Serializable {
                 : !this.framework.equals(other.framework)) {
             return false;
         }
+        if ((this.frameworkHash == null) ? (other.frameworkHash != null) 
+                : !this.frameworkHash.equals(other.frameworkHash)) {
+            return false;
+        }
         if ((this.resource == null) ? (other.resource != null) 
                 : !this.resource.equals(other.resource)) {
             return false;
@@ -186,8 +201,8 @@ public class TopologyResourceEntry implements Serializable {
     public String toString() {
         return "TopologyResourceEntry{" + "id=" + id + ", name=" + name 
                 + ", description=" + description + ", version=" + version 
-                + ", framework=" + framework + ", resource=" + resource 
-                + ", resourceClass=" + resourceClass + ", properties=" + properties 
-                + ", propertyTypes=" + propertyTypes + '}';
+                + ", framework=" + framework + ", frameworkHash=" + frameworkHash
+                + ", resource=" + resource + ", resourceClass=" + resourceClass 
+                + ", properties=" + properties + ", propertyTypes=" + propertyTypes + '}';
     }
 }

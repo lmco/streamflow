@@ -1,4 +1,8 @@
-# StreamFlow&trade;
+# StreamFlow&trade; 
+
+[![Build Status](https://travis-ci.org/lmco/streamflow.svg?branch=develop)](https://travis-ci.org/lmco/streamflow)
+
+[![Join the chat at https://gitter.im/lmco/streamflow](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/lmco/streamflow?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 ## Overview
 
@@ -7,6 +11,8 @@ workflows.  The ultimate goal of StreamFlow is to make working with stream proce
 such as Apache Storm easier, faster, and with "enterprise" like management functionality.  
 StreamFlow also provides a mechanism for non-developers such as data scientists, analysts, or 
 operational users to rapidly build scalable data flows and analytics.
+
+![Sample topology](https://raw.githubusercontent.com/wiki/lmco/streamflow/sample-topology.png)
 
 StreamFlow provides the following capabilities: 
 
@@ -95,7 +101,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 
 This product incorporates open source software components covered by the terms 
-of third party license agreements contained are contained in the /Licenses 
+of third party license agreements contained in the /Licenses 
 folder of this project.
 
 ## Documentation Version

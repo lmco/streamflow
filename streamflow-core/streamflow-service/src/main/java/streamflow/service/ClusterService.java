@@ -48,7 +48,7 @@ public class ClusterService {
 
         // Generate the local cluster and add it to the cluster map
         Cluster localCluster = new Cluster(
-                Cluster.LOCAL, "Local", "localhost", 6617, "localhost", 9300, null);
+                Cluster.LOCAL, "Local", "localhost", 6627, "localhost", 9300, null);
         clusters.put(localCluster.getId(), localCluster);
     }
 

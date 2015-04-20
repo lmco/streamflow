@@ -33,6 +33,8 @@ public class TopologyLogCriteria implements Serializable {
     
     private int pageSize = 100;
     
+    private boolean showHistoric = false;
+    
     private SortOrder sortOrder = SortOrder.DESC;
     
     public enum SortOrder {
@@ -100,6 +102,14 @@ public class TopologyLogCriteria implements Serializable {
         this.pageSize = pageSize;
     }
 
+    public boolean getShowHistoric() {
+        return showHistoric;
+    }
+
+    public void setShowHistoric(boolean showHistoric) {
+        this.showHistoric = showHistoric;
+    }
+
     public SortOrder getSortOrder() {
         return sortOrder;
     }
@@ -118,6 +128,7 @@ public class TopologyLogCriteria implements Serializable {
         hash = 59 * hash + (this.age != null ? this.age.hashCode() : 0);
         hash = 59 * hash + this.pageNum;
         hash = 59 * hash + this.pageSize;
+        hash = 59 * hash + (this.showHistoric ? 1 : 0);
         hash = 59 * hash + (this.sortOrder != null ? this.sortOrder.hashCode() : 0);
         return hash;
     }
@@ -152,6 +163,9 @@ public class TopologyLogCriteria implements Serializable {
         if (this.pageSize != other.pageSize) {
             return false;
         }
+        if (this.showHistoric != other.showHistoric) {
+            return false;
+        }
         if (this.sortOrder != other.sortOrder) {
             return false;
         }
@@ -163,6 +177,6 @@ public class TopologyLogCriteria implements Serializable {
         return "TopologyLogCriteria{" + "query=" + query + ", component=" + component 
                 + ", level=" + level + ", category=" + category + ", age=" + age 
                 + ", pageNum=" + pageNum + ", pageSize=" + pageSize 
-                + ", sortOrder=" + sortOrder + '}';
+                + ", showHistoric=" + showHistoric + ", sortOrder=" + sortOrder + '}';
     }
 }

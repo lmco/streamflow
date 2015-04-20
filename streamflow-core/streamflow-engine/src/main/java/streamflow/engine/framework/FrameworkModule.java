@@ -15,6 +15,7 @@
  */
 package streamflow.engine.framework;
 
+import backtype.storm.task.TopologyContext;
 import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.LoggerContext;
@@ -26,7 +27,6 @@ import com.google.inject.Provides;
 import com.google.inject.name.Names;
 import java.io.File;
 import java.util.Map.Entry;
-import streamflow.model.Cluster;
 import streamflow.model.Topology;
 import streamflow.model.TopologyComponent;
 import streamflow.model.config.StreamflowConfig;
@@ -34,21 +34,23 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
 public class FrameworkModule extends AbstractModule {
+    
+    private final org.slf4j.Logger LOG = LoggerFactory.getLogger(FrameworkModule.class);
 
     private final Topology topology;
     
     private final TopologyComponent component;
     
-    private final boolean isCluster;
-    
     private final StreamflowConfig streamflowConfig;
+    
+    private final TopologyContext context;
 
     public FrameworkModule(Topology topology, TopologyComponent component,
-            boolean isCluster, StreamflowConfig streamflowConfig) {
+            StreamflowConfig streamflowConfig, TopologyContext context) {
         this.topology = topology;
         this.component = component;
-        this.isCluster = isCluster;
         this.streamflowConfig = streamflowConfig;
+        this.context = context;
     }
 
     @Override
@@ -69,40 +71,29 @@ public class FrameworkModule extends AbstractModule {
                     streamflowConfig.getProxy().getPort());
         }
 
-        if (component.getKey() != null) {
-            bindConstant().annotatedWith(
-                    Names.named("streamflow.component.key")).to(component.getKey());
-        }
-
-        if (topology.getId() != null) {
-            bindConstant().annotatedWith(
-                    Names.named("streamflow.topology.id")).to(topology.getId());
-        }
-
-        // Bind configuration values for the cluster if values are needed
-        Cluster cluster = streamflowConfig.getSelectedCluster();
-
-        if (cluster != null) {
-            if (cluster.getId() != null) {
-                bindConstant().annotatedWith(
-                        Names.named("streamflow.cluster.id")).to(cluster.getId());
-            }
-
-            if (cluster.getDisplayName() != null) {
-                bindConstant().annotatedWith(
-                        Names.named("streamflow.cluster.displayName")).to(cluster.getDisplayName());
-            }
-
-            if (cluster.getJmsURI() != null) {
-                bindConstant().annotatedWith(
-                        Names.named("streamflow.cluster.jmsUri")).to(cluster.getJmsURI());
-            }
-        }
+        // Bind streamflow specific properties in case underlying bolts/resources require them
+        bindConstant().annotatedWith(
+                Names.named("streamflow.topology.id")).to(topology.getId());
+        //bindConstant().annotatedWith(
+        //        Names.named("streamflow.topology.name")).to(topology.getName());
+        bindConstant().annotatedWith(
+                Names.named("streamflow.component.key")).to(component.getKey());
+        bindConstant().annotatedWith(
+                Names.named("streamflow.component.label")).to(component.getLabel());
+        bindConstant().annotatedWith(
+                Names.named("streamflow.component.name")).to(component.getName());
+        bindConstant().annotatedWith(
+                Names.named("streamflow.component.framework")).to(component.getFramework());
+        //bindConstant().annotatedWith(
+        //        Names.named("streamflow.user.id")).to(topology.getUserId());
+        //bindConstant().annotatedWith(
+        //        Names.named("streamflow.cluster.id")).to(topology.getClusterId());
+        //bindConstant().annotatedWith(
+        //        Names.named("streamflow.cluster.name")).to(topology.getClusterName());
     }
     
     @Provides
     public org.slf4j.Logger provideLogger() {
-        
         LoggerContext loggerContext = (LoggerContext) LoggerFactory.getILoggerFactory();
         
         PatternLayout patternLayout = new PatternLayout();
@@ -110,12 +101,10 @@ public class FrameworkModule extends AbstractModule {
         patternLayout.setContext(loggerContext);
         patternLayout.start();
         
-        // TODO: NEED TO ENSURE THE PROJECT ID IS PASSED TO THE FRAMEWORK MODULE
-        
         String logPath = streamflowConfig.getLogger().getBaseDir() 
-                + File.separator + topology.getId() + ".log";
+                + File.separator + "topology-" + topology.getId() + ".log";
 
-        FileAppender<ILoggingEvent> fileAppender = new FileAppender<ILoggingEvent>();
+        FileAppender<ILoggingEvent> fileAppender = new FileAppender<>();
         fileAppender.setName("FILE");
         fileAppender.setFile(logPath);
         fileAppender.setContext(loggerContext);
@@ -127,12 +116,17 @@ public class FrameworkModule extends AbstractModule {
         logger.detachAndStopAllAppenders();
         logger.addAppender(fileAppender);
         logger.setAdditive(false);
-        logger.setLevel(Level.DEBUG);
+        logger.setLevel(Level.toLevel(topology.getLogLevel()));
         
         // Set the context for the topology/component when logging
         MDC.put("topology", topology.getId());
-        MDC.put("component", component.getKey());
         MDC.put("project", topology.getProjectId());
+        MDC.put("component", component.getKey());
+        if (context != null) {
+            MDC.put("task", component.getName() + "-" + context.getThisTaskIndex());
+        } else {
+            MDC.put("task", component.getName());
+        }
         
         return logger;
     }

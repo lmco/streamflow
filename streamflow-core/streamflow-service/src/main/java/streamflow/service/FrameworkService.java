@@ -334,13 +334,27 @@ public class FrameworkService {
     	
     }
 
+    public FileInfo getFrameworkFileInfo(String frameworkId) {
+        Framework framework = getFramework(frameworkId);
+
+        FileInfo frameworkFileInfo = fileService.getFileInfo(framework.getJarId());
+        if (frameworkFileInfo == null) {
+            throw new ServiceException("Error retrieving framework file info: ID = "
+                    + frameworkId + ", Jar ID = " + framework.getJarId());
+        }
+
+        return frameworkFileInfo;
+    }
+
     public Framework processFrameworkJar(byte[] frameworkJar, boolean isPublic) {
         Framework framework = null;
         
         try {
+            String frameworkHash = DigestUtils.md5Hex(frameworkJar);
+            
             // Write out a temporary file for the jar so it can be processed
             File tempFrameworkFile = new File(StreamflowEnvironment.getFrameworksDir(),
-                    UUID.randomUUID().toString() + ".jar");
+                    frameworkHash + ".jar");
 
             FileUtils.writeByteArrayToFile(tempFrameworkFile, frameworkJar);
             
@@ -377,7 +391,7 @@ public class FrameworkService {
                 processFrameworkSerializations(framework, frameworkConfig);
 
                 // Delete the temporary file and squelch delete errors
-                FileUtils.deleteQuietly(tempFrameworkFile);
+                //FileUtils.deleteQuietly(tempFrameworkFile);
             } else {
                 throw new EntityInvalidException(
                         "The framework config could not be deserialized");

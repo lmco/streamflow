@@ -16,12 +16,17 @@
 package streamflow.model.storm;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 public class ErrorInfo implements Serializable {
 
     private String error;
 
     private int errorTimeSecs;
+    
+    private String host;
+    
+    private int port;
 
     
     public ErrorInfo() {
@@ -43,11 +48,29 @@ public class ErrorInfo implements Serializable {
         this.errorTimeSecs = errorTimeSecs;
     }
 
+    public String getHost() {
+        return host;
+    }
+
+    public void setHost(String host) {
+        this.host = host;
+    }
+
+    public int getPort() {
+        return port;
+    }
+
+    public void setPort(int port) {
+        this.port = port;
+    }
+
     @Override
     public int hashCode() {
         int hash = 5;
-        hash = 17 * hash + (this.error != null ? this.error.hashCode() : 0);
-        hash = 17 * hash + this.errorTimeSecs;
+        hash = 37 * hash + Objects.hashCode(this.error);
+        hash = 37 * hash + this.errorTimeSecs;
+        hash = 37 * hash + Objects.hashCode(this.host);
+        hash = 37 * hash + this.port;
         return hash;
     }
 
@@ -60,10 +83,16 @@ public class ErrorInfo implements Serializable {
             return false;
         }
         final ErrorInfo other = (ErrorInfo) obj;
-        if ((this.error == null) ? (other.error != null) : !this.error.equals(other.error)) {
+        if (!Objects.equals(this.error, other.error)) {
             return false;
         }
         if (this.errorTimeSecs != other.errorTimeSecs) {
+            return false;
+        }
+        if (!Objects.equals(this.host, other.host)) {
+            return false;
+        }
+        if (this.port != other.port) {
             return false;
         }
         return true;
@@ -71,6 +100,7 @@ public class ErrorInfo implements Serializable {
 
     @Override
     public String toString() {
-        return "ErrorInfo{" + "error=" + error + ", errorTimeSecs=" + errorTimeSecs + '}';
+        return "ErrorInfo{" + "error=" + error + ", errorTimeSecs=" + errorTimeSecs 
+                + ", host=" + host + ", port=" + port + '}';
     }
 }

@@ -48,4 +48,4 @@ echo
 
 # Start the Streamflow application server
 $JAVA $JAVA_OPTS $STREAMFLOW_OPTS -cp $STREAMFLOW_HOME/lib -jar \
-    $STREAMFLOW_HOME/lib/streamflow-server-${project.version}.jar
+    $STREAMFLOW_HOME/lib/streamflow-app-jar-${project.version}.jar

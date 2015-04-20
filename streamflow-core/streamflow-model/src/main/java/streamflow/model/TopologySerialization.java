@@ -32,6 +32,8 @@ public class TopologySerialization implements Serializable {
 
     private String framework;
     
+    private String frameworkHash;
+    
 
     public TopologySerialization() {
     }
@@ -68,6 +70,14 @@ public class TopologySerialization implements Serializable {
         this.framework = framework;
     }
 
+    public String getFrameworkHash() {
+        return frameworkHash;
+    }
+
+    public void setFrameworkHash(String frameworkHash) {
+        this.frameworkHash = frameworkHash;
+    }
+
     @Override
     public int hashCode() {
         int hash = 7;
@@ -75,6 +85,7 @@ public class TopologySerialization implements Serializable {
         hash = 61 * hash + (this.serializerClass != null ? this.serializerClass.hashCode() : 0);
         hash = 61 * hash + (this.version != null ? this.version.hashCode() : 0);
         hash = 61 * hash + (this.framework != null ? this.framework.hashCode() : 0);
+        hash = 61 * hash + (this.frameworkHash != null ? this.frameworkHash.hashCode() : 0);
         return hash;
     }
 
@@ -103,6 +114,10 @@ public class TopologySerialization implements Serializable {
                 : !this.framework.equals(other.framework)) {
             return false;
         }
+        if ((this.frameworkHash == null) ? (other.frameworkHash != null) 
+                : !this.frameworkHash.equals(other.frameworkHash)) {
+            return false;
+        }
         return true;
     }
 
@@ -110,6 +125,6 @@ public class TopologySerialization implements Serializable {
     public String toString() {
         return "TopologySerialization{" + "typeClass=" + typeClass 
                 + ", serializerClass=" + serializerClass + ", version=" + version 
-                + ", framework=" + framework + '}';
+                + ", framework=" + framework + ", frameworkHash=" + frameworkHash + '}';
     }
 }
