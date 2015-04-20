@@ -22,7 +22,7 @@
     <parent>
         <groupId>streamflow</groupId>
         <artifactId>streamflow</artifactId>
-        <version>0.10.1</version>
+        <version>0.11.0</version>
     </parent>
 
     <artifactId>streamflow-core</artifactId>
@@ -38,4 +38,4 @@
         <module>streamflow-server</module>
         <module>streamflow-app</module>
     </modules>
-<version xmlns="">0.10.1</version></project>
+</project>
