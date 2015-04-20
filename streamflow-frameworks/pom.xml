@@ -33,4 +33,4 @@
         <module>core-framework</module>
         <module>twitter-framework</module>
     </modules>
-<version xmlns="">0.10.0</version></project>
+<version xmlns="">0.10.0</version><version xmlns="">0.10.0</version></project>
