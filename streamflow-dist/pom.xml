@@ -54,7 +54,7 @@
         </dependency>
     </dependencies>
     
-    <version xmlns="">0.10.0</version><version xmlns="">0.10.0</version><build>
+    <build>
         <plugins>  
             <!-- Generate the archives for the distribution -->
             <plugin>
