@@ -38,4 +38,4 @@
         <module>streamflow-server</module>
         <module>streamflow-app</module>
     </modules>
-</project>
+<version xmlns="">0.10.1-SNAPSHOT</version></project>
