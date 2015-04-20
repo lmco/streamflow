@@ -65,9 +65,11 @@
         <log4j.version>1.2.17</log4j.version>
         <junit.version>4.11</junit.version>
         <powermock.version>1.5.6</powermock.version>
+		<javassist.version>3.18.2-GA</javassist.version>
     </properties>
 
     <modules>
+    	<module>streamflow-annotations</module>
         <module>streamflow-core</module>
         <module>streamflow-frameworks</module>
         <module>streamflow-dist</module>
@@ -383,7 +385,6 @@
                 <version>${logback.version}</version>
             </dependency>
             
-            <!--
             <dependency>
                 <groupId>org.slf4j</groupId>
                 <artifactId>slf4j-log4j12</artifactId>
@@ -394,7 +395,13 @@
                 <artifactId>log4j</artifactId>
                 <version>${log4j.version}</version>
             </dependency>
-            -->
+            
+            <!-- Javassist Byetcode Library -->
+            <dependency>
+            	<groupId>org.javassist</groupId>
+            	<artifactId>javassist</artifactId>
+            	<version>${javassist.version}</version>
+            </dependency>
             
             <!-- Lucene Testing -->
             <dependency>
