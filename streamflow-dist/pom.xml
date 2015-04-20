@@ -22,7 +22,7 @@
     <parent>
         <groupId>streamflow</groupId>
         <artifactId>streamflow</artifactId>
-        <version>0.10.0</version>
+        <version>0.10.1</version>
     </parent>
 
     <artifactId>streamflow-dist</artifactId>
@@ -54,7 +54,7 @@
         </dependency>
     </dependencies>
     
-    <build>
+    <version xmlns="">0.10.0</version><build>
         <plugins>  
             <!-- Generate the archives for the distribution -->
             <plugin>

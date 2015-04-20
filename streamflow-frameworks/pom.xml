@@ -22,7 +22,7 @@
     <parent>
         <groupId>streamflow</groupId>
         <artifactId>streamflow</artifactId>
-        <version>0.10.0</version>
+        <version>0.10.1</version>
     </parent>
 
     <artifactId>streamflow-frameworks</artifactId>
@@ -33,4 +33,4 @@
         <module>core-framework</module>
         <module>twitter-framework</module>
     </modules>
-</project>
+<version xmlns="">0.10.0</version></project>
