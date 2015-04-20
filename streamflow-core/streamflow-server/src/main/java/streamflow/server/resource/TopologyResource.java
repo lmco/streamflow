@@ -114,6 +114,14 @@ public class TopologyResource {
     }
 
     @GET
+    @Path("/{topologyId}/config/deployed")
+    @Produces(MediaType.APPLICATION_JSON)
+    public TopologyConfig getDeployedTopologyConfig(@PathParam("topologyId") String topologyId) {
+        String userId = (String) SecurityUtils.getSubject().getPrincipal();
+        return topologyService.getTopology(topologyId, userId).getDeployedConfig();
+    }
+
+    @GET
     @Path("/{topologyId}/info")
     @Produces(MediaType.APPLICATION_JSON)
     public TopologyInfo getTopologyInfo(@PathParam("topologyId") String topologyId) {

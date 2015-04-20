@@ -89,10 +89,9 @@ topologyModule.factory('Topology', ['$resource', function($resource) {
             method: 'POST', 
             url: 'api/topologies/:id/log'
         },
-        metrics: {
+        info: {
             method: 'GET', 
-            isArray: true, 
-            url: 'api/topologies/:id/metrics'
+            url: 'api/topologies/:id/info'
         },
         updateCurrentConfig: {
             method: 'PUT', 
@@ -104,7 +103,7 @@ topologyModule.factory('Topology', ['$resource', function($resource) {
         },
         getDeployedConfig: {
             method: 'GET', 
-            url: 'api/topologies/:id/config'
+            url: 'api/topologies/:id/config/deployed'
         }
     });
 }]);
@@ -1092,47 +1091,26 @@ topologyModule.controller('TopologyClusterLogController', [
  * Topology controller used to view metrics data for a topology
  */
 topologyModule.controller('TopologyMetricsController', [
-    '$scope', '$routeParams', 'Topology', 
-    function($scope, $routeParams, Topology) {
-        $scope.topology = Topology.get({id: $routeParams.id});
-        $scope.topologyConfig = Topology.getDeployedConfig({id: $routeParams.id});
-        $scope.metrics = [];
-        $scope.components = [];
-        $scope.classNames = [];
-        $scope.metricNames = [];
-
-        $scope.updateMetrics = function() {
-            $scope.metricsMsg = "Loading Metrics......";
-            $scope.metrics = Topology.metrics({id: $routeParams.id},
-                function(metrics) {
-                    angular.forEach(metrics, function(metric) {
-                        if (!(metric.component in $scope.components)) {
-                            $scope.components[metric.component] = {name: metric.component};
-                        }
-
-                        if (!(metric.className in $scope.classNames)) {
-                            $scope.classNames[metric.className] = {name: metric.className};
-                        }
-
-                        if (!(metric.metricName in $scope.metricNames)) {
-                            $scope.metricNames[metric.metricName] = {name: metric.metricName};
-                        }
-                    });
-                    console.log("Got metrics" + metrics.length);
-
-                    if (metrics.length === 0) {
-                        $scope.metricsMsg = "No metrics for topology " + $routeParams.id;
-                    } else {
-                        $scope.metricsMsg = null;
-                    }
-                },
-                function() {
-                    $scope.metricsMsg = "No metrics for topology " + $routeParams.id;
-                }
-            );
+    '$scope', '$routeParams', 'Topology', function($scope, $routeParams, Topology) {
+        $scope.topologyLoaded = false;
+        $scope.topologyFailed = false;
+        $scope.topologyState = {
+            isModified: false
         };
 
-        $scope.updateMetrics();
+        $scope.topology = Topology.get({id: $routeParams.id}, 
+            function(topology) {
+                $scope.topologyLoaded = true;
+                $scope.topologyState.type = topology.type;
+            },
+            function() {
+                $scope.topologyLoaded = true;
+                $scope.topologyFailed = true;
+            }
+        );
+
+        $scope.topologyConfig = Topology.getDeployedConfig({id: $routeParams.id});
+        $scope.topologyInfo = Topology.info({id: $routeParams.id});
     }
 ]);
 

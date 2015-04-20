@@ -33,7 +33,7 @@ public class ResourcePropertyOptions implements Serializable {
 
     private Integer minNumber;
 
-    private Float floatStep;
+    private Double floatStep;
 
     private String displayUnits;
 
@@ -74,11 +74,11 @@ public class ResourcePropertyOptions implements Serializable {
         this.minNumber = minNumber;
     }
 
-    public Float getFloatStep() {
+    public Double getFloatStep() {
         return floatStep;
     }
 
-    public void setFloatStep(Float floatStep) {
+    public void setFloatStep(Double floatStep) {
         this.floatStep = floatStep;
     }
 
