@@ -86,7 +86,7 @@
     <dependencies>
         <dependency>
             <groupId>streamflow</groupId>
-            <artifactId>framework-annotations</artifactId>
+            <artifactId>streamflow-annotations</artifactId>
             <version>${project.version}</version>
         </dependency>
         
