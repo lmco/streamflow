@@ -27,14 +27,6 @@
             </includes>
         </dependencySet>
         <dependencySet>
-            <outputDirectory>/deploy</outputDirectory>
-            <useProjectArtifact>false</useProjectArtifact>
-            <useTransitiveDependencies>false</useTransitiveDependencies>
-            <includes>
-                <include>streamflow:streamflow-app-war</include>
-            </includes>
-        </dependencySet>
-        <dependencySet>
             <outputDirectory>/sample</outputDirectory>
             <useProjectArtifact>false</useProjectArtifact>
             <useTransitiveDependencies>false</useTransitiveDependencies>
