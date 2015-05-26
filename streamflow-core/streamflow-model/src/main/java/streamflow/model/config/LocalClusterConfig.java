@@ -31,6 +31,28 @@ public class LocalClusterConfig implements Serializable {
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
     }
+    
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 43 * hash + (this.enabled ? 1 : 0);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final LocalClusterConfig other = (LocalClusterConfig) obj;
+        if (this.enabled != other.enabled) {
+            return false;
+        }
+        return true;
+    }
 
     @Override
     public String toString() {
