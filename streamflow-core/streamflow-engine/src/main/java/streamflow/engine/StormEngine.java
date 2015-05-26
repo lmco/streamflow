@@ -21,6 +21,7 @@ import backtype.storm.generated.Nimbus;
 import backtype.storm.generated.NotAliveException;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import com.google.inject.name.Named;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -53,7 +54,7 @@ public class StormEngine {
 
     protected static final Logger LOG = LoggerFactory.getLogger(StormEngine.class);
     
-    private final LocalCluster stormCluster;
+    private LocalCluster localCluster;
     
     private final StreamflowConfig streamflowConfig;
     
@@ -62,8 +63,7 @@ public class StormEngine {
     private static final int KILL_BUFFER_SECS = 60;
     
     @Inject
-    public StormEngine(LocalCluster stormCluster, StreamflowConfig streamflowConfig) {
-        this.stormCluster = stormCluster;
+    public StormEngine(StreamflowConfig streamflowConfig) {
         this.streamflowConfig = streamflowConfig;
         
         // Add each of the clusters from the application configuration
@@ -72,17 +72,22 @@ public class StormEngine {
                 clusters.put(cluster.getId(), cluster);
             }
         }
+    }
+    
+    @Inject(optional=true)
+    public void setLocalCluster(@Named("LocalCluster") LocalCluster localCluster) {
+        this.localCluster = localCluster;
 
         // Manually add the local cluster and add it to the cluster map
-        Cluster localCluster = new Cluster(
+        Cluster localClusterEntry = new Cluster(
                 Cluster.LOCAL, "Local", "localhost", 6627, "localhost", 9300, null);
-        clusters.put(localCluster.getId(), localCluster);
+        clusters.put(localClusterEntry.getId(), localClusterEntry);
     }
     
     public Topology submitTopology(Topology topology, Cluster cluster) {
         // Execute topology submission in a thread to maintain separate context class loader for each topology
         TopologySubmitter submitter = new TopologySubmitter(
-            topology, cluster, stormCluster, streamflowConfig);
+            topology, cluster, localCluster, streamflowConfig);
         submitter.start();
         
         try {
@@ -107,7 +112,7 @@ public class StormEngine {
                 
                 if (isLocal(topology.getClusterId())) {
                     // Kill the topology on the local cluster
-                    stormCluster.killTopologyWithOpts(topology.getId(), killOptions);
+                    localCluster.killTopologyWithOpts(topology.getId(), killOptions);
                 } else {
                     Cluster cluster = clusters.get(topology.getClusterId());
 
@@ -142,7 +147,7 @@ public class StormEngine {
         
         if (cluster != null) {
             if (isLocal(cluster.getId())) {
-                summary = stormCluster.getClusterInfo();
+                summary = localCluster.getClusterInfo();
             } else {
                 TSocket tsocket = new TSocket(cluster.getNimbusHost(), cluster.getNimbusPort());
                 TFramedTransport tTransport = new TFramedTransport(tsocket);
@@ -228,8 +233,8 @@ public class StormEngine {
         }
         
         if (isLocal(topology.getClusterId())) {
-            info = stormCluster.getTopologyInfo(stormTopologyId);
-            topologyConf = stormCluster.getTopologyConf(stormTopologyId);
+            info = localCluster.getTopologyInfo(stormTopologyId);
+            topologyConf = localCluster.getTopologyConf(stormTopologyId);
         } else {
             Cluster cluster = clusters.get(topology.getClusterId());
             

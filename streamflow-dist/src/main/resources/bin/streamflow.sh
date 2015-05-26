@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Change this value to modify any JAVA_OPTS provided to the Streamflow server
-STREAMFLOW_OPTS="-Xms512m -Xmx1g"
+STREAMFLOW_OPTS="-Xms256m -Xmx256m"
 
 SCRIPT="$0"
 

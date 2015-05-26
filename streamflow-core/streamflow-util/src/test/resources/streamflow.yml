@@ -20,6 +20,9 @@ datastore:
 proxy:
     host: test.classpath.proxy
     port: 80
+    
+localCluster:
+    enabled: true
 
 # Cluster Configuration
 clusters:

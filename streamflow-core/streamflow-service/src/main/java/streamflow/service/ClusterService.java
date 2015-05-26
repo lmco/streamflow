@@ -33,7 +33,7 @@ public class ClusterService {
     
     private final StormEngine stormEngine;
 
-    private final Map<String, Cluster> clusters = new HashMap<String, Cluster>();
+    private final Map<String, Cluster> clusters = new HashMap<>();
 
     @Inject
     public ClusterService(StormEngine stormEngine, StreamflowConfig streamflowConfig) {
@@ -46,10 +46,12 @@ public class ClusterService {
             }
         }
 
-        // Generate the local cluster and add it to the cluster map
-        Cluster localCluster = new Cluster(
-                Cluster.LOCAL, "Local", "localhost", 6627, "localhost", 9300, null);
-        clusters.put(localCluster.getId(), localCluster);
+        if (streamflowConfig.getLocalCluster().isEnabled()) {
+            // Generate the local cluster and add it to the cluster map
+            Cluster localCluster = new Cluster(
+                    Cluster.LOCAL, "Local", "localhost", 6627, "localhost", 9300, null);
+            clusters.put(localCluster.getId(), localCluster);
+        }
     }
 
     public Collection<Cluster> listClusters() {

@@ -3,7 +3,7 @@
 SETLOCAL
 
 rem Change this value to modify any JAVA_OPTS provided to the Streamflow server
-set STREAMFLOW_OPTS="-Xms512m -Xmx1g"
+set STREAMFLOW_OPTS="-Xms256m -Xmx256g"
 
 if NOT DEFINED JAVA_HOME goto err
 

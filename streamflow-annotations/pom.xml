@@ -23,7 +23,7 @@
         <version>0.12.0-SNAPSHOT</version>
     </parent>
   
-    <artifactId>framework-annotations</artifactId>
+    <artifactId>streamflow-annotations</artifactId>
     <name>Streamflow Annotations</name>
     <description>Annotations for use with Streamflow Frameworks</description>
   
