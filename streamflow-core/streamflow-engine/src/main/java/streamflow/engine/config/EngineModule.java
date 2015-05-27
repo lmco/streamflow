@@ -17,7 +17,10 @@ package streamflow.engine.config;
 
 import backtype.storm.LocalCluster;
 import com.google.inject.AbstractModule;
+import com.google.inject.name.Names;
 import streamflow.engine.StormEngine;
+import streamflow.model.config.LocalClusterConfig;
+import streamflow.util.config.ConfigLoader;
 
 public class EngineModule extends AbstractModule {
 
@@ -25,7 +28,9 @@ public class EngineModule extends AbstractModule {
     protected void configure() {
         bind(StormEngine.class);
         
-        // Would prefer to use provider, but newer interface does not provide eager initialization
-        bind(LocalCluster.class).toInstance(new LocalCluster());
+        LocalClusterConfig localClusterConfig = ConfigLoader.getConfig().getLocalCluster();
+        if (localClusterConfig != null && localClusterConfig.isEnabled()) {
+            bind(LocalCluster.class).annotatedWith(Names.named("LocalCluster")).toInstance(new LocalCluster());
+        }
     }
 }

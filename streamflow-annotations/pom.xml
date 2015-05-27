@@ -20,10 +20,10 @@
     <parent>
         <groupId>streamflow</groupId>
         <artifactId>streamflow</artifactId>
-        <version>0.11.0</version>
+        <version>0.12.0</version>
     </parent>
   
-    <artifactId>framework-annotations</artifactId>
+    <artifactId>streamflow-annotations</artifactId>
     <name>Streamflow Annotations</name>
     <description>Annotations for use with Streamflow Frameworks</description>
   

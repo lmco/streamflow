@@ -23,6 +23,10 @@ server:
 # Datastore configuration
 #datastore:
 #    moduleClass: streamflow.datastore.jdbc.config.JDBCDatastoreModule
+ 
+# Local Cluster configuration
+#localCluster:
+#    enabled: true
     
 # Cluster Configuration
 #clusters:

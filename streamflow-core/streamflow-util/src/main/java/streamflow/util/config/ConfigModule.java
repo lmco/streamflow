@@ -24,6 +24,7 @@ import streamflow.model.config.ProxyConfig;
 import streamflow.model.config.ServerConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import streamflow.model.config.LocalClusterConfig;
 
 public class ConfigModule extends AbstractModule {
 
@@ -38,6 +39,7 @@ public class ConfigModule extends AbstractModule {
         bind(AuthConfig.class).toInstance(streamflowConfig.getAuth());
         bind(ProxyConfig.class).toInstance(streamflowConfig.getProxy());
         bind(LoggerConfig.class).toInstance(streamflowConfig.getLogger());
+        bind(LocalClusterConfig.class).toInstance(streamflowConfig.getLocalCluster());
         bind(DatastoreConfig.class).toInstance(streamflowConfig.getDatastore());
     }
 }
