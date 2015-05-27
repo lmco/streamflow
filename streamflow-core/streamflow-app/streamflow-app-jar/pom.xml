@@ -22,7 +22,7 @@
     <parent>
         <groupId>streamflow</groupId>
         <artifactId>streamflow-app</artifactId>
-        <version>0.12.0</version>
+        <version>0.13.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>streamflow-app-jar</artifactId>
