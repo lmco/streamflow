@@ -22,7 +22,7 @@
     <parent>
         <groupId>streamflow</groupId>
         <artifactId>streamflow-frameworks</artifactId>
-        <version>0.12.0</version>
+        <version>0.12.1-SNAPSHOT</version>
     </parent>
 
     <artifactId>twitter-framework</artifactId>

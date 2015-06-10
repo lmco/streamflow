@@ -22,7 +22,7 @@
     <parent>
         <groupId>streamflow</groupId>
         <artifactId>streamflow-datastore</artifactId>
-        <version>0.12.0</version>
+        <version>0.12.1-SNAPSHOT</version>
     </parent>
 
     <artifactId>streamflow-datastore-mongodb</artifactId>
