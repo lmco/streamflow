@@ -199,7 +199,8 @@ public class TopologySubmitter extends Thread {
     }
     
     private Object loadProperty(String stringValue) {
-        Object boundValue;
+        // Default to using the string value
+        Object boundValue = stringValue;
         
         try {
             boundValue = Long.parseLong(stringValue);
@@ -207,10 +208,10 @@ public class TopologySubmitter extends Thread {
             try {
                 boundValue = Double.parseDouble(stringValue);
             } catch (NumberFormatException ex2) {
-                try {
-                    boundValue = Boolean.parseBoolean(stringValue);
-                } catch (NumberFormatException ex3) {
-                    boundValue = stringValue;
+                if (stringValue.equalsIgnoreCase("true")) {
+                    boundValue = Boolean.TRUE;
+                } else if (stringValue.equalsIgnoreCase("false")) {
+                    boundValue = Boolean.FALSE;
                 }
             }
         }
