@@ -34,7 +34,9 @@ public class StreamflowConfig implements Serializable {
     private LoggerConfig logger = new LoggerConfig();
 
     private AuthConfig auth = new AuthConfig();
-    
+
+    private MonitorConfig monitor = new MonitorConfig();
+
     private LocalClusterConfig localCluster = new LocalClusterConfig();
 
     private List<Cluster> clusters = new ArrayList<>();
@@ -84,6 +86,14 @@ public class StreamflowConfig implements Serializable {
         this.auth = auth;
     }
 
+    public MonitorConfig getMonitor() {
+        return monitor;
+    }
+
+    public void setMonitor(MonitorConfig monitor) {
+        this.monitor = monitor;
+    }
+
     public LocalClusterConfig getLocalCluster() {
         return localCluster;
     }
@@ -116,6 +126,7 @@ public class StreamflowConfig implements Serializable {
         hash = 29 * hash + (this.datastore != null ? this.datastore.hashCode() : 0);
         hash = 29 * hash + (this.logger != null ? this.logger.hashCode() : 0);
         hash = 29 * hash + (this.auth != null ? this.auth.hashCode() : 0);
+        hash = 29 * hash + (this.monitor != null ? this.monitor.hashCode() : 0);
         hash = 29 * hash + (this.localCluster != null ? this.localCluster.hashCode() : 0);
         hash = 29 * hash + (this.clusters != null ? this.clusters.hashCode() : 0);
         return hash;
@@ -150,6 +161,10 @@ public class StreamflowConfig implements Serializable {
                 || !this.auth.equals(other.auth))) {
             return false;
         }
+        if (this.monitor != other.monitor && (this.monitor == null
+                || !this.monitor.equals(other.monitor))) {
+            return false;
+        }
         if (this.localCluster != other.localCluster && (this.localCluster == null 
                 || !this.localCluster.equals(other.localCluster))) {
             return false;
@@ -165,7 +180,7 @@ public class StreamflowConfig implements Serializable {
     public String toString() {
         return "StreamFlowConfig{" + "server=" + server + ", proxy=" + proxy 
                 + ", datastore=" + datastore + ", logger=" + logger 
-                + ", auth=" + auth + ", localCluster=" + localCluster 
+                + ", auth=" + auth + ", monitor=" + monitor + ", localCluster=" + localCluster
                 + ", clusters=" + clusters + '}';
     }
 }
