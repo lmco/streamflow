@@ -554,7 +554,9 @@ topologyModule.controller('TopologyPropertiesNewController', [
             'storm.messaging.netty.max_wait_ms',
             'storm.messaging.netty.min_wait_ms',
             'storm.messaging.netty.transfer.batch.size',
+            'storm.messaging.netty.socket.backlog',
             'storm.messaging.netty.flush.check.interval.ms',
+            'storm.messaging.netty.authentication',
             'topology.enable.message.timeouts',
             'topology.debug',
             'topology.workers',
@@ -584,8 +586,10 @@ topologyModule.controller('TopologyPropertiesNewController', [
             'topology.kryo.factory',
             'topology.tuple.serializer',
             'topology.trident.batch.emit.interval.millis',
+            'storm.group.mapping.service.cache.duration.secs',
             'topology.classpath',
-            'topology.environment'
+            'topology.environment',
+            'topology.bolts.outgoing.overflow.buffer.enable'
         ];
         
         $scope.add = function() {

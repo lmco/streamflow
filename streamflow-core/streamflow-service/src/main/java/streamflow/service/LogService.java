@@ -166,7 +166,9 @@ public class LogService {
         
         try {
             // Delete the local log file from the server
-            FileUtils.forceDelete(logFile);
+            if (logFile.exists()) {
+                FileUtils.forceDelete(logFile);
+            }
         } catch (IOException ex) {
             LOG.error("Error deleting local topology log file: " + logFile.getAbsolutePath());
         }

@@ -22,7 +22,7 @@
     <parent>
         <groupId>streamflow</groupId>
         <artifactId>streamflow-core</artifactId>
-        <version>0.12.1</version>
+        <version>0.13.0</version>
     </parent>
 
     <artifactId>streamflow-engine</artifactId>
@@ -50,7 +50,7 @@
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>13.0</version>
+            <version>18.0</version>
         </dependency>
         <dependency>
             <groupId>com.google.inject</groupId>

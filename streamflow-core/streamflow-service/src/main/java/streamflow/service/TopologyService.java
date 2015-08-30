@@ -112,6 +112,10 @@ public class TopologyService {
         this.streamflowConfig = streamflowConfig;
     }
 
+    public List<Topology> listAllTopologies() {
+        return topologyDao.findAll();
+    }
+
     public List<Topology> listTopologies(String userId) {
         List<Topology> topologies = topologyDao.findAll(userId);
         
@@ -398,7 +402,7 @@ public class TopologyService {
         } catch (ServiceException ex) {
             LOG.error("Exception while initializing the topology config object", ex);
 
-            throw new ServiceException("Exception while intializing the "
+            throw new ServiceException("Exception while initializing the "
                     + "Topology config object: " + ex.getMessage());
         }
     }
@@ -418,9 +422,9 @@ public class TopologyService {
             jarBuilder.open();
 
             // Keep track of already added dependencies
-            HashSet<String> frameworkDependencies = new HashSet<String>();
+            HashSet<String> frameworkDependencies = new HashSet<>();
 
-            HashSet<String> processedSerializations = new HashSet<String>();
+            HashSet<String> processedSerializations = new HashSet<>();
 
             TopologyConfig topologyConfig = topology.getDeployedConfig();
 
@@ -663,7 +667,7 @@ public class TopologyService {
                 FileUtils.forceDelete(new File(StreamflowEnvironment.getTopologiesDir(), 
                         projectId + ".jar"));
             } catch (IOException ex) {
-                LOG.error("Exception while clearing the topology project: ", ex);
+                //LOG.error("Exception while clearing the topology project: ", ex);
             }
         }
     }

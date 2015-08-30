@@ -130,10 +130,13 @@ public class StormEngine {
                     killed = waitForTopologyRemoval(topology, waitTimeSecs + KILL_BUFFER_SECS);
                 }
                 
+            } catch (NotAliveException ex) {
+                // Topology is not running on the cluster so just ignore
+                killed = true;
             } catch (Exception ex) {
                 LOG.error("Exception occurred while killing the remote topology: ID = " +
                                 topology.getId() + ", Reason = " + ex.getMessage());
-
+                ex.printStackTrace();
                 killed = false;
             } 
         }
@@ -252,7 +255,7 @@ public class StormEngine {
             } catch (NotAliveException ex) {
                 LOG.error("The requested topology was not found in the cluster: ID = " + stormTopologyId);
             } catch (TException ex) {
-                LOG.error("Exception while retrieving the remote topology info: ", ex);
+                LOG.error("Exception while retrieving the remote topology info: ", ex.getMessage());
             } finally {
                 tTransport.close();
             }
@@ -267,166 +270,168 @@ public class StormEngine {
         */
 
         TopologyInfo topologyInfo = new TopologyInfo();
-        topologyInfo.setId(info.get_id());
-        topologyInfo.setName(info.get_name());
-        topologyInfo.setStatus(info.get_status());
-        topologyInfo.setUptimeSecs(info.get_uptime_secs());
-        topologyInfo.setTopologyConf(topologyConf);
+        if (info != null) {
+            topologyInfo.setId(info.get_id());
+            topologyInfo.setName(info.get_name());
+            topologyInfo.setStatus(info.get_status());
+            topologyInfo.setUptimeSecs(info.get_uptime_secs());
+            topologyInfo.setTopologyConf(topologyConf);
 
-        for (Map.Entry<String, List<backtype.storm.generated.ErrorInfo>> error
-                : info.get_errors().entrySet()) {
-            List<ErrorInfo> errorInfoList = new ArrayList<>();
-            for (backtype.storm.generated.ErrorInfo ei : error.getValue()) {
-                ErrorInfo errorInfo = new ErrorInfo();
-                errorInfo.setError(ei.get_error());
-                errorInfo.setErrorTimeSecs(ei.get_error_time_secs());
-                errorInfo.setHost(ei.get_host());
-                errorInfo.setPort(ei.get_port());
+            for (Map.Entry<String, List<backtype.storm.generated.ErrorInfo>> error
+                    : info.get_errors().entrySet()) {
+                List<ErrorInfo> errorInfoList = new ArrayList<>();
+                for (backtype.storm.generated.ErrorInfo ei : error.getValue()) {
+                    ErrorInfo errorInfo = new ErrorInfo();
+                    errorInfo.setError(ei.get_error());
+                    errorInfo.setErrorTimeSecs(ei.get_error_time_secs());
+                    errorInfo.setHost(ei.get_host());
+                    errorInfo.setPort(ei.get_port());
 
-                errorInfoList.add(errorInfo);
-            }
-
-            topologyInfo.getErrors().put(error.getKey(), errorInfoList);
-        }
-
-        List<ExecutorSummary> executorSummaries = new ArrayList<>();
-        for (backtype.storm.generated.ExecutorSummary es : info.get_executors()) {
-            ExecutorSummary executor = new ExecutorSummary();
-            executor.setComponentId(es.get_component_id());
-            executor.setHost(es.get_host());
-            executor.setPort(es.get_port());
-            executor.setUptimeSecs(es.get_uptime_secs());
-
-            backtype.storm.generated.ExecutorInfo ei = es.get_executor_info();
-            if (ei != null) {
-                ExecutorInfo executorInfo = new ExecutorInfo();
-                executorInfo.setTaskStart(ei.get_task_start());
-                executorInfo.setTaskEnd(ei.get_task_end());
-
-                executor.setExecutorInfo(executorInfo);
-            }
-
-            backtype.storm.generated.ExecutorStats eStats = es.get_stats();
-            if (eStats != null) {
-                ExecutorStats stats = new ExecutorStats();
-                stats.setEmitted(eStats.get_emitted());
-                stats.setTransferred(eStats.get_transferred());
-
-                backtype.storm.generated.ExecutorSpecificStats ess = eStats.get_specific();
-                if (ess != null) {
-                    ExecutorSpecificStats specific = new ExecutorSpecificStats();
-
-                    if (ess.is_set_bolt()) {
-                        backtype.storm.generated.BoltStats bs = ess.get_bolt();
-                        if (bs != null) {
-                            BoltStats boltStats = new BoltStats();
-
-                            for (Map.Entry<String, Map<backtype.storm.generated.GlobalStreamId, Long>> ae
-                                    : bs.get_acked().entrySet()) {
-                                Map<String, Long> ackedMap = new HashMap<>();
-
-                                for (Map.Entry<backtype.storm.generated.GlobalStreamId, Long> aem
-                                        : ae.getValue().entrySet()) {
-                                    backtype.storm.generated.GlobalStreamId gsi = aem.getKey();
-
-                                    String globalStreamId = gsi.get_componentId() + ":" + gsi.get_streamId();
-
-                                    ackedMap.put(globalStreamId, aem.getValue());
-                                }
-
-                                boltStats.getAcked().put(ae.getKey(), ackedMap);
-                            }
-
-                            for (Map.Entry<String, Map<backtype.storm.generated.GlobalStreamId, Long>> fe
-                                    : bs.get_failed().entrySet()) {
-                                Map<String, Long> failedMap = new HashMap<>();
-
-                                for (Map.Entry<backtype.storm.generated.GlobalStreamId, Long> fem
-                                        : fe.getValue().entrySet()) {
-                                    backtype.storm.generated.GlobalStreamId gsi = fem.getKey();
-
-                                    String globalStreamId = gsi.get_componentId() + ":" + gsi.get_streamId();
-
-                                    failedMap.put(globalStreamId, fem.getValue());
-                                }
-
-                                boltStats.getFailed().put(fe.getKey(), failedMap);
-                            }
-
-                            for (Map.Entry<String, Map<backtype.storm.generated.GlobalStreamId, Long>> ee
-                                    : bs.get_executed().entrySet()) {
-                                Map<String, Long> executedMap = new HashMap<>();
-
-                                for (Map.Entry<backtype.storm.generated.GlobalStreamId, Long> eem
-                                        : ee.getValue().entrySet()) {
-                                    backtype.storm.generated.GlobalStreamId gsi = eem.getKey();
-
-                                    String globalStreamId = gsi.get_componentId() + ":" + gsi.get_streamId();
-
-                                    executedMap.put(globalStreamId, eem.getValue());
-                                }
-
-                                boltStats.getExecuted().put(ee.getKey(), executedMap);
-                            }
-
-                            for (Map.Entry<String, Map<backtype.storm.generated.GlobalStreamId, Double>> ema
-                                    : bs.get_execute_ms_avg().entrySet()) {
-                                Map<String, Double> executedMap = new HashMap<>();
-
-                                for (Map.Entry<backtype.storm.generated.GlobalStreamId, Double> emam
-                                        : ema.getValue().entrySet()) {
-                                    backtype.storm.generated.GlobalStreamId gsi = emam.getKey();
-
-                                    String globalStreamId = gsi.get_componentId() + ":" + gsi.get_streamId();
-
-                                    executedMap.put(globalStreamId, emam.getValue());
-                                }
-
-                                boltStats.getExecuteMsAvg().put(ema.getKey(), executedMap);
-                            }
-
-                            for (Map.Entry<String, Map<backtype.storm.generated.GlobalStreamId, Double>> pma
-                                    : bs.get_process_ms_avg().entrySet()) {
-                                Map<String, Double> processMap = new HashMap<>();
-
-                                for (Map.Entry<backtype.storm.generated.GlobalStreamId, Double> pmam
-                                        : pma.getValue().entrySet()) {
-                                    backtype.storm.generated.GlobalStreamId gsi = pmam.getKey();
-
-                                    String globalStreamId = gsi.get_componentId() + ":" + gsi.get_streamId();
-
-                                    processMap.put(globalStreamId, pmam.getValue());
-                                }
-
-                                boltStats.getProcessMsAvg().put(pma.getKey(), processMap);
-                            }
-
-                            specific.setBolt(boltStats);
-                        }
-                    }
-
-                    if (ess.is_set_spout()) {
-                        backtype.storm.generated.SpoutStats ss = ess.get_spout();
-                        if (ss != null) {
-                            SpoutStats spoutStats = new SpoutStats();
-                            spoutStats.setAcked(ss.get_acked());
-                            spoutStats.setFailed(ss.get_failed());
-                            spoutStats.setCompleteMsAvg(ss.get_complete_ms_avg());
-
-                            specific.setSpout(spoutStats);
-                        }
-                    }
-
-                    stats.setSpecific(specific);
+                    errorInfoList.add(errorInfo);
                 }
 
-                executor.setStats(stats);
+                topologyInfo.getErrors().put(error.getKey(), errorInfoList);
             }
 
-            executorSummaries.add(executor);
-        }
+            List<ExecutorSummary> executorSummaries = new ArrayList<>();
+            for (backtype.storm.generated.ExecutorSummary es : info.get_executors()) {
+                ExecutorSummary executor = new ExecutorSummary();
+                executor.setComponentId(es.get_component_id());
+                executor.setHost(es.get_host());
+                executor.setPort(es.get_port());
+                executor.setUptimeSecs(es.get_uptime_secs());
 
-        topologyInfo.setExecutors(executorSummaries);
+                backtype.storm.generated.ExecutorInfo ei = es.get_executor_info();
+                if (ei != null) {
+                    ExecutorInfo executorInfo = new ExecutorInfo();
+                    executorInfo.setTaskStart(ei.get_task_start());
+                    executorInfo.setTaskEnd(ei.get_task_end());
+
+                    executor.setExecutorInfo(executorInfo);
+                }
+
+                backtype.storm.generated.ExecutorStats eStats = es.get_stats();
+                if (eStats != null) {
+                    ExecutorStats stats = new ExecutorStats();
+                    stats.setEmitted(eStats.get_emitted());
+                    stats.setTransferred(eStats.get_transferred());
+
+                    backtype.storm.generated.ExecutorSpecificStats ess = eStats.get_specific();
+                    if (ess != null) {
+                        ExecutorSpecificStats specific = new ExecutorSpecificStats();
+
+                        if (ess.is_set_bolt()) {
+                            backtype.storm.generated.BoltStats bs = ess.get_bolt();
+                            if (bs != null) {
+                                BoltStats boltStats = new BoltStats();
+
+                                for (Map.Entry<String, Map<backtype.storm.generated.GlobalStreamId, Long>> ae
+                                        : bs.get_acked().entrySet()) {
+                                    Map<String, Long> ackedMap = new HashMap<>();
+
+                                    for (Map.Entry<backtype.storm.generated.GlobalStreamId, Long> aem
+                                            : ae.getValue().entrySet()) {
+                                        backtype.storm.generated.GlobalStreamId gsi = aem.getKey();
+
+                                        String globalStreamId = gsi.get_componentId() + ":" + gsi.get_streamId();
+
+                                        ackedMap.put(globalStreamId, aem.getValue());
+                                    }
+
+                                    boltStats.getAcked().put(ae.getKey(), ackedMap);
+                                }
+
+                                for (Map.Entry<String, Map<backtype.storm.generated.GlobalStreamId, Long>> fe
+                                        : bs.get_failed().entrySet()) {
+                                    Map<String, Long> failedMap = new HashMap<>();
+
+                                    for (Map.Entry<backtype.storm.generated.GlobalStreamId, Long> fem
+                                            : fe.getValue().entrySet()) {
+                                        backtype.storm.generated.GlobalStreamId gsi = fem.getKey();
+
+                                        String globalStreamId = gsi.get_componentId() + ":" + gsi.get_streamId();
+
+                                        failedMap.put(globalStreamId, fem.getValue());
+                                    }
+
+                                    boltStats.getFailed().put(fe.getKey(), failedMap);
+                                }
+
+                                for (Map.Entry<String, Map<backtype.storm.generated.GlobalStreamId, Long>> ee
+                                        : bs.get_executed().entrySet()) {
+                                    Map<String, Long> executedMap = new HashMap<>();
+
+                                    for (Map.Entry<backtype.storm.generated.GlobalStreamId, Long> eem
+                                            : ee.getValue().entrySet()) {
+                                        backtype.storm.generated.GlobalStreamId gsi = eem.getKey();
+
+                                        String globalStreamId = gsi.get_componentId() + ":" + gsi.get_streamId();
+
+                                        executedMap.put(globalStreamId, eem.getValue());
+                                    }
+
+                                    boltStats.getExecuted().put(ee.getKey(), executedMap);
+                                }
+
+                                for (Map.Entry<String, Map<backtype.storm.generated.GlobalStreamId, Double>> ema
+                                        : bs.get_execute_ms_avg().entrySet()) {
+                                    Map<String, Double> executedMap = new HashMap<>();
+
+                                    for (Map.Entry<backtype.storm.generated.GlobalStreamId, Double> emam
+                                            : ema.getValue().entrySet()) {
+                                        backtype.storm.generated.GlobalStreamId gsi = emam.getKey();
+
+                                        String globalStreamId = gsi.get_componentId() + ":" + gsi.get_streamId();
+
+                                        executedMap.put(globalStreamId, emam.getValue());
+                                    }
+
+                                    boltStats.getExecuteMsAvg().put(ema.getKey(), executedMap);
+                                }
+
+                                for (Map.Entry<String, Map<backtype.storm.generated.GlobalStreamId, Double>> pma
+                                        : bs.get_process_ms_avg().entrySet()) {
+                                    Map<String, Double> processMap = new HashMap<>();
+
+                                    for (Map.Entry<backtype.storm.generated.GlobalStreamId, Double> pmam
+                                            : pma.getValue().entrySet()) {
+                                        backtype.storm.generated.GlobalStreamId gsi = pmam.getKey();
+
+                                        String globalStreamId = gsi.get_componentId() + ":" + gsi.get_streamId();
+
+                                        processMap.put(globalStreamId, pmam.getValue());
+                                    }
+
+                                    boltStats.getProcessMsAvg().put(pma.getKey(), processMap);
+                                }
+
+                                specific.setBolt(boltStats);
+                            }
+                        }
+
+                        if (ess.is_set_spout()) {
+                            backtype.storm.generated.SpoutStats ss = ess.get_spout();
+                            if (ss != null) {
+                                SpoutStats spoutStats = new SpoutStats();
+                                spoutStats.setAcked(ss.get_acked());
+                                spoutStats.setFailed(ss.get_failed());
+                                spoutStats.setCompleteMsAvg(ss.get_complete_ms_avg());
+
+                                specific.setSpout(spoutStats);
+                            }
+                        }
+
+                        stats.setSpecific(specific);
+                    }
+
+                    executor.setStats(stats);
+                }
+
+                executorSummaries.add(executor);
+            }
+
+            topologyInfo.setExecutors(executorSummaries);
+        }
 
         return topologyInfo;
     }

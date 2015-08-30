@@ -25,7 +25,7 @@
 
     <groupId>streamflow</groupId>
     <artifactId>streamflow</artifactId>
-    <version>0.12.1</version>
+    <version>0.13.0</version>
     <packaging>pom</packaging>
 	
     <name>StreamFlow</name>
@@ -50,7 +50,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         
         <!-- Dependency Versions -->
-        <storm.version>0.9.3</storm.version>
+        <storm.version>0.9.5</storm.version>
         <jetty.version>9.0.0.RC2</jetty.version>
         <jackson.version>2.4.1</jackson.version>
         <jersey.version>1.17.1</jersey.version>
@@ -588,7 +588,7 @@
             <plugin>
                 <groupId>external.atlassian.jgitflow</groupId>
                 <artifactId>jgitflow-maven-plugin</artifactId>
-                <version>1.0-m4.3</version>
+                <version>1.0-m5.1</version>
                 <configuration>
                     <autoVersionSubmodules>true</autoVersionSubmodules>
                     <noDeploy>true</noDeploy>
