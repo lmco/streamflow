@@ -15,14 +15,18 @@
  */
 package streamflow.server.config;
 
+//import com.google.common.util.concurrent.ServiceManager;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.servlet.GuiceServletContextListener;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.annotation.WebListener;
+
+import org.apache.storm.guava.util.concurrent.ServiceManager;
 import streamflow.datastore.config.DatastoreModule;
 import streamflow.engine.config.EngineModule;
+import streamflow.server.service.TopologyMonitorService;
 import streamflow.service.config.ServiceModule;
 import streamflow.util.config.ConfigModule;
 import org.apache.shiro.guice.web.ShiroWebModule;
@@ -39,9 +43,17 @@ public class WebConfig extends GuiceServletContextListener {
         StreamflowEnvironment.setStreamflowHome(System.getenv("STREAMFLOW_HOME"));
         StreamflowEnvironment.initialize();
         
-        return Guice.createInjector(new ConfigModule(), new DatastoreModule(),
-                new ServiceModule(), new EngineModule(), new JerseyModule(),
+        Injector injector = Guice.createInjector(new ConfigModule(), new DatastoreModule(),
+                new ServiceModule(), new GuavaServiceModule(), new EngineModule(), new JerseyModule(),
                 new SecurityModule(servletContext), ShiroWebModule.guiceFilterModule());
+
+        // Initialize the service manager to manage daemon services
+        //ServiceManager manager = injector.getInstance(ServiceManager.class);
+        //manager.startAsync().awaitHealthy();
+        TopologyMonitorService topologyMonitorService = injector.getInstance(TopologyMonitorService.class);
+        topologyMonitorService.startAsync().awaitRunning();
+
+        return injector;
     }
 
     @Override

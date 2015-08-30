@@ -16,15 +16,9 @@
 package streamflow.util.config;
 
 import com.google.inject.AbstractModule;
-import streamflow.model.config.AuthConfig;
-import streamflow.model.config.DatastoreConfig;
-import streamflow.model.config.StreamflowConfig;
-import streamflow.model.config.LoggerConfig;
-import streamflow.model.config.ProxyConfig;
-import streamflow.model.config.ServerConfig;
+import streamflow.model.config.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import streamflow.model.config.LocalClusterConfig;
 
 public class ConfigModule extends AbstractModule {
 
@@ -37,6 +31,7 @@ public class ConfigModule extends AbstractModule {
         bind(StreamflowConfig.class).toInstance(streamflowConfig);
         bind(ServerConfig.class).toInstance(streamflowConfig.getServer());
         bind(AuthConfig.class).toInstance(streamflowConfig.getAuth());
+        bind(MonitorConfig.class).toInstance(streamflowConfig.getMonitor());
         bind(ProxyConfig.class).toInstance(streamflowConfig.getProxy());
         bind(LoggerConfig.class).toInstance(streamflowConfig.getLogger());
         bind(LocalClusterConfig.class).toInstance(streamflowConfig.getLocalCluster());

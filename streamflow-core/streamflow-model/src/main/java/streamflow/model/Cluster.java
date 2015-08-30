@@ -30,7 +30,7 @@ public class Cluster implements Serializable {
 
     private Integer nimbusPort = 6627;
     
-    private String version = "0.9.1";
+    private String version = "0.9.5";
 
     private String logServerHost = "localhost";
     

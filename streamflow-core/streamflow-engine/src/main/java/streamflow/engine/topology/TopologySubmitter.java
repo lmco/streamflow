@@ -102,13 +102,13 @@ public class TopologySubmitter extends Thread {
                 localCluster.submitTopology(topology.getId(), stormConfig, stormTopology);
             }
         } catch (AlreadyAliveException ex) {
-            LOG.error("The specified topology is already running on the cluster: {}", ex);
+            LOG.error("The specified topology is already running on the cluster:", ex);
         } catch (InvalidTopologyException ex) {
             LOG.error("The specified topology is invalid: " + ex);
         } catch (FrameworkException ex) {
-            LOG.error("The topology was unable to load a dependent framework: {}", ex);
+            LOG.error("The topology was unable to load a dependent framework:", ex);
         } catch (Exception ex) {
-            LOG.error("The topology threw an uncaught exception: {}", ex);
+            LOG.error("The topology threw an uncaught exception:", ex);
         }
     }
     

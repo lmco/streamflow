@@ -1,17 +1,15 @@
 /**
  * Copyright 2014 Lockheed Martin Corporation
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License. You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Unless required by applicable law or agreed to in writing, software distributed under the License
+ * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing permissions and limitations under
+ * the License.
  */
 package streamflow.service;
 
@@ -23,7 +21,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
-import java.util.UUID;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
@@ -156,182 +153,233 @@ public class FrameworkService {
 
         return frameworkJarContent;
     }
-    
+
     /**
      * Process the annotations found in a framework jar
+     *
      * @param jarFile
      * @return a FrameworkConfig or null if no annotations were found
      */
-    public FrameworkConfig processFrameworkAnnotations(File jarFile){
-    	FrameworkConfig config = new FrameworkConfig();
-    	ArrayList<ComponentConfig> components = new ArrayList<ComponentConfig>();
-		String frameworkLevel = null;
-		boolean foundFrameworkAnnotations = false;
-		ZipFile zipFile = null;
-		
-		try {
-			zipFile = new ZipFile(jarFile);
-			
-			Enumeration<? extends ZipEntry> entries = zipFile.entries();
-			while(entries.hasMoreElements()){
-				ZipEntry entry = entries.nextElement();
-				String entryName = entry.getName();
-				if(entry.isDirectory()){
-					if(frameworkLevel != null){
-						if(entryName.startsWith(frameworkLevel) == false) frameworkLevel = null;
-					}
-					ZipEntry packageInfoEntry = zipFile.getEntry(entryName+"package-info.class");
-					if(packageInfoEntry != null){
-						InputStream fileInputStream = zipFile.getInputStream(packageInfoEntry);
-						DataInputStream dstream = new DataInputStream(fileInputStream);
-						ClassFile cf = new ClassFile(dstream);
-						String cfName = cf.getName();
-						AnnotationsAttribute attr = (AnnotationsAttribute)cf.getAttribute(AnnotationsAttribute.visibleTag);
-						Annotation annotation = attr.getAnnotation("streamflow.annotations.Framework");
-						if(annotation == null) continue;
-						
-						frameworkLevel = cfName;
-						foundFrameworkAnnotations = true;
-						StringMemberValue frameworkLabel = (StringMemberValue) annotation.getMemberValue("label");
-						if(frameworkLabel != null) config.setLabel(frameworkLabel.getValue());
-						StringMemberValue frameworkName = (StringMemberValue) annotation.getMemberValue("name");
-						if(frameworkName != null) config.setName(frameworkName.getValue());
-						StringMemberValue frameworkVersion = (StringMemberValue) annotation.getMemberValue("version");
-						if(frameworkVersion != null) config.setVersion(frameworkVersion.getValue());
-						
-						Annotation descriptionAnnotation = attr.getAnnotation("streamflow.annotations.Description");
-						if(descriptionAnnotation != null){
-							StringMemberValue frameworkDescription = (StringMemberValue) descriptionAnnotation.getMemberValue("value");
-							if(frameworkDescription != null) config.setDescription(frameworkDescription.getValue());
-						}
-						
-						
-					}
-				} else if(frameworkLevel != null && entryName.endsWith(".class") && entryName.endsWith("package-info.class") == false){
-					ZipEntry packageInfoEntry = zipFile.getEntry(entryName);
-					InputStream fileInputStream = zipFile.getInputStream(packageInfoEntry);
-					DataInputStream dstream = new DataInputStream(fileInputStream);
-					ClassFile cf = new ClassFile(dstream);
-					String cfName = cf.getName();
-					AnnotationsAttribute attr = (AnnotationsAttribute)cf.getAttribute(AnnotationsAttribute.visibleTag);
-					if(attr == null) continue;
-					Annotation componentAnnotation = attr.getAnnotation("streamflow.annotations.Component");
-					
-					if(componentAnnotation == null) continue;
-					
-					ComponentConfig component = new ComponentConfig();
-					component.setMainClass(cf.getName());
-					StringMemberValue componentLabel = (StringMemberValue) componentAnnotation.getMemberValue("label");
-					if(componentLabel != null) component.setLabel(componentLabel.getValue());
-					StringMemberValue componentName = (StringMemberValue) componentAnnotation.getMemberValue("name");
-					if(componentName != null) component.setName(componentName.getValue());
-					StringMemberValue componentType = (StringMemberValue) componentAnnotation.getMemberValue("type");
-					if(componentType != null) component.setType(componentType.getValue());
-					StringMemberValue componentIcon = (StringMemberValue) componentAnnotation.getMemberValue("icon");
-					if(componentIcon != null) component.setIcon(componentIcon.getValue());
-					
-					Annotation componentDescriptionAnnotation = attr.getAnnotation("streamflow.annotations.Description");
-					if(componentDescriptionAnnotation != null){
-						StringMemberValue componentDescription = (StringMemberValue) componentDescriptionAnnotation.getMemberValue("value");
-						if(componentDescription != null) component.setDescription(componentDescription.getValue());
-					}
-					
-					Annotation componentInputsAnnotation = attr.getAnnotation("streamflow.annotations.ComponentInputs");
-					if(componentInputsAnnotation != null){
-						ArrayList<ComponentInterface> inputs = new ArrayList<ComponentInterface>();
-						ArrayMemberValue componentInputs = (ArrayMemberValue) componentInputsAnnotation.getMemberValue("value");
-						for(MemberValue value : componentInputs.getValue()){
-							AnnotationMemberValue annotationMember = (AnnotationMemberValue)value;
-							Annotation annotationValue = annotationMember.getValue();
-							StringMemberValue keyAnnotationValue = (StringMemberValue) annotationValue.getMemberValue("key");
-							StringMemberValue descriptionAnnotationValue = (StringMemberValue) annotationValue.getMemberValue("description");
-							ComponentInterface inputInterface = new ComponentInterface();
-							if(keyAnnotationValue != null) inputInterface.setKey(keyAnnotationValue.getValue());
-							if(descriptionAnnotationValue != null) inputInterface.setDescription(descriptionAnnotationValue.getValue());
-							inputs.add(inputInterface);
-						}
-						
-						component.setInputs(inputs);
-					}
-					
-					Annotation componentOutputsAnnotation = attr.getAnnotation("streamflow.annotations.ComponentOutputs");
-					if(componentOutputsAnnotation != null){
-						ArrayList<ComponentInterface> outputs = new ArrayList<ComponentInterface>();
-						ArrayMemberValue componentOutputs = (ArrayMemberValue) componentOutputsAnnotation.getMemberValue("value");
-						for(MemberValue value : componentOutputs.getValue()){
-							AnnotationMemberValue annotationMember = (AnnotationMemberValue)value;
-							Annotation annotationValue = annotationMember.getValue();
-							StringMemberValue keyAnnotationValue = (StringMemberValue) annotationValue.getMemberValue("key");
-							StringMemberValue descriptionAnnotationValue = (StringMemberValue) annotationValue.getMemberValue("description");
-							ComponentInterface outputInterface = new ComponentInterface();
-							if(keyAnnotationValue != null) outputInterface.setKey(keyAnnotationValue.getValue());
-							if(descriptionAnnotationValue != null) outputInterface.setDescription(descriptionAnnotationValue.getValue());
-							outputs.add(outputInterface);
-						}
-						
-						component.setOutputs(outputs);
-					}
-					
-	
-					List<MethodInfo> memberMethods = cf.getMethods();
-					if(memberMethods != null){
-						ArrayList<ComponentProperty> properties = new ArrayList<ComponentProperty>();
+    public FrameworkConfig processFrameworkAnnotations(File jarFile) {
+        FrameworkConfig config = new FrameworkConfig();
+        ArrayList<ComponentConfig> components = new ArrayList<ComponentConfig>();
+        String frameworkLevel = null;
+        boolean foundFrameworkAnnotations = false;
+        ZipFile zipFile = null;
 
-						for(MethodInfo method : memberMethods){
-							AnnotationsAttribute methodAttr =  (AnnotationsAttribute) method.getAttribute(AnnotationsAttribute.visibleTag);
-							if(methodAttr == null) continue;
-							Annotation propertyAnnotation = methodAttr.getAnnotation("streamflow.annotations.ComponentProperty");
-							if(propertyAnnotation == null) continue;
+        try {
+            zipFile = new ZipFile(jarFile);
 
-							ComponentProperty property = new ComponentProperty();
-							
-							StringMemberValue propertyName = (StringMemberValue) propertyAnnotation.getMemberValue("name");
-							if(propertyName != null) property.setName(propertyName.getValue());
-							StringMemberValue propertylabel = (StringMemberValue) propertyAnnotation.getMemberValue("label");
-							if(propertylabel != null) property.setLabel(propertylabel.getValue());
-							StringMemberValue propertyType = (StringMemberValue) propertyAnnotation.getMemberValue("type");
-							if(propertyType != null) property.setType(propertyType.getValue());
-							StringMemberValue propertyDefaultValue = (StringMemberValue) propertyAnnotation.getMemberValue("defaultValue");
-							if(propertyDefaultValue != null) property.setDefaultValue(propertyDefaultValue.getValue());
-							BooleanMemberValue propertyRequired = (BooleanMemberValue)propertyAnnotation.getMemberValue("required");
-							if(propertyRequired != null) property.setRequired(propertyRequired.getValue());
-							
-							Annotation methodDescriptionAnnotation = methodAttr.getAnnotation("streamflow.annotations.Description");
-							if(methodDescriptionAnnotation != null){
-								StringMemberValue methodDescription = (StringMemberValue) methodDescriptionAnnotation.getMemberValue("value");
-								if(methodDescription != null) property.setDescription(methodDescription.getValue());
-							}
-							properties.add(property);
-						}
-						component.setProperties(properties);
+            Enumeration<? extends ZipEntry> entries = zipFile.entries();
+            while (entries.hasMoreElements()) {
+                ZipEntry entry = entries.nextElement();
+                String entryName = entry.getName();
+                if (entry.isDirectory()) {
+                    if (frameworkLevel != null) {
+                        if (entryName.startsWith(frameworkLevel) == false) {
+                            frameworkLevel = null;
+                        }
+                    }
+                    ZipEntry packageInfoEntry = zipFile.getEntry(entryName + "package-info.class");
+                    if (packageInfoEntry != null) {
+                        InputStream fileInputStream = zipFile.getInputStream(packageInfoEntry);
+                        DataInputStream dstream = new DataInputStream(fileInputStream);
+                        ClassFile cf = new ClassFile(dstream);
+                        String cfName = cf.getName();
+                        AnnotationsAttribute attr = (AnnotationsAttribute) cf.getAttribute(AnnotationsAttribute.visibleTag);
+                        Annotation annotation = attr.getAnnotation("streamflow.annotations.Framework");
+                        if (annotation == null) {
+                            continue;
+                        }
 
-					}
+                        frameworkLevel = cfName;
+                        foundFrameworkAnnotations = true;
+                        StringMemberValue frameworkLabel = (StringMemberValue) annotation.getMemberValue("label");
+                        if (frameworkLabel != null) {
+                            config.setLabel(frameworkLabel.getValue());
+                        }
+                        StringMemberValue frameworkName = (StringMemberValue) annotation.getMemberValue("name");
+                        if (frameworkName != null) {
+                            config.setName(frameworkName.getValue());
+                        }
+                        StringMemberValue frameworkVersion = (StringMemberValue) annotation.getMemberValue("version");
+                        if (frameworkVersion != null) {
+                            config.setVersion(frameworkVersion.getValue());
+                        }
 
-					components.add(component);
-				}
-			}
-			
-			config.setComponents(components);
-			
-			// return null if no framework annotations were located
-			if(foundFrameworkAnnotations == false) return null;
-			
-			return  config;
-		} catch (IOException ex){
+                        Annotation descriptionAnnotation = attr.getAnnotation("streamflow.annotations.Description");
+                        if (descriptionAnnotation != null) {
+                            StringMemberValue frameworkDescription = (StringMemberValue) descriptionAnnotation.getMemberValue("value");
+                            if (frameworkDescription != null) {
+                                config.setDescription(frameworkDescription.getValue());
+                            }
+                        }
+
+                    }
+                } else if (frameworkLevel != null && entryName.endsWith(".class") && entryName.endsWith("package-info.class") == false) {
+                    ZipEntry packageInfoEntry = zipFile.getEntry(entryName);
+                    InputStream fileInputStream = zipFile.getInputStream(packageInfoEntry);
+                    DataInputStream dstream = new DataInputStream(fileInputStream);
+                    ClassFile cf = new ClassFile(dstream);
+                    String cfName = cf.getName();
+                    AnnotationsAttribute attr = (AnnotationsAttribute) cf.getAttribute(AnnotationsAttribute.visibleTag);
+                    if (attr == null) {
+                        continue;
+                    }
+                    Annotation componentAnnotation = attr.getAnnotation("streamflow.annotations.Component");
+
+                    if (componentAnnotation == null) {
+                        continue;
+                    }
+
+                    ComponentConfig component = new ComponentConfig();
+                    component.setMainClass(cf.getName());
+                    StringMemberValue componentLabel = (StringMemberValue) componentAnnotation.getMemberValue("label");
+                    if (componentLabel != null) {
+                        component.setLabel(componentLabel.getValue());
+                    }
+                    StringMemberValue componentName = (StringMemberValue) componentAnnotation.getMemberValue("name");
+                    if (componentName != null) {
+                        component.setName(componentName.getValue());
+                    }
+                    StringMemberValue componentType = (StringMemberValue) componentAnnotation.getMemberValue("type");
+                    if (componentType != null) {
+                        component.setType(componentType.getValue());
+                    }
+                    StringMemberValue componentIcon = (StringMemberValue) componentAnnotation.getMemberValue("icon");
+                    if (componentIcon != null) {
+                        component.setIcon(componentIcon.getValue());
+                    }
+
+                    Annotation componentDescriptionAnnotation = attr.getAnnotation("streamflow.annotations.Description");
+                    if (componentDescriptionAnnotation != null) {
+                        StringMemberValue componentDescription = (StringMemberValue) componentDescriptionAnnotation.getMemberValue("value");
+                        if (componentDescription != null) {
+                            component.setDescription(componentDescription.getValue());
+                        }
+                    }
+
+                    Annotation componentInputsAnnotation = attr.getAnnotation("streamflow.annotations.ComponentInputs");
+                    if (componentInputsAnnotation != null) {
+                        ArrayList<ComponentInterface> inputs = new ArrayList<ComponentInterface>();
+                        ArrayMemberValue componentInputs = (ArrayMemberValue) componentInputsAnnotation.getMemberValue("value");
+                        for (MemberValue value : componentInputs.getValue()) {
+                            AnnotationMemberValue annotationMember = (AnnotationMemberValue) value;
+                            Annotation annotationValue = annotationMember.getValue();
+                            StringMemberValue keyAnnotationValue = (StringMemberValue) annotationValue.getMemberValue("key");
+                            StringMemberValue descriptionAnnotationValue = (StringMemberValue) annotationValue.getMemberValue("description");
+                            ComponentInterface inputInterface = new ComponentInterface();
+                            if (keyAnnotationValue != null) {
+                                inputInterface.setKey(keyAnnotationValue.getValue());
+                            }
+                            if (descriptionAnnotationValue != null) {
+                                inputInterface.setDescription(descriptionAnnotationValue.getValue());
+                            }
+                            inputs.add(inputInterface);
+                        }
+
+                        component.setInputs(inputs);
+                    }
+
+                    Annotation componentOutputsAnnotation = attr.getAnnotation("streamflow.annotations.ComponentOutputs");
+                    if (componentOutputsAnnotation != null) {
+                        ArrayList<ComponentInterface> outputs = new ArrayList<ComponentInterface>();
+                        ArrayMemberValue componentOutputs = (ArrayMemberValue) componentOutputsAnnotation.getMemberValue("value");
+                        for (MemberValue value : componentOutputs.getValue()) {
+                            AnnotationMemberValue annotationMember = (AnnotationMemberValue) value;
+                            Annotation annotationValue = annotationMember.getValue();
+                            StringMemberValue keyAnnotationValue = (StringMemberValue) annotationValue.getMemberValue("key");
+                            StringMemberValue descriptionAnnotationValue = (StringMemberValue) annotationValue.getMemberValue("description");
+                            ComponentInterface outputInterface = new ComponentInterface();
+                            if (keyAnnotationValue != null) {
+                                outputInterface.setKey(keyAnnotationValue.getValue());
+                            }
+                            if (descriptionAnnotationValue != null) {
+                                outputInterface.setDescription(descriptionAnnotationValue.getValue());
+                            }
+                            outputs.add(outputInterface);
+                        }
+
+                        component.setOutputs(outputs);
+                    }
+
+                    List<MethodInfo> memberMethods = cf.getMethods();
+                    if (memberMethods != null) {
+                        ArrayList<ComponentProperty> properties = new ArrayList<ComponentProperty>();
+
+                        for (MethodInfo method : memberMethods) {
+                            AnnotationsAttribute methodAttr = (AnnotationsAttribute) method.getAttribute(AnnotationsAttribute.visibleTag);
+                            if (methodAttr == null) {
+                                continue;
+                            }
+                            Annotation propertyAnnotation = methodAttr.getAnnotation("streamflow.annotations.ComponentProperty");
+                            if (propertyAnnotation == null) {
+                                continue;
+                            }
+
+                            ComponentProperty property = new ComponentProperty();
+
+                            StringMemberValue propertyName = (StringMemberValue) propertyAnnotation.getMemberValue("name");
+                            if (propertyName != null) {
+                                property.setName(propertyName.getValue());
+                            }
+                            StringMemberValue propertylabel = (StringMemberValue) propertyAnnotation.getMemberValue("label");
+                            if (propertylabel != null) {
+                                property.setLabel(propertylabel.getValue());
+                            }
+                            StringMemberValue propertyType = (StringMemberValue) propertyAnnotation.getMemberValue("type");
+                            if (propertyType != null) {
+                                property.setType(propertyType.getValue());
+                            }
+                            StringMemberValue propertyDefaultValue = (StringMemberValue) propertyAnnotation.getMemberValue("defaultValue");
+                            if (propertyDefaultValue != null) {
+                                property.setDefaultValue(propertyDefaultValue.getValue());
+                            }
+                            BooleanMemberValue propertyRequired = (BooleanMemberValue) propertyAnnotation.getMemberValue("required");
+                            if (propertyRequired != null) {
+                                property.setRequired(propertyRequired.getValue());
+                            }
+
+                            Annotation methodDescriptionAnnotation = methodAttr.getAnnotation("streamflow.annotations.Description");
+                            if (methodDescriptionAnnotation != null) {
+                                StringMemberValue methodDescription = (StringMemberValue) methodDescriptionAnnotation.getMemberValue("value");
+                                if (methodDescription != null) {
+                                    property.setDescription(methodDescription.getValue());
+                                }
+                            }
+                            properties.add(property);
+                        }
+                        component.setProperties(properties);
+
+                    }
+
+                    components.add(component);
+                }
+            }
+
+            config.setComponents(components);
+
+            // return null if no framework annotations were located
+            if (foundFrameworkAnnotations == false) {
+                return null;
+            }
+
+            return config;
+        } catch (IOException ex) {
             LOG.error("Error while parsing framework annotations: ", ex);
-            
+
             throw new EntityInvalidException("Error while parsing framework annotations: "
-                + ex.getMessage());
-		} finally {
-			if(zipFile != null){
-				try {
-					zipFile.close();
-				} catch (IOException e) {
-					LOG.error("Error while closing framework zip");
-				}
-			}
-		}
-    	
+                    + ex.getMessage());
+        } finally {
+            if (zipFile != null) {
+                try {
+                    zipFile.close();
+                } catch (IOException e) {
+                    LOG.error("Error while closing framework zip");
+                }
+            }
+        }
+
     }
 
     public FileInfo getFrameworkFileInfo(String frameworkId) {
@@ -348,22 +396,19 @@ public class FrameworkService {
 
     public Framework processFrameworkJar(byte[] frameworkJar, boolean isPublic) {
         Framework framework = null;
-        
+
         try {
             String frameworkHash = DigestUtils.md5Hex(frameworkJar);
-            
+
             // Write out a temporary file for the jar so it can be processed
             File tempFrameworkFile = new File(StreamflowEnvironment.getFrameworksDir(),
                     frameworkHash + ".jar");
 
             FileUtils.writeByteArrayToFile(tempFrameworkFile, frameworkJar);
-            
+
             FrameworkConfig frameworkConfig = processFrameworkConfig(tempFrameworkFile);
 
             if (frameworkConfig != null) {
-            	
-            	
-            	
                 String frameworkId = frameworkConfig.getName();
 
                 // If the framework already exists, delete it first to clear out children
@@ -400,13 +445,13 @@ public class FrameworkService {
             LOG.error("Exception while processing the framework jar", ex);
 
             throw new EntityInvalidException(
-                    "Exception while processing the framework framework: Exception = "  
-                            + ex.getMessage());
+                    "Exception while processing the framework framework: Exception = "
+                    + ex.getMessage());
         }
 
         return framework;
     }
-    
+
     public String storeFrameworkJar(byte[] frameworkJar) {
         FileInfo frameworkFile = new FileInfo();
         frameworkFile.setFileName(IDUtils.randomUUID());
@@ -420,18 +465,18 @@ public class FrameworkService {
         if (frameworkFile == null) {
             throw new ServiceException("Unable to save framework jar file");
         }
-        
+
         return frameworkFile.getId();
     }
-    
+
     public FrameworkConfig processFrameworkConfig(File tempFrameworkFile) {
         FrameworkConfig frameworkConfig = null;
 
         try {
             JarFile frameworkJarFile = new JarFile(tempFrameworkFile.getAbsoluteFile());
-            
+
             JarEntry frameworkYamlEntry = frameworkJarFile.getJarEntry("STREAMFLOW-INF/framework.yml");
-            
+
             JarEntry frameworkJsonEntry = frameworkJarFile.getJarEntry("STREAMFLOW-INF/framework.json");
 
             if (frameworkYamlEntry != null) {
@@ -444,27 +489,27 @@ public class FrameworkService {
             } else if (frameworkJsonEntry != null) {
                 String frameworkJson = IOUtils.toString(
                         frameworkJarFile.getInputStream(frameworkJsonEntry));
-                
+
                 // Attempt to deserialize the inbuilt streams-framework.json 
                 frameworkConfig = jsonMapper.readValue(
                         frameworkJson, FrameworkConfig.class);
             } else {
-            	frameworkConfig = processFrameworkAnnotations(tempFrameworkFile);
-            	if(frameworkConfig == null){
-	                throw new EntityInvalidException(
-	                        "The framework configuration file was not found in the framework jar");
-            	}
+                frameworkConfig = processFrameworkAnnotations(tempFrameworkFile);
+                if (frameworkConfig == null) {
+                    throw new EntityInvalidException(
+                            "The framework configuration file was not found in the framework jar");
+                }
             }
         } catch (IOException ex) {
             LOG.error("Error while loaded the framework configuration: ", ex);
-            
+
             throw new EntityInvalidException("Error while loading the framework configuration: "
-                + ex.getMessage());
+                    + ex.getMessage());
         }
-            
+
         return frameworkConfig;
     }
-    
+
     public void processFrameworkComponents(Framework framework, FrameworkConfig frameworkConfig, File frameworkFile) {
         for (ComponentConfig componentConfig : frameworkConfig.getComponents()) {
             Component component = new Component();
@@ -480,7 +525,7 @@ public class FrameworkService {
             componentService.addComponent(component);
         }
     }
-    
+
     public void processFrameworkResources(Framework framework, FrameworkConfig frameworkConfig) {
         for (ResourceConfig resourceConfig : frameworkConfig.getResources()) {
             Resource resource = new Resource();
@@ -495,7 +540,7 @@ public class FrameworkService {
             resourceService.addResource(resource);
         }
     }
-    
+
     public void processFrameworkSerializations(Framework framework, FrameworkConfig frameworkConfig) {
         // Keep track of the order or the serializations specified in the config
         int serializationPriority = 0;
@@ -513,7 +558,7 @@ public class FrameworkService {
             serializationService.addSerialization(serialization);
         }
     }
-    
+
     public String loadFrameworkComponentIcon(ComponentConfig componentConfig, File frameworkFile) {
         String iconId = null;
         byte[] iconData = null;
@@ -521,7 +566,7 @@ public class FrameworkService {
         if (componentConfig.getIcon() != null) {
             try {
                 JarFile frameworkJarFile = new JarFile(frameworkFile);
-                
+
                 JarEntry iconEntry = frameworkJarFile.getJarEntry(componentConfig.getIcon());
                 if (iconEntry != null) {
                     iconData = IOUtils.toByteArray(frameworkJarFile.getInputStream(iconEntry));
@@ -535,31 +580,31 @@ public class FrameworkService {
             try {
                 if (componentConfig.getType().equalsIgnoreCase(Component.STORM_SPOUT_TYPE)) {
                     iconData = IOUtils.toByteArray(Thread.currentThread()
-                        .getContextClassLoader().getResourceAsStream("icons/storm-spout.png"));
+                            .getContextClassLoader().getResourceAsStream("icons/storm-spout.png"));
                 } else if (componentConfig.getType().equalsIgnoreCase(Component.STORM_BOLT_TYPE)) {
                     iconData = IOUtils.toByteArray(Thread.currentThread()
-                        .getContextClassLoader().getResourceAsStream("icons/storm-bolt.png"));
+                            .getContextClassLoader().getResourceAsStream("icons/storm-bolt.png"));
                 } else {
                     iconData = IOUtils.toByteArray(Thread.currentThread()
-                        .getContextClassLoader().getResourceAsStream("icons/storm-trident.png"));
+                            .getContextClassLoader().getResourceAsStream("icons/storm-trident.png"));
                 }
             } catch (IOException ex) {
                 LOG.error("Error occurred while loading the default component icon: ", ex);
             }
         }
-        
+
         if (iconData != null) {
             FileInfo iconFile = new FileInfo();
             iconFile.setFileName(iconFile.getFileName());
             iconFile.setFileType("image/png");
             iconFile.setFileSize(iconData.length);
             iconFile.setContentHash(DigestUtils.md5Hex(iconData));
-            
+
             iconFile = fileService.saveFile(iconFile, iconData);
 
             iconId = iconFile.getId();
         }
-        
+
         return iconId;
     }
 }
