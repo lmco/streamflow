@@ -78,11 +78,11 @@
     <repositories>
         <repository>
             <id>clojars.org</id>
-            <url>http://clojars.org/repo</url>
+            <url>https://clojars.org/repo</url>
         </repository>
         <repository>
             <id>EclipseLink Repo</id>
-            <url>http://download.eclipse.org/rt/eclipselink/maven.repo</url>
+            <url>https://download.eclipse.org/rt/eclipselink/maven.repo</url>
         </repository>
     </repositories>
 
